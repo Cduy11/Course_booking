@@ -4,6 +4,7 @@ import { MainLayout } from "../layouts/MainLayout";
 import { AuthLayout } from "../layouts/AuthLayout";
 import Auth from "../modules/Auth/Auth";
 import ErrorPage from "../components/ErrorPage/ErrorPage";
+import HomePage from "../modules/Home/HomePage/HomePage";
 
 const useRouteElements = () => {
   const routes = useRoutes([
@@ -11,7 +12,7 @@ const useRouteElements = () => {
       path: "/",
       element: (
         <MainLayout>
-          <div>Home Page</div>
+          <HomePage />
         </MainLayout> 
       ),
     },
