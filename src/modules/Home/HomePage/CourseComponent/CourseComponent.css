@@ -5,6 +5,8 @@
 .course-component-title-text {
   font-weight: 600;
   color: #e8bb4b;
+  margin-bottom: 30px !important;
+  margin: 40px 0px !important;
 }
 .course-component-content-item {
   display: flex;
@@ -25,18 +27,21 @@
   background-color: #fff !important;
   background-clip: border-box;
   border: 1px solid rgba(0, 0, 0, 0.125);
-  box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px !important;
+  height: 400px;
+  transition: all 0.3s;
 }
 
 .course-item-card:hover {
   transform: scale(1.05);
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px !important;
 }
 .course-item-card-content-title {
   height: 26px;
   display: inline-block;
   position: absolute;
   z-index: 10;
-  top: 169px;
+  top: 135px;
   padding: 3px 7px !important;
   color: #fff;
   background: #41b294 !important;
@@ -46,7 +51,7 @@
 
 .course-item-card-content-description {
   font-size: 15px !important;
-  padding: 18px 0px;
+  padding: 15px 0px;
   font-weight: 500 !important;
 }
 
@@ -83,6 +88,7 @@
 }
 
 .course-card-footer-item {
+  display: flex;
   flex-direction: column;
 }
 
@@ -102,7 +108,139 @@
 .course-card-footer-item-rating {
   display: flex;
   align-items: center;
-  color: #f6ba35;
-  font-size: 20px;
+  font-size: 15px;
+  flex-direction: column;
 }
 
+.course-card-footer-item-rating-star {
+  display: flex;
+  align-items: center;
+  color: #f6ba35;
+}
+
+.course-card-footer-item-rating-view {
+  font-size: 15px;
+  font-weight: 500;
+  color: #8a8a8a;
+  margin-top: 25px;
+}
+
+/* Reference Course */
+
+.course-card-footer-item-reference {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.course-item-reference-icons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: space-around;
+  color: #8a8a8a;
+}
+
+.course-item-reference-icons-item {
+  display: flex;
+  align-items: center;
+}
+
+.course-card-footer-item-title {
+  display: flex;
+  align-items: center;
+}
+
+.course-card-footer-item-title-image {
+  height: 40px;
+  width: 40px;
+  padding: 2px;
+  border-color: #f6ba35 transparent;
+  border-left: 1px solid transparent;
+  border-bottom: 1px solid #f6ba35;
+  border-right: 1px solid transparent;
+  border-top: 1px solid #f6ba35;
+  border-radius: 50%;
+}
+
+.course-card-footer-item-title-text {
+  font-size: 15px;
+  font-weight: 500;
+  color: #8a8a8a;
+  margin-left: 10px;
+}
+
+.course-card-footer-item-price {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  color: #8a8a8a;
+  margin-left: 10px;
+}
+
+.course-card-footer-item-price-old {
+  font-size: 15px;
+  font-weight: 500;
+  color: #8a8a8a;
+  text-decoration: line-through;
+  margin-left: 10px;
+}
+
+.course-card-footer-item-price-new {
+  font-size: 18px;
+  font-weight: 500;
+  color: #41b294;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+.course-card-footer-item-sell-icon {
+  font-size: 20px;
+  color: #f90303;
+  margin-left: 5px;
+  margin-top: 35px;
+}
+
+.card-container {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  z-index: 99;
+  top: -10%;
+  right: -132%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.5s;
+  width: 350px;
+  min-width: 280px;
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.1);
+  height: 400px;
+}
+
+
+
+.card-container:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tooltip-inner {
+  right: 0; /* Tooltip hiển vào bên trong */
+  left: auto;
+}
+
+/* Tooltip hiển ra ngoài */
+.tooltip-outer {
+  left: 0; /* Tooltip hiển ra bên ngoài */
+  right: auto;
+}
