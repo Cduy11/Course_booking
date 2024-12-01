@@ -6,19 +6,22 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-
-import { Course } from "../../../../../interfaces/course";
 import AccessAlarmsIcon from "@mui/icons-material/AccessAlarms";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import SignalCellularAltIcon from "@mui/icons-material/SignalCellularAlt";
-import logoHuman from "../../../../../assets/avatar2.bb9626e2.png";
 import SellIcon from "@mui/icons-material/Sell";
-import { useState } from "react";
+import logoHuman from "../../../../../assets/avatar2.bb9626e2.png";
+import { Course } from "../../../../../interfaces/course";
 
-function ReferenceCourse({ course }: { course: Course }) {
-  const [isOuterCard, setIsOuterCard] = useState(false);
+function ReferenceCourse({
+  course,
+  position,
+}: {
+  course: Course;
+  position: string;
+}) {
   return (
-    <div className="card-container">
+    <div className={`card-container ${position}`}>
       <Card className="course-item-card">
         <CardMedia
           className="course-item-card-media"
@@ -76,10 +79,9 @@ function ReferenceCourse({ course }: { course: Course }) {
           </Box>
         </CardActions>
       </Card>
-      <div
-        className={`tooltip ${isOuterCard ? "tooltip-inner" : "tooltip-outer"}`}
-      >
+      <div className="tooltip">
         {/* Nội dung tooltip */}
+        <Typography>Thông tin thêm về khóa học</Typography>
       </div>
     </div>
   );

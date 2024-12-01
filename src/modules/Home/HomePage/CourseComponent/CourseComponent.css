@@ -206,41 +206,32 @@
   display: inline-block;
 }
 
+/* Tooltip mặc định cho card ngoài */
 .tooltip {
   position: absolute;
   visibility: hidden;
   opacity: 0;
   z-index: 99;
-  top: -10%;
-  right: -132%;
+  top: 50%;                
+  right: -132%;           
+  transform: translateY(-50%);
   padding: 20px;
-  display: flex;
-  flex-direction: column;
-  transition: all 0.5s;
-  width: 350px;
-  min-width: 280px;
-  word-wrap: break-word;
+  width: 300px;
   background-color: #fff;
-  background-clip: border-box;
   border: 1px solid rgba(0, 0, 0, 0.125);
   box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.1);
-  height: 400px;
+  transition: all 0.5s;
+  
 }
 
+/* Tooltip cho card ở giữa */
+.middle-card .tooltip {
+  right: auto;
+  left: -132%;            
+}
 
-
+/* Hiển thị tooltip khi hover */
 .card-container:hover .tooltip {
   visibility: visible;
   opacity: 1;
-}
-
-.tooltip-inner {
-  right: 0; /* Tooltip hiển vào bên trong */
-  left: auto;
-}
-
-/* Tooltip hiển ra ngoài */
-.tooltip-outer {
-  left: 0; /* Tooltip hiển ra bên ngoài */
-  right: auto;
 }
