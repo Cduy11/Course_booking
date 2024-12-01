@@ -3,9 +3,10 @@ import { useCourses } from "../../../../hooks/useCourse";
 import "./CourseComponent.css";
 import CoursePurchase from "./CoursePurchase/CoursePurchase";
 import ReferenceCourse from "./ReferenceCourse/ReferenceCourse";
+import Courses from "./Courses/Courses";
 
 export default function CourseComponent() {
-  const { topCourses, referenceCourses } = useCourses();
+  const { topCourses, referenceCourses, courses } = useCourses();
 
   return (
     <Box className="course-component">
@@ -39,6 +40,27 @@ export default function CourseComponent() {
             return (
               <Grid item xs={12} sm={6} md={3} key={course.maKhoaHoc}>
                 <ReferenceCourse course={course} position={positionClass} />
+              </Grid>
+            );
+          })}
+        </Grid>
+      </Box>
+      <Box className="course-component-title">
+        <Typography variant="h6" className="course-component-title-text">
+          Khoá Học Back End
+        </Typography>
+      </Box>
+      <Box className="course-component-content">
+        <Grid container spacing={2} style={{ padding: "0px 40px" }}>
+          {courses.map((course, index) => {
+            const positionClass =
+              index === 0 || index === courses.length - 2
+                ? "outer-card"
+                : "middle-card";
+
+            return (
+              <Grid item xs={12} sm={6} md={3} key={course.maKhoaHoc}>
+                <Courses course={course} position={positionClass} />
               </Grid>
             );
           })}

@@ -17,7 +17,6 @@ export const fetchCourseList = createAsyncThunk(
       const reponse = await fetcher.get(
         `/QuanLyKhoaHoc/LayDanhSachKhoaHoc?MaNhom=${MaNhom}`
       );
-      console.log(reponse.data);
       return reponse.data;
     } catch (error: any) {
       return rejectWithValue(error.response.data);

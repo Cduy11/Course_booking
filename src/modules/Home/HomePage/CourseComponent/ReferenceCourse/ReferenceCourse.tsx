@@ -5,6 +5,7 @@ import {
   Card,
   Typography,
   Box,
+  Button,
 } from "@mui/material";
 import AccessAlarmsIcon from "@mui/icons-material/AccessAlarms";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
@@ -12,6 +13,12 @@ import SignalCellularAltIcon from "@mui/icons-material/SignalCellularAlt";
 import SellIcon from "@mui/icons-material/Sell";
 import logoHuman from "../../../../../assets/avatar2.bb9626e2.png";
 import { Course } from "../../../../../interfaces/course";
+import logoHuman2 from "../../../../../assets/emoji.6d1b7051.png";
+import FaceIcon from "@mui/icons-material/Face";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import { PATH } from "../../../../../routes/path";
+import { useNavigate } from "react-router-dom";
+
 
 function ReferenceCourse({
   course,
@@ -20,8 +27,13 @@ function ReferenceCourse({
   course: Course;
   position: string;
 }) {
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate(PATH.AUTH.LOGIN);
+  };
   return (
     <div className={`card-container ${position}`}>
+      {/* card */}
       <Card className="course-item-card">
         <CardMedia
           className="course-item-card-media"
@@ -79,10 +91,55 @@ function ReferenceCourse({
           </Box>
         </CardActions>
       </Card>
-      <div className="tooltip">
-        {/* Nội dung tooltip */}
-        <Typography>Thông tin thêm về khóa học</Typography>
-      </div>
+      {/* tooltip */}
+      <Card className="tooltip">
+        <Box className="tooltip-content">
+          <Box className="tooltip-content-header">
+            <img
+              className="tooltip-content-header-image"
+              src={logoHuman2}
+              alt="logoHuman2"
+            />
+            <Typography className="tooltip-content-header-text">
+              {course.nguoiTao.hoTen}
+            </Typography>
+          </Box>
+          <Box className="tooltip-content-body">
+            <Typography className="tooltip-content-name">
+              {course.tenKhoaHoc}
+            </Typography>
+            <Typography className="tooltip-content-description">
+              {course.moTa.slice(0, 200)}...
+            </Typography>
+          </Box>
+          <Box className="tooltip-content-footer">
+            <Typography className="tooltip-content-footer-item">
+              <FaceIcon style={{ color: "#f1cf4f" }} />
+              <span className="tooltip-content-footer-item-text">
+                {course.soLuongHocVien}
+              </span>
+            </Typography>
+            <Typography className="tooltip-content-footer-item">
+              <VisibilityIcon style={{ color: "#c27c7f" }} />
+              <span className="tooltip-content-footer-item-text">
+                {course.luotXem}
+              </span>
+            </Typography>
+            <Typography className="tooltip-content-footer-item">
+              <SignalCellularAltIcon style={{ color: "#6eb4e8" }} />
+              <span className="tooltip-content-footer-item-text">1000+</span>
+            </Typography>
+          </Box>
+          <Button className="tooltip-content-footer-item-button" onClick={handleClick}>
+            Xem chi tiết
+          </Button>
+        </Box>
+      </Card>
+
+      {/* cardSale */}
+      <Card className="card-sale">
+        <span>Sale</span>
+      </Card>
     </div>
   );
 }

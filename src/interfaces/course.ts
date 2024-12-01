@@ -7,4 +7,9 @@ export interface Course {
     hoTen: string;
   };
   luotXem: number;
+  soLuongHocVien: number;
+  danhMucKhoaHoc: {
+    tenDanhMucKhoaHoc: string;
+    maDanhMucKhoahoc: string;
+  };
 } 
