@@ -2,6 +2,7 @@ import { Box } from "@mui/material";
 import SliderComponent from "./SliderComponent/SliderComponent";
 import "./HomePage.css";
 import InfoCourseComponent from "./InfoCourseComponent/InfoCourseComponent";
+import CourseComponent from "./CourseComponent/CourseComponent";
 
 export default function HomePage() {
   return (
@@ -11,7 +12,12 @@ export default function HomePage() {
           <SliderComponent />
         </Box>
 
-        <InfoCourseComponent />
+        <Box>
+          <InfoCourseComponent />
+        </Box>
+        <Box>
+          <CourseComponent />
+        </Box>
       </Box>
     </>
   );
