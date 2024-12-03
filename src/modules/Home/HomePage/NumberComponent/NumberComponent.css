@@ -1,0 +1,35 @@
+.number_container {
+    margin-top: 5rem;
+    padding: 50px;
+    background-color: #eff8ff;
+    height: auto;
+    display: flex;
+    align-items: center;
+  }
+
+  .number-content {
+   padding: 1.5rem ;
+   text-align: center;
+  }
+
+  .number-img img {
+    width: 80px;
+    height: 80px;
+  }
+  .number-text {
+    flex-direction: column;
+  }
+
+  .text-number {
+    color: #3fb394;
+    font-size: 50px;
+    margin: 10px !important;
+    font-weight: 600;
+  }
+
+  .text-title {
+    color: #000;
+    font-weight: 600;
+    font-size: 20px;
+  }
+  
