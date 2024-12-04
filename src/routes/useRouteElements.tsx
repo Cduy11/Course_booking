@@ -5,23 +5,30 @@ import { AuthLayout } from "../layouts/AuthLayout";
 import Auth from "../modules/Auth/Auth";
 import ErrorPage from "../components/ErrorPage/ErrorPage";
 import HomePage from "../modules/Home/HomePage/HomePage";
+import CourseDetails from "../modules/Home/CourseDetails/CourseDetails";
 
 const useRouteElements = () => {
   const routes = useRoutes([
     {
-      path: "/",
-      element: (
-        <MainLayout>
-          <HomePage />
-        </MainLayout> 
-      ),
+      path: PATH.HOME.ROOT,
+      element: <MainLayout />,
+      children: [
+        {
+          index: true,
+          element: <HomePage />,
+        },
+        {
+          path: PATH.HOME.COURSE_DETAILS + "/:maKhoaHoc",
+          element: <CourseDetails />,
+        },
+      ],
     },
     {
       path: PATH.AUTH.ROOT,
       element: <Outlet />,
       children: [
         {
-          path: PATH.AUTH.LOGIN, 
+          path: PATH.AUTH.LOGIN,
           element: (
             <AuthLayout>
               <Auth />
@@ -29,7 +36,7 @@ const useRouteElements = () => {
           ),
         },
         {
-          path: PATH.AUTH.REGISTER, 
+          path: PATH.AUTH.REGISTER,
           element: (
             <AuthLayout>
               <Auth />

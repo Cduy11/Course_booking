@@ -1,0 +1,12 @@
+
+.title_course_details{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    padding: 50px;
+    background-color: #ffd60a;
+    text-transform: uppercase;
+    color: #fff;
+}
+

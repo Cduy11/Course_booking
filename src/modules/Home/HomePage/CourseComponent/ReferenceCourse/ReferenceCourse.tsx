@@ -29,7 +29,7 @@ function ReferenceCourse({
 }) {
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate(PATH.AUTH.LOGIN);
+    navigate(`${PATH.HOME.COURSE_DETAILS}/${course.maKhoaHoc}`);
   };
   return (
     <div className={`card-container ${position}`}>

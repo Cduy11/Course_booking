@@ -13,3 +13,19 @@ export interface Course {
     maDanhMucKhoahoc: string;
   };
 } 
+
+export interface CourseDetails {
+  maKhoaHoc: string;
+  tenKhoaHoc?: string;
+  moTa?: string;
+  soLuongHocVien?: number;
+  danhMucKhoaHoc: {
+    tenDanhMucKhoaHoc: string;
+  };
+  nguoiTao: {
+    hoTen: string;
+  };
+  luotXem: number;  
+  hinhAnh: string;
+}
+

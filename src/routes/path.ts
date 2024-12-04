@@ -7,7 +7,12 @@ export const PATH = {
     ADMIN: {
         // route admin
     },
-    HOME: "/",
-    ERROR: "/404",
+  
+    
+    HOME: {
+        ROOT: "/",
+        COURSE_DETAILS: "/course-details",
+    },
+    ERROR: "/404",      
     LOADING: "/loading",
 }
