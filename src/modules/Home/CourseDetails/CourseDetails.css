@@ -1,12 +1,31 @@
-
 .title_course_details{
     display: flex;
     flex-direction: column;
     gap: 10px;
     width: 100%;
-    padding: 50px;
+    max-width: 100%;
+    padding: 20px;
     background-color: #ffd60a;
     text-transform: uppercase;
     color: #fff;
+    box-sizing: border-box;
 }
 
+.details_course_details_footer_title {
+    font-size: 20px !important;
+    font-weight: bold !important;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.details_course_details {
+    width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+.course-component-content {
+    width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}

@@ -16,7 +16,12 @@ export default function CourseComponent() {
         </Typography>
       </Box>
       <Box className="course-component-content">
-        <Grid container spacing={2} style={{ padding: "0px 40px" }}>
+        <Grid
+          container
+          spacing={2}
+          justifyContent="center"
+          style={{ padding: "0px 40px", marginLeft: "90px" }}
+        >
           {topCourses.map((course) => (
             <Grid item xs={12} sm={6} md={3} key={course.maKhoaHoc}>
               <CoursePurchase course={course} />
@@ -30,7 +35,12 @@ export default function CourseComponent() {
         </Typography>
       </Box>
       <Box className="course-component-content">
-        <Grid container spacing={2} style={{ padding: "0px 40px" }}>
+        <Grid
+          container
+          spacing={2}
+          justifyContent="center"
+          style={{ padding: "0px 40px", marginLeft: "90px" }}
+        >
           {referenceCourses.map((course, index) => {
             const positionClass =
               index === 0 || index === referenceCourses.length - 2
@@ -51,7 +61,12 @@ export default function CourseComponent() {
         </Typography>
       </Box>
       <Box className="course-component-content">
-        <Grid container spacing={2} style={{ padding: "0px 40px" }}>
+        <Grid
+          container
+          spacing={2}
+          justifyContent="center"
+          style={{ padding: "0px 40px", marginLeft: "90px" }}
+        >
           {courses.map((course, index) => {
             const positionClass =
               index === 0 || index === courses.length - 2

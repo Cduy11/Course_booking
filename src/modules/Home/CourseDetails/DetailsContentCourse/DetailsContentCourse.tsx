@@ -1,4 +1,4 @@
-import { Typography, Box, Grid, Button } from "@mui/material";
+import { Typography, Box, Grid, Button, Stack, Rating } from "@mui/material";
 import "./DetailsContentCourse.css";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
@@ -7,7 +7,11 @@ import { AppDispatch, RootState } from "../../../../store";
 import { useEffect } from "react";
 import { fetchCourseDetails } from "../../../../store/slices/courseSlice";
 import { useParams } from "react-router-dom";
-
+import SchoolIcon from "@mui/icons-material/School";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
+import VideoLibraryIcon from "@mui/icons-material/VideoLibrary";
+import StorageIcon from "@mui/icons-material/Storage";
+import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import type { CourseDetails } from "../../../../interfaces/course";
 import { courseSections, learningOutcomes } from "./FakeData";
 
@@ -59,33 +63,29 @@ export default function CourseDetails() {
                   alt=""
                 />
                 <Box className="info_details_course_text">
-                  <Typography>Giáo Viên</Typography>
+                  <Typography sx={{ fontWeight: "bold" }}>Giáo Viên</Typography>
                   <Typography>{courseDetails.nguoiTao.hoTen}</Typography>
                 </Box>
               </Grid>
               <Grid item xs={12} md={4} className="info_details_course">
-                <img
-                  className="details_course_img"
-                  src="https://demo2.cybersoft.edu.vn/static/media/instrutor5.2e4bd1e6.jpg"
-                  alt=""
+                <SchoolIcon
+                  className="info_details_course_icon"
                 />
                 <Box className="info_details_course_text">
-                  <Typography>Lĩnh Vực</Typography>
+                  <Typography sx={{ fontWeight: "bold" }}>Lĩnh Vực</Typography>
                   <Typography>
                     {courseDetails.danhMucKhoaHoc.tenDanhMucKhoaHoc}
                   </Typography>
                 </Box>
               </Grid>
               <Grid item xs={12} md={4} className="info_details_course">
-                <img
-                  className="details_course_img"
-                  src="https://demo2.cybersoft.edu.vn/static/media/instrutor5.2e4bd1e6.jpg"
-                  alt=""
-                />
-                <Box className="info_details_course_text">
-                  <Typography>Lượt Xem</Typography>
-                  <Typography>{courseDetails.luotXem}</Typography>
-                </Box>
+                <Stack spacing={1}>
+                <Rating name="half-rating-read" defaultValue={5} precision={0.5} readOnly />
+                  <Box className="info_details_course_text">
+             
+                    <Typography>{courseDetails.luotXem} Lượt Xem</Typography>
+                  </Box>
+                </Stack>
               </Grid>
             </Grid>
           </Box>
@@ -109,7 +109,7 @@ export default function CourseDetails() {
             </Grid>
           </Box>
           <Box>
-            <Typography className="course-content-title font-bold">
+            <Typography className="course-content-title1">
               Nội dung khóa học:
             </Typography>
             <ul className="course-content-list">
@@ -133,7 +133,8 @@ export default function CourseDetails() {
                     {section.lessons.map((lesson, lessonIndex) => (
                       <li key={lessonIndex}>
                         <Typography>
-                          <PlayCircleOutlineIcon sx={{ color: "#4bab90" }} /> {lesson.title}
+                          <PlayCircleOutlineIcon sx={{ color: "#4bab90" }} />{" "}
+                          {lesson.title}
                         </Typography>
                         <span className="course-content-time">
                           <AccessTimeIcon
@@ -157,20 +158,51 @@ export default function CourseDetails() {
             <Box className="flex justify-center mb-4 silideBarCourseDetails_img">
               <img src={courseDetails.hinhAnh} alt="Course" className="w-3/4" />
             </Box>
-            <Typography className="text-center font-bold silideBarCourseDetails_price">
-              500.000 <sup>đ</sup>
+            <Typography className="text-center font-bold silideBarCourseDetails_price d-flex align-items-center">
+              <ElectricBoltIcon className="icon-right" />
+              <span>
+                500.000 <sup>đ</sup>
+              </span>
             </Typography>
-            <Button variant="outlined" className="silideBarCourseDetails_button" fullWidth>
+            <Button
+              variant="outlined"
+              className="silideBarCourseDetails_button"
+              fullWidth
+            >
               Đăng ký
             </Button>
-            <Box className="mt-4">
-              <Typography>
-                Ghi danh: {courseDetails.soLuongHocVien} học viên
+            <Box className="mt-4 silideBarCourseDetails_info">
+              <Typography className="silideBarCourseDetails_info">
+                Ghi danh:{" "}
+                <span className="silideBarCourseDetails_text">
+                  {courseDetails.soLuongHocVien} học viên{" "}
+                  <SchoolIcon className="icon-right" />
+                </span>
               </Typography>
-              <Typography>Thời gian: 18 giờ</Typography>
-              <Typography>Bài học: 10</Typography>
-              <Typography>Video: 14</Typography>
-              <Typography>Trình độ: Người mới bắt đầu</Typography>
+              <Typography className="silideBarCourseDetails_info">
+                Thời gian:{" "}
+                <span className="silideBarCourseDetails_text">
+                  18 giờ <AccessTimeIcon className="icon-right" />{" "}
+                </span>
+              </Typography>
+              <Typography className="silideBarCourseDetails_info">
+                Bài học:{" "}
+                <span className="silideBarCourseDetails_text">
+                  10 <MenuBookIcon className="icon-right" />{" "}
+                </span>
+              </Typography>
+              <Typography className="silideBarCourseDetails_info">
+                Video:{" "}
+                <span className="silideBarCourseDetails_text">
+                  14 <VideoLibraryIcon className="icon-right" />{" "}
+                </span>
+              </Typography>
+              <Typography className="silideBarCourseDetails_info">
+                Trình độ:{" "}
+                <span className="silideBarCourseDetails_text">
+                  Người mới bắt đầu <StorageIcon className="icon-right" />
+                </span>
+              </Typography>
             </Box>
           </Box>
         </Grid>

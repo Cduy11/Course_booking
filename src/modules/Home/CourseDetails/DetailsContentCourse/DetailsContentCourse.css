@@ -31,6 +31,11 @@
   text-align: justify;
 }
 
+.info_details_course_icon {
+  font-size: 45px !important;
+  color: #4bab90 !important;
+}
+
 /* box_course_learn */
 
 .course_learn_item_list_left {
@@ -44,6 +49,7 @@
 .box_course_learn_title {
   padding-bottom: 10px 0;
   font-size: 20px !important;
+  font-weight: bold !important;
 }
 
 .course_learn_item {
@@ -58,6 +64,7 @@
   margin-bottom: 40px;
   text-align: justify;
   line-height: 1.5;
+  font-size: 16px;
 }
 
 .course_learn_item li::before {
@@ -68,24 +75,25 @@
 
 /* New styles for course content */
 
-.course-content-title {
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
 .course-content-list {
   list-style-type: none;
   padding-left: 0;
 }
 
 .course-content-list > li {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .course-content-title {
-  font-weight: bold !important;
   margin-bottom: 10px;
   font-size: 20px !important;
+  margin-left: 10px !important;
+
+}
+
+.course-content-title1 {
+  font-size: 25px !important;
+  font-weight: bold !important;
 }
 
 .course-content-button {
@@ -116,7 +124,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 5px 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #eee !important;
 }
 
 .course-content-sublist li:last-child {
@@ -148,6 +156,7 @@
   margin-bottom: 15px;
   padding: 10px 30px;
   box-shadow: 1px 1px 10px 4px #dadada;
+  overflow: auto;
 }
 .silideBarCourseDetails_img img {
   width: 100%;
@@ -176,4 +185,22 @@
   color: #fff !important;
   scale: 1.05;
 }
+
+
+.silideBarCourseDetails_text {
+  font-weight: bold;
+  margin-left: 2px;
+  line-height: 2.5 !important;
+}
+
+.silideBarCourseDetails_info {
+  border-bottom: 1px solid #d0d0d0;
+  padding: 10px 0;
+}
+
+.icon-right {
+  float: right;
+  color: #f5ba37;
+}
+
 

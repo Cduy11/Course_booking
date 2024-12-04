@@ -333,3 +333,9 @@
   right: -5px ;
   border-left: 5px solid #f90303 !important;
 }
+
+.course-component-content {
+  display: grid;
+  place-items: center;
+  padding: 0px 40px;
+}
