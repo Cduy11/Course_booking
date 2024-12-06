@@ -231,8 +231,7 @@
 }
 
 /* Hiển thị tooltip khi hover */
-.card-container:hover .tooltip,
-.card-container:focus-within .tooltip {
+.card-container:hover .tooltip {
   visibility: visible;
   opacity: 1;
   transition: all 0.5s;
