@@ -6,6 +6,7 @@ import Auth from "../modules/Auth/Auth";
 import ErrorPage from "../components/ErrorPage/ErrorPage";
 import HomePage from "../modules/Home/HomePage/HomePage";
 import CourseDetails from "../modules/Home/CourseDetails/CourseDetails";
+import CoursePagination from "../modules/Home/CoursePage/CoursePagination/CoursePagination";
 
 const useRouteElements = () => {
   const routes = useRoutes([
@@ -20,6 +21,10 @@ const useRouteElements = () => {
         {
           path: PATH.HOME.COURSE_DETAILS + "/:maKhoaHoc",
           element: <CourseDetails />,
+        },
+        {
+          path: PATH.HOME.COURSE_PAGINATION,
+          element: <CoursePagination />,
         },
       ],
     },

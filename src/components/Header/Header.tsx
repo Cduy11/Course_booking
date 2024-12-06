@@ -3,21 +3,20 @@ import logo from "../../assets/logo.png";
 import "./Header.css";
 import SearchIcon from "@mui/icons-material/Search";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { PATH } from "../../routes/path";
 import { RootState } from "../../store";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../../store/slices/categotySlice";
 import { AppDispatch } from "../../store";
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-
-
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 export default function Header() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [eventAnchorEl, setEventAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const eventOpen = Boolean(eventAnchorEl);
+  const navigate = useNavigate();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -29,7 +28,9 @@ export default function Header() {
 
   // lấy danh mục từ redux
   const dispatch: AppDispatch = useDispatch();
-  const { categoryList, isLoading, error } = useSelector((state: RootState) => state.category) as {
+  const { categoryList, isLoading, error } = useSelector(
+    (state: RootState) => state.category
+  ) as {
     categoryList: { tenDanhMuc: string }[];
     isLoading: boolean;
     error: string | null;
@@ -39,12 +40,19 @@ export default function Header() {
     dispatch(fetchCategories());
   }, [dispatch]);
 
+  const handleCourseClick = () => {
+    navigate(PATH.HOME.COURSE_PAGINATION);
+  };
 
   return (
     <div className="header__layout">
       <div className="header__left">
         <div className="logo">
-          <img src={logo} alt="Logo" />
+          <img
+            src={logo}
+            alt="Logo"
+            onClick={() => navigate(PATH.HOME.ROOT)}
+          />
         </div>
         <div className="search">
           <input type="text" placeholder="Tìm kiếm" />
@@ -81,19 +89,25 @@ export default function Header() {
               ) : error ? (
                 <MenuItem className="menu-item">Lỗi: {error}</MenuItem>
               ) : (
-                Array.isArray(categoryList) && categoryList.map((category, index) => (
+                Array.isArray(categoryList) &&
+                categoryList.map((category, index) => (
                   <MenuItem
                     key={index}
                     onClick={() => setAnchorEl(null)}
                     className="menu-item"
                   >
-                    <span className="menu-item-text">{category.tenDanhMuc}</span>
+                    <span className="menu-item-text">
+                      {category.tenDanhMuc}
+                    </span>
                   </MenuItem>
                 ))
               )}
             </Box>
           </Menu>
-          <Button className="header__menu-button">Khóa học</Button>
+          <Button className="header__menu-button" onClick={handleCourseClick}>
+            {" "}
+            Khóa học
+          </Button>
           <Button className="header__menu-button">Blog</Button>
           <Button
             className="header__menu-button"
@@ -116,17 +130,26 @@ export default function Header() {
             onClose={() => setEventAnchorEl(null)}
           >
             <Box className="menu-item-box">
-              <MenuItem onClick={() => setEventAnchorEl(null)} className="menu-item">
+              <MenuItem
+                onClick={() => setEventAnchorEl(null)}
+                className="menu-item"
+              >
                 <Link to={PATH.ERROR} className="menu-item-text">
                   Sự Kiện Cuối Năm
                 </Link>
               </MenuItem>
-              <MenuItem onClick={() => setEventAnchorEl(null)} className="menu-item">
+              <MenuItem
+                onClick={() => setEventAnchorEl(null)}
+                className="menu-item"
+              >
                 <Link to={PATH.ERROR} className="menu-item-text">
                   Sự kiện Giáng Sinh
                 </Link>
               </MenuItem>
-              <MenuItem onClick={() => setEventAnchorEl(null)} className="menu-item">
+              <MenuItem
+                onClick={() => setEventAnchorEl(null)}
+                className="menu-item"
+              >
                 <Link to={PATH.ERROR} className="menu-item-text">
                   Sự kiện Năm Mới
                 </Link>

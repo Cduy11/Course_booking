@@ -29,3 +29,18 @@ export interface CourseDetails {
   hinhAnh: string;
 }
 
+export interface CoursePagination {
+  maKhoaHoc: string;
+  hinhAnh: string;
+  tenKhoaHoc: string;
+  moTa: string;
+  nguoiTao: {
+    hoTen: string;
+  };
+  luotXem: number;
+  soLuongHocVien: number;
+  danhMucKhoaHoc: {
+    tenDanhMucKhoaHoc: string;
+    maDanhMucKhoahoc: string; // Thêm dòng này
+  };
+}

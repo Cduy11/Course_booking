@@ -12,6 +12,7 @@ export const PATH = {
     HOME: {
         ROOT: "/",
         COURSE_DETAILS: "/course-details",
+        COURSE_PAGINATION: "/course-pagination",
     },
     ERROR: "/404",      
     LOADING: "/loading",
