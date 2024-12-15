@@ -3,7 +3,7 @@ import logo from "../../assets/logo.png";
 import "./Header.css";
 import SearchIcon from "@mui/icons-material/Search";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { PATH } from "../../routes/path";
 import { RootState } from "../../store";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,6 +14,7 @@ import { fetchCatelog } from "../../store/slices/categotySlice";
 
 export default function Header() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [eventAnchorEl, setEventAnchorEl] = useState<null | HTMLElement>(null);
   const navigate = useNavigate();
   const dispatch: AppDispatch = useDispatch();
   const { categoryList, isLoading, error } = useSelector(
@@ -34,15 +35,19 @@ export default function Header() {
     navigate(PATH.HOME.CATALOG_COURSE + `/${maDanhMuc}`);
   };
 
+  const handleEventClick = (event: React.MouseEvent<HTMLElement>) => {
+    setEventAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseEventMenu = () => {
+    setEventAnchorEl(null);
+  };
+
   return (
     <div className="header__layout">
       <div className="header__left">
         <div className="logo">
-          <img
-            src={logo}
-            alt="Logo"
-            onClick={() => navigate(PATH.HOME.ROOT)}
-          />
+          <img src={logo} alt="Logo" onClick={() => navigate(PATH.HOME.ROOT)} />
         </div>
         <div className="search">
           <input type="text" placeholder="Tìm kiếm" />
@@ -83,15 +88,40 @@ export default function Header() {
               )}
             </Box>
           </Menu>
-          <Button className="header__menu-button" onClick={() => navigate(PATH.HOME.COURSE_PAGINATION)}>
+          <Button
+            className="header__menu-button"
+            onClick={() => navigate(PATH.HOME.COURSE_PAGINATION)}
+          >
             Khóa học
           </Button>
           <Button className="header__menu-button">Blog</Button>
+          <Button className="header__menu-button" onClick={handleEventClick}>
+            Sự kiện <KeyboardArrowDownIcon />
+          </Button>
+          <Menu
+            anchorEl={eventAnchorEl}
+            open={Boolean(eventAnchorEl)}
+            onClose={handleCloseEventMenu}
+          >
+            <Box className="menu-item-box">
+              <MenuItem className="menu-item" onClick={handleCloseEventMenu}>
+                Sự kiện sale cuối năm
+              </MenuItem>
+              <MenuItem className="menu-item" onClick={handleCloseEventMenu}>
+                Sự kiện cuối giáng sinh
+              </MenuItem>
+              <MenuItem className="menu-item" onClick={handleCloseEventMenu}>
+                Sự kiện Tết
+              </MenuItem>
+            </Box>
+          </Menu>
           <Button className="header__menu-button">Thông tin</Button>
         </div>
       </div>
       <div className="login">
-        <button>ĐĂNG NHẬP</button>
+        <Button onClick={() => navigate(PATH.AUTH.LOGIN)} className="login-button">
+          Đăng nhập
+        </Button>
       </div>
     </div>
   );

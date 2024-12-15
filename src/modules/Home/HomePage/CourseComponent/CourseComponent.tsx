@@ -2,8 +2,9 @@ import { Box, Grid, Typography } from "@mui/material";
 import { useCourses } from "../../../../hooks/useCourse";
 import "./CourseComponent.css";
 import CoursePurchase from "./CoursePurchase/CoursePurchase";
-import ReferenceCourse from "./ReferenceCourse/ReferenceCourse";
+
 import Courses from "./Courses/Courses";
+import ReferenceCourse from "./ReferenceCourse/ReferenceCourse";
 
 export default function CourseComponent() {
   const { topCourses, referenceCourses, courses } = useCourses();
