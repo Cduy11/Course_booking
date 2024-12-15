@@ -7,6 +7,7 @@ import ErrorPage from "../components/ErrorPage/ErrorPage";
 import HomePage from "../modules/Home/HomePage/HomePage";
 import CourseDetails from "../modules/Home/CourseDetails/CourseDetails";
 import CoursePagination from "../modules/Home/CoursePage/CoursePagination/CoursePagination";
+import CatalogCourse from "../modules/Home/CatalogCourse/CatalogCourse";
 
 const useRouteElements = () => {
   const routes = useRoutes([
@@ -26,6 +27,10 @@ const useRouteElements = () => {
           path: PATH.HOME.COURSE_PAGINATION,
           element: <CoursePagination />,
         },
+        {
+          path: PATH.HOME.CATALOG_COURSE + "/:maDanhMucKhoaHoc", 
+          element: <CatalogCourse />
+        }
       ],
     },
     {

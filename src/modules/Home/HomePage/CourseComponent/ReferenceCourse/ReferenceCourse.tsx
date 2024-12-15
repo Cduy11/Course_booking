@@ -23,9 +23,11 @@ import { useNavigate } from "react-router-dom";
 function ReferenceCourse({
   course,
   position,
+  index,
 }: {
   course: Course;
   position: string;
+  index: number;
 }) {
   const navigate = useNavigate();
   const handleClick = () => {
@@ -92,7 +94,7 @@ function ReferenceCourse({
         </CardActions>
       </Card>
       {/* tooltip */}
-      <Card className="tooltip">
+      <Card className={`tooltip ${index > 3 ? 'tooltip-multiple' : ''}`}>
         <Box className="tooltip-content">
           <Box className="tooltip-content-header">
             <img

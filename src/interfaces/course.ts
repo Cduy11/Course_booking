@@ -44,3 +44,8 @@ export interface CoursePagination {
     maDanhMucKhoahoc: string; // Thêm dòng này
   };
 }
+
+export interface Category {
+  maDanhMuc: string;
+  tenDanhMuc: string;
+}

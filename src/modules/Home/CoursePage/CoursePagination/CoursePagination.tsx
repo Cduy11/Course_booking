@@ -13,12 +13,12 @@ import { Course } from "../../../../interfaces/course";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "../../../../routes/path";
 import { fakeData } from "../FakeData/FakeData";
+
+
 export default function CoursePagination() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const { coursePagination } = useCoursePagination(page);
-
-
 
   const handleChange = (_: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);

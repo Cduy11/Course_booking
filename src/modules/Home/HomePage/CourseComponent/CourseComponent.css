@@ -226,8 +226,9 @@
 
 /* Tooltip cho card ở giữa */
 .middle-card .tooltip {
-  right: auto;
+  right: -117;
   left: -115%;
+  top: 50%;
 }
 
 /* Hiển thị tooltip khi hover */
@@ -337,4 +338,19 @@
   display: grid;
   place-items: center;
   padding: 0px 40px;
+}
+
+.card-container.last-card-inner {
+  position: relative;
+  transform: translateX(-10%); /* Di chuyển vào trong */
+}
+
+.card-container.last-card-inner .tooltip {
+  left: auto;
+  right: 100%; /* Tooltip hiển thị vào trong */
+}
+
+.card-container.last-card-inner .card-sale {
+  left: auto;
+  right: 0; /* Sale badge hiển thị đúng */
 }
