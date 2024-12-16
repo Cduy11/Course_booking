@@ -12,7 +12,7 @@ const useRouteElements = () => {
       element: (
         <MainLayout>
           <div>Home Page</div>
-        </MainLayout> 
+        </MainLayout>
       ),
     },
     {
@@ -20,7 +20,7 @@ const useRouteElements = () => {
       element: <Outlet />,
       children: [
         {
-          path: PATH.AUTH.LOGIN, 
+          path: PATH.AUTH.LOGIN,
           element: (
             <AuthLayout>
               <Auth />
@@ -28,7 +28,7 @@ const useRouteElements = () => {
           ),
         },
         {
-          path: PATH.AUTH.REGISTER, 
+          path: PATH.AUTH.REGISTER,
           element: (
             <AuthLayout>
               <Auth />
