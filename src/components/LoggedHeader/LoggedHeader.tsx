@@ -1,6 +1,6 @@
 import { Button, Menu, MenuItem, Box } from "@mui/material";
 import logo from "../../assets/logo.png";
-import "./Header.css";
+import "./../Header/Header.css";
 import SearchIcon from "@mui/icons-material/Search";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,15 +10,27 @@ import { fetchCategories } from "../../store/slices/categotySlice";
 import { AppDispatch } from "../../store";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { fetchCatelog } from "../../store/slices/categotySlice";
+import LogoutIcon from '@mui/icons-material/Logout';
+import "./LoggedHeader.css"
 import { useCategories } from "../../hooks/useCategories";
+import { logout } from "../../store/slices/authSlice";
 
-export default function Header() {
+export default function LoggedHeader() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [eventAnchorEl, setEventAnchorEl] = useState<null | HTMLElement>(null);
   const navigate = useNavigate();
   const dispatch: AppDispatch = useDispatch();
   const { categoryList, isLoading, error } = useCategories();
 
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
+
+  const handleCategoryClick = (maDanhMuc: string) => {
+    dispatch(fetchCatelog(maDanhMuc));
+    setAnchorEl(null);
+    navigate(PATH.HOME.CATALOG_COURSE + `/${maDanhMuc}`);
+  };
 
   const handleEventClick = (event: React.MouseEvent<HTMLElement>) => {
     setEventAnchorEl(event.currentTarget);
@@ -28,16 +40,10 @@ export default function Header() {
     setEventAnchorEl(null);
   };
 
-
-  const handleCategoryClick = (maDanhMuc: string) => {
-    dispatch(fetchCatelog(maDanhMuc));
-    setAnchorEl(null);
-    navigate(PATH.HOME.CATALOG_COURSE + `/${maDanhMuc}`);
+  const handleLogout = () => {
+    dispatch(logout()); // Gọi hàm logout
   };
 
-  useEffect(() => {
-    dispatch(fetchCategories());
-  }, [dispatch]);
 
   return (
     <div className="header__layout">
@@ -114,10 +120,16 @@ export default function Header() {
           <Button className="header__menu-button">Thông tin</Button>
         </div>
       </div>
-      <div className="login">
-        <Button onClick={() => navigate(PATH.AUTH.LOGIN)} className="login-button">
-          Đăng nhập
-        </Button>
+      <div className="header-info">
+        <div className="avatar-container">
+          <img src="https://cdn.dribbble.com/users/2364329/screenshots/6676961/02.jpg?compress=1&resize=800x600" alt="Avatar" className="avatar" />
+           
+        </div>
+        <div>
+        <Button className="logout-button" onClick={handleLogout}>
+            <LogoutIcon/>
+          </Button>
+        </div>
       </div>
     </div>
   );

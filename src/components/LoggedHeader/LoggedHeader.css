@@ -1,0 +1,20 @@
+.header-info {
+  display: flex;
+}
+
+.avatar-container {
+  position: relative;
+  display: inline-block;
+}
+
+.avatar {
+  width: 50px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.logout-button {
+  margin-top: 15px !important;
+}

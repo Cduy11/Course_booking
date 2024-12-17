@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Register } from "./Register";
-import { Login } from "./Login";
-
+import Login from "./Login/Login";
+import Register from "./Register/Register";
 
 export default function Auth() {
   const [isActive, setIsActive] = useState<boolean>(false);
