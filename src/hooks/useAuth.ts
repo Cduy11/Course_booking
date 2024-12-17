@@ -13,11 +13,21 @@ const useAuth = () => {
   const login = async (data: LoginFormData) => {
     const response = await dispatch(loginApi(data));
     const user = response.payload;
-    localStorage.setItem("currentUser", JSON.stringify(user));
-    return user;
+
+    if (response.error) {
+      console.error("Đăng nhập không thành công:", response.error.message);
+      return null;
+    }
+
+    if (user) {
+      localStorage.setItem("currentUser", JSON.stringify(user));
+      return user;
+    } else {
+      return null;
+    }
   };
 
   return { login };
 };
 
-export default useAuth; 
+export default useAuth;

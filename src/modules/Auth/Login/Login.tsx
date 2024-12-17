@@ -18,7 +18,7 @@ interface LoginFormData {
   matKhau: string;
 }
 
-const Login = ({ onToggle }: RegisterProps) => {
+const Login: React.FC<RegisterProps> = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const { register, handleSubmit } = useForm<LoginFormData>({
@@ -38,9 +38,13 @@ const Login = ({ onToggle }: RegisterProps) => {
 
   const onSubmit = (data: LoginFormData) => {
     login(data)
-      .then(() => {
-        toast.success("Đăng nhập thành công!");
-        navigate(PATH.HOME.ROOT);
+      .then((user) => {
+        if (user) {
+          toast.success("Đăng nhập thành công!");
+          navigate(PATH.HOME.ROOT);
+        } else {
+          toast.error("Đăng nhập thất bại!");
+        }
       })
       .catch(() => {
         toast.error("Đăng nhập thất bại!");
