@@ -1,12 +1,13 @@
 import fetcher from "../../apis/fetcher";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { ErrorState, ApiError } from "../../interfaces/errorTypes";
 
 const initialState = {
   courseList: [],
   courseDetails: null,
   coursePagination: [],
   isLoading: false,
-  error: null,
+  error: null as ErrorState | null,
 };
 
 // call api danh sách khóa học
@@ -14,12 +15,13 @@ export const fetchCourseList = createAsyncThunk(
   "course/fetchCourseList",
   async ({ MaNhom }: { MaNhom: string }, { rejectWithValue }) => {
     try {
-      const reponse = await fetcher.get(
+      const response = await fetcher.get(
         `/QuanLyKhoaHoc/LayDanhSachKhoaHoc?MaNhom=${MaNhom}`
       );
-      return reponse.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response.data);
+      return response.data;
+    } catch (error: unknown) {
+      const apiError = error as ApiError;
+      return rejectWithValue(apiError.message || "Có lỗi xảy ra khi gọi API");
     }
   }
 );
@@ -29,13 +31,13 @@ export const fetchCourseDetails = createAsyncThunk(
   "course/fetchCourseDetails",
   async ({ MaKhoaHoc }: { MaKhoaHoc: string }, { rejectWithValue }) => {
     try {
-      const reponse = await fetcher.get(
+      const response = await fetcher.get(
         `/QuanLyKhoaHoc/LayThongTinKhoaHoc?maKhoaHoc=${MaKhoaHoc}`
       );
-      console.log("courseDetails", reponse.data);
-      return reponse.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response.data);
+      return response.data;
+    } catch (error: unknown) {
+      const apiError = error as ApiError;
+      return rejectWithValue(apiError.message || "Có lỗi xảy ra khi gọi API");
     }
   }
 );
@@ -55,10 +57,10 @@ export const fetchCoursePagination = createAsyncThunk(
       const response = await fetcher.get(
         `/QuanLyKhoaHoc/LayDanhSachKhoaHoc_PhanTrang?page=${SoTrang}&pageSize=${SoPhanTuTrang}&MaNhom=${MaNhom}`
       );
-      console.log("coursePagination", response.data.items);
       return response.data.items;
-    } catch (error: any) {
-      return rejectWithValue(error.response.data);
+    } catch (error: unknown) {
+      const apiError = error as ApiError;
+      return rejectWithValue(apiError.message || "Có lỗi xảy ra khi gọi API");
     }
   }
 );
@@ -79,7 +81,7 @@ const courseSlice = createSlice({
     });
     builder.addCase(fetchCourseList.rejected, (state, { payload }) => {
       state.isLoading = false;
-      state.error = payload;
+      state.error = { message: payload as string || "Có lỗi xảy ra" };
     });
     // call api chi tiết khóa học
     builder.addCase(fetchCourseDetails.pending, (state) => {
@@ -92,7 +94,7 @@ const courseSlice = createSlice({
     });
     builder.addCase(fetchCourseDetails.rejected, (state, { payload }) => {
       state.isLoading = false;
-      state.error = payload as string;
+      state.error = { message: payload as string || "Có lỗi xảy ra" };
     });
 
     // call api danh sách khóa học theo trang
@@ -106,7 +108,7 @@ const courseSlice = createSlice({
     });
     builder.addCase(fetchCoursePagination.rejected, (state, { payload }) => {
       state.isLoading = false;
-      state.error = payload as string;
+      state.error = { message: payload as string || "Có lỗi xảy ra" };
     });
   },
 });

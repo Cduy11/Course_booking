@@ -1,12 +1,14 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import fetcher from "../../apis/fetcher";
+import { ErrorState, ApiError } from "../../interfaces/errorTypes";
+
 
 // trạng thái ban đầu
 const initialState = {
   categoryList: [],
   catelogList: [],
   isLoading: false,
-  error: null,
+  error: null as ErrorState | null,
 };
 
 // call api danh mục
@@ -16,8 +18,9 @@ export const fetchCategories = createAsyncThunk(
     try {
       const response = await fetcher.get("/QuanLyKhoaHoc/LayDanhMucKhoaHoc");
       return response.data;
-    } catch (error: any) {
-      throw error.response.data;
+    } catch (error: unknown) {
+      const apiError = error as ApiError;
+      throw apiError.message;
     }
   }
 );
@@ -31,13 +34,13 @@ export const fetchCatelog = createAsyncThunk(
         `/QuanLyKhoaHoc/LayKhoaHocTheoDanhMuc?maDanhMuc=${maDanhMuc}&MaNhom=GP01`
       );
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error fetching catelog:", error);
-      throw error.response ? error.response.data : error.message;
+      const apiError = error as ApiError;
+      throw apiError.message || "Có lỗi xảy ra khi gọi API";
     }
   }
 );
-
 
 // tạo slice
 const categorySlice = createSlice({
@@ -51,10 +54,11 @@ const categorySlice = createSlice({
     builder.addCase(fetchCategories.fulfilled, (state, action) => {
       state.isLoading = false;
       state.categoryList = action.payload;
+      state.error = null;
     });
     builder.addCase(fetchCategories.rejected, (state, action) => {
       state.isLoading = false;
-      state.error = action.error.message;
+      state.error = { message: action.error.message || "Có lỗi xảy ra" };
     });
     builder.addCase(fetchCatelog.pending, (state) => {
       state.isLoading = true;
@@ -66,8 +70,8 @@ const categorySlice = createSlice({
     });
     builder.addCase(fetchCatelog.rejected, (state, action) => {
       state.isLoading = false;
-      state.error = action.error.message || "Có lỗi xảy ra khi gọi API";
-    })
+      state.error = { message: action.error.message || "Có lỗi xảy ra khi gọi API" };
+    });
   },
 });
 

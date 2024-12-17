@@ -1,6 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import fetcher from "../../apis/fetcher";
 import { toast } from "react-toastify";
+import { ErrorState, ApiError } from "../../interfaces/errorTypes";
+import { UserRegisterData } from "../../interfaces/auth";
+
 
 const userLocal = localStorage.getItem("currentUser") 
   ? JSON.parse(localStorage.getItem("currentUser")!) 
@@ -8,20 +11,36 @@ const userLocal = localStorage.getItem("currentUser")
 
 const initialState = {
   isLoading: false,
-  error: null,
+  error: null as ErrorState | null,
   currentUser: userLocal,
 };
 
+// login
 export const loginApi = createAsyncThunk(
   "auth/loginApi",
   async (data, { rejectWithValue }) => {
     try {
       const response = await fetcher.post("/QuanLyNguoiDung/DangNhap", data);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const apiError = error as ApiError;
       return rejectWithValue(
-        error.response ? error.response.data : error.message
+        apiError.message || "Có lỗi xảy ra khi gọi API"
       );
+    }
+  }
+);
+
+// register
+export const registerApi = createAsyncThunk(
+  "auth/registerApi",
+  async (data: UserRegisterData, { rejectWithValue }) => {
+    try {
+      const response = await fetcher.post("/QuanLyNguoiDung/DangKy", data);
+      return response.data;
+    } catch (error: unknown) {
+      const apiError = error as ApiError;
+      return rejectWithValue(apiError.message || "Có lỗi xảy ra khi gọi API");
     }
   }
 );
@@ -37,7 +56,7 @@ const authSlice = createSlice({
     logout: (state) => {
       state.currentUser = null;
       localStorage.removeItem("currentUser");
-      toast.success("Đăng xuất thành công")
+      toast.success("Đăng xuất thành công");
     }
   },
   extraReducers: (builder) => {
@@ -50,11 +69,23 @@ const authSlice = createSlice({
       state.currentUser = action.payload;
     });
     builder.addCase(loginApi.rejected, (state, action) => {
-      state.error = action.payload as string | null;
       state.isLoading = false;
+      state.error = { message: action.payload as string || "Có lỗi xảy ra" };
+    });
+    builder.addCase(registerApi.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(registerApi.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.error = null;
+      state.currentUser = action.payload;
+    });
+    builder.addCase(registerApi.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = { message: action.payload as string || "Có lỗi xảy ra khi gọi API" };
     });
   },
 });
 
-export const {logout} = authSlice.actions
+export const { logout } = authSlice.actions;
 export default authSlice.reducer;

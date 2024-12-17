@@ -12,19 +12,17 @@ const useAuth = () => {
 
   const login = async (data: LoginFormData) => {
     const response = await dispatch(loginApi(data));
-    const user = response.payload;
-
-    if (response.error) {
-      console.error("Đăng nhập không thành công:", response.error.message);
+    
+    if (response.meta.requestStatus === 'rejected') {
       return null;
     }
 
+    const user = response.payload;
     if (user) {
       localStorage.setItem("currentUser", JSON.stringify(user));
       return user;
-    } else {
-      return null;
     }
+    return null;
   };
 
   return { login };

@@ -3,6 +3,12 @@ import "../Auth.css";
 import { Stack, TextField, Select, MenuItem } from "@mui/material";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { useDispatch } from "react-redux";
+import { registerApi } from "../../../store/slices/authSlice";
+import { toast } from "react-toastify";
+import { PATH } from "../../../routes/path";
+import { useNavigate } from "react-router-dom";
+import { AppDispatch } from "../../../store";
 
 //định nghĩa kiểu dữ liệu cho props
 interface RegisterProps {
@@ -10,7 +16,7 @@ interface RegisterProps {
 }
 
 //định nghĩa kiểu dữ liệu cho form
-interface FormData {
+interface UserRegisterData {
   taiKhoan: string;
   hoTen: string;
   matKhau: string;
@@ -41,11 +47,14 @@ const schema = yup.object().shape({
 });
 
 const Register: React.FC<RegisterProps> = () => {
+const dispatch = useDispatch<AppDispatch>();
+const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<UserRegisterData>({
     defaultValues: {
       taiKhoan: "",
       hoTen: "",
@@ -54,12 +63,18 @@ const Register: React.FC<RegisterProps> = () => {
       soDienThoai: "",
       maNhom: "",
     },
-    resolver: yupResolver(schema),  
+    resolver: yupResolver(schema),
     mode: "onChange",
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
+  const onSubmit = async(data: UserRegisterData) => {
+   try {
+    await dispatch(registerApi(data));
+    toast.success("Đăng ký thành công")
+    navigate(PATH.AUTH.LOGIN)
+   } catch {
+    toast.error("Đăng ký thất bại")
+   }
   };
   return (
     <div className="auth-form-container auth-sign-up">

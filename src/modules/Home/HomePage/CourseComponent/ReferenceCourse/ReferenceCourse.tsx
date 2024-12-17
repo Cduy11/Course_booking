@@ -19,16 +19,12 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { PATH } from "../../../../../routes/path";
 import { useNavigate } from "react-router-dom";
 
-
-function ReferenceCourse({
-  course,
-  position,
-  index,
-}: {
+interface ReferenceCourseProps {
   course: Course;
   position: string;
-  index: number;
-}) {
+}
+
+function ReferenceCourse({ course, position }: ReferenceCourseProps) {
   const navigate = useNavigate();
   const handleClick = () => {
     navigate(`${PATH.HOME.COURSE_DETAILS}/${course.maKhoaHoc}`);
@@ -94,7 +90,7 @@ function ReferenceCourse({
         </CardActions>
       </Card>
       {/* tooltip */}
-      <Card className={`tooltip ${index > 3 ? 'tooltip-multiple' : ''}`}>
+      <Card className={`tooltip`}>
         <Box className="tooltip-content">
           <Box className="tooltip-content-header">
             <img
