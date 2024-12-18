@@ -122,7 +122,9 @@ export default function LoggedHeader() {
       </div>
       <div className="header-info">
         <div className="avatar-container">
-          <img src="https://cdn.dribbble.com/users/2364329/screenshots/6676961/02.jpg?compress=1&resize=800x600" alt="Avatar" className="avatar" />
+          <Button className="avatar-button" onClick={() => navigate(PATH.HOME.INFO_DETAIL)}>
+            <img src="https://cdn.dribbble.com/users/2364329/screenshots/6676961/02.jpg?compress=1&resize=800x600" alt="Avatar" className="avatar" />
+          </Button>
            
         </div>
         <div>

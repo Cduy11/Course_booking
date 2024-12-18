@@ -41,7 +41,11 @@ const Login: React.FC<RegisterProps> = () => {
       .then((user) => {
         if (user) {
           toast.success("Đăng nhập thành công!");
-          navigate(PATH.HOME.ROOT);
+          if ( user.maLoaiNguoiDung === "QuanTri") {
+            navigate(PATH.ADMIN);
+          } else {
+            navigate(PATH.HOME.ROOT);
+          }
         } else {
           toast.error("Đăng nhập thất bại!");
         }

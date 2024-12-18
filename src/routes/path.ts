@@ -13,7 +13,8 @@ export const PATH = {
         ROOT: "/",
         COURSE_DETAILS: "/course-details",
         COURSE_PAGINATION: "/course-pagination",
-        CATALOG_COURSE: "/course-catalog"
+        CATALOG_COURSE: "/course-catalog",
+        INFO_DETAIL: "/info"
     },
     ERROR: "/404",      
     LOADING: "/loading",
