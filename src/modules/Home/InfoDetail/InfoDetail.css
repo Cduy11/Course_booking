@@ -25,3 +25,14 @@ button.infoDetail-button {
     border: none;
 }
 
+.modal-style {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background-color: #fff;
+    border: 2px solid #000;
+    box-shadow: 24px 24px 24px rgba(0, 0, 0, 0.5);
+    padding: 16px;
+  }
