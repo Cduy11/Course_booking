@@ -4,9 +4,9 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { fetchCourseDetails } from "../../../../store/slices/courseSlice";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import SchoolIcon from "@mui/icons-material/School";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import VideoLibraryIcon from "@mui/icons-material/VideoLibrary";
@@ -14,6 +14,11 @@ import StorageIcon from "@mui/icons-material/Storage";
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import type { CourseDetails } from "../../../../interfaces/course";
 import { courseSections, learningOutcomes } from "./FakeData";
+import { bookingCouseApi } from "../../../../store/slices/bookingSlice";
+import { toast } from "react-toastify";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import { PATH } from "../../../../routes/path";
+
 
 interface CourseDetailsState {
   courseDetails: CourseDetails | null;
@@ -28,24 +33,49 @@ export default function CourseDetails() {
     (state: RootState) => state.course
   ) as CourseDetailsState;
 
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
   useEffect(() => {
     if (maKhoaHoc) {
       dispatch(fetchCourseDetails({ MaKhoaHoc: maKhoaHoc }));
     }
   }, [dispatch, maKhoaHoc]);
 
-  if (isLoading) {
-    return <Typography>Loading...</Typography>;
-  }
 
-  if (error) {
-    return <Typography>Error: {error}</Typography>;
-  }
+  // LOGIC XỬ LÝ ĐĂNG KÝ
+  const handleRegister = async () => {
+    if (!maKhoaHoc) return;
+    const userJson = localStorage.getItem("currentUser");
+    if (!userJson) {
+      toast.info("Bạn cần đăng nhập để đăng ký khóa học!");
+      navigate(PATH.AUTH.LOGIN);
+      return;
+    }
 
-  if (!courseDetails) {
+    const currentUser = JSON.parse(userJson);
+    const data = {
+      maKhoaHoc,
+      taiKhoan: currentUser.taiKhoan,
+    };
+
+    try {
+      await dispatch(bookingCouseApi(data)).unwrap();
+      toast.success("Đăng ký khóa học thành công!");
+    } catch (error: any) {
+      alert(`Đăng ký thất bại: ${error}`);
+    } finally {
+      handleClose();
+    }
+  };
+
+  if (isLoading) return <Typography>Loading...</Typography>;
+  if (error) return <Typography>Error: {error}</Typography>;
+  if (!courseDetails)
     return <Typography>No course details available.</Typography>;
-  }
-
   return (
     <Box className="details_content_course">
       <Grid container spacing={4}>
@@ -68,9 +98,7 @@ export default function CourseDetails() {
                 </Box>
               </Grid>
               <Grid item xs={12} md={4} className="info_details_course">
-                <SchoolIcon
-                  className="info_details_course_icon"
-                />
+                <SchoolIcon className="info_details_course_icon" />
                 <Box className="info_details_course_text">
                   <Typography sx={{ fontWeight: "bold" }}>Lĩnh Vực</Typography>
                   <Typography>
@@ -80,9 +108,13 @@ export default function CourseDetails() {
               </Grid>
               <Grid item xs={12} md={4} className="info_details_course">
                 <Stack spacing={1}>
-                <Rating name="half-rating-read" defaultValue={5} precision={0.5} readOnly />
+                  <Rating
+                    name="half-rating-read"
+                    defaultValue={5}
+                    precision={0.5}
+                    readOnly
+                  />
                   <Box className="info_details_course_text">
-             
                     <Typography>{courseDetails.luotXem} Lượt Xem</Typography>
                   </Box>
                 </Stack>
@@ -168,6 +200,7 @@ export default function CourseDetails() {
               variant="outlined"
               className="silideBarCourseDetails_button"
               fullWidth
+              onClick={handleOpen}
             >
               Đăng ký
             </Button>
@@ -207,6 +240,23 @@ export default function CourseDetails() {
           </Box>
         </Grid>
       </Grid>
+
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Xác nhận đăng ký</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Bạn có chắc chắn muốn đăng ký khóa học này?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Hủy
+          </Button>
+          <Button onClick={handleRegister} color="primary" autoFocus>
+            Xác nhận
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

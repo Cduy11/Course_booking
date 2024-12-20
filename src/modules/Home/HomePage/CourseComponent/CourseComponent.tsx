@@ -20,7 +20,7 @@ export default function CourseComponent() {
           container
           spacing={2}
           justifyContent="center"
-          style={{ padding: "0px 40px", marginLeft: "90px" }}
+          style={{ padding: "0px 40px" }}
         >
           {topCourses.map((course) => (
             <Grid item xs={12} sm={6} md={3} key={course.maKhoaHoc}>
@@ -39,7 +39,7 @@ export default function CourseComponent() {
           container
           spacing={2}
           justifyContent="center"
-          style={{ padding: "0px 40px", marginLeft: "90px" }}
+          style={{ padding: "0px 40px" }}
         >
           {referenceCourses.map((course, index) => {
             const positionClass =
@@ -65,7 +65,7 @@ export default function CourseComponent() {
           container
           spacing={2}
           justifyContent="center"
-          style={{ padding: "0px 40px", marginLeft: "90px" }}
+          style={{ padding: "0px 40px" }}
         >
           {courses.map((course, index) => {
             const positionClass =

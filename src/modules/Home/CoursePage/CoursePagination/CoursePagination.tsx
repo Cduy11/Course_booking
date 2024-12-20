@@ -67,7 +67,7 @@ export default function CoursePagination() {
                   container
                 spacing={2}
                 justifyContent="center"
-                style={{ padding: "0px 40px", marginLeft: "90px" }}
+                style={{ padding: "0px 40px",  }}
               >
                 {coursePagination.map((course) => (
                   <Grid item xs={12} sm={6} md={3}>
