@@ -35,7 +35,6 @@ export const fetchCatelog = createAsyncThunk(
       );
       return response.data;
     } catch (error: unknown) {
-      console.error("Error fetching catelog:", error);
       const apiError = error as ApiError;
       throw apiError.message || "Có lỗi xảy ra khi gọi API";
     }
