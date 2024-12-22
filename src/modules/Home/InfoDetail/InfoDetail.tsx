@@ -1,12 +1,10 @@
 import { Box, Grid, Tabs, Tab, Typography, Button } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import logoHuman from "../../../assets/avatar2.bb9626e2.png";
 import "./InfoDetail.css";
 import PersonalInfo from "./PersonalInfo/PersonalInfo";
 import InfoCourse from "./InfoCourse/InfoCourse";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../store";
-import { fetchInfoUserApi } from "../../../store/slices/infoSlice";
+import { useFetchUserInfo } from "../../../hooks/useInfo";
 
 export default function InfoDetail() {
   const [value, setValue] = useState("one");
@@ -14,17 +12,7 @@ export default function InfoDetail() {
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
-  const dispatch = useDispatch<AppDispatch>();
-  
-  // Lấy dữ liệu từ state
-  const { inforUser, isLoading, error } = useSelector(
-    (state: RootState) => state.inforUser
-  );
-
-  // Gọi API khi component mount
-  useEffect(() => {
-    dispatch(fetchInfoUserApi());
-  }, [dispatch]);
+  const { inforUser } = useFetchUserInfo();
 
   return (
     <Box className="info-detail">
@@ -39,13 +27,9 @@ export default function InfoDetail() {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={3}>
             <Box className="infoDetail-left">
-              <img
-                src={logoHuman}
-                alt="Avatar"
-                className="avatar"
-              />
+              <img src={logoHuman} alt="Avatar" className="avatar" />
               <Typography variant="h6" mb={1} fontWeight={600}>
-                Nguyễn Văn A
+                {inforUser.hoTen || "Tên người dùng"}
               </Typography>
               <Typography variant="body1" mb={1} fontWeight={500}>
                 Lập trình viên Fullstack

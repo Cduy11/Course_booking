@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Box,
   Typography,
@@ -10,8 +11,37 @@ import {
   Button,
 } from "@mui/material";
 import logoHuman from "../../../../assets/avatar2.bb9626e2.png";
+import FeedbackIcon from "@mui/icons-material/Feedback";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import AutoGraphIcon from "@mui/icons-material/AutoGraph";
+import { useFetchUserInfo } from "../../../../hooks/useInfo";
+import { cancelCourseApi } from "../../../../store/slices/bookingSlice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../../store";
+import { ChiTietKhoaHoc } from "../../../../interfaces/info";
 
 const InfoCourse = () => {
+  const { inforUser } = useFetchUserInfo();
+  const [courseHistory, setCourseHistory] = useState<ChiTietKhoaHoc[]>(
+    inforUser.chiTietKhoaHocGhiDanh || []
+  );
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleCancelCourse = async (maKhoaHoc: string) => {
+    const action = await dispatch(
+      cancelCourseApi({ maKhoaHoc, taiKhoan: inforUser.taiKhoan })
+    );
+
+    if (cancelCourseApi.fulfilled.match(action)) {
+      setCourseHistory((prev) =>
+        prev.filter((course: ChiTietKhoaHoc) => course.maKhoaHoc !== maKhoaHoc)
+      );
+    } else {
+      console.error("Hủy khóa học thất bại:", action.payload);
+    }
+  };
+
   return (
     <Box className="info-details-page">
       <Typography variant="h5" className="info-details-header">
@@ -27,64 +57,70 @@ const InfoCourse = () => {
         />
       </Box>
 
-      <Card className="info-details-card">
-        <CardMedia
-          component="img"
-          className="info-details-image"
-          image={logoHuman}
-          alt="Course Image"
-        />
-
-        <CardContent className="info-details-content">
-          <Typography
-            variant="h6"
-            fontWeight="bold"
-            className="info-details-title"
-          >
-            Javascript
-          </Typography>
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            className="info-details-description"
-          >
-            ES6 là một chuẩn Javascript mới được đưa ra vào năm 2015 với nhiều
-            quy tắc và cách sử dụng khác nhau...
-          </Typography>
-
-          <Box className="info-details-info">
-            <Typography variant="body2" className="info-details-duration">
-              ⏳ 8 giờ
-            </Typography>
-            <Typography variant="body2" className="info-details-duration">
-              🗓️ 23 giờ
-            </Typography>
-            <Typography variant="body2">📈 All level</Typography>
-          </Box>
-
-          <Rating
-            value={5}
-            readOnly
-            size="small"
-            className="info-details-rating"
+      {courseHistory.map((course, index) => (
+        <Card key={index} className="info-details-card">
+          <CardMedia
+            component="img"
+            className="info-details-image"
+            image={course.hinhAnh}
+            alt="Course Image"
           />
 
-          <Box className="info-details-author">
-            <Avatar src={logoHuman} alt="Author Avatar" />
-            <Typography variant="body2">Nguyễn Nam</Typography>
-          </Box>
-        </CardContent>
+          <CardContent className="info-details-content">
+            <Typography
+              variant="h6"
+              fontWeight="bold"
+              className="info-details-title"
+            >
+              {course.tenKhoaHoc}
+            </Typography>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              className="info-details-description"
+            >
+              {course.moTa}
+            </Typography>
 
-        <Box className="info-details-actions">
-          <Button
-            variant="contained"
-            color="warning"
-            sx={{ textTransform: "none" }}
-          >
-            Hủy Khóa Học
-          </Button>
-        </Box>
-      </Card>
+            <Box className="info-details-info">
+              <Typography variant="body2" className="info-details-duration">
+                <FeedbackIcon style={{ color: "#ef6b00" }} /> {course.danhGia}{" "}
+                Đánh giá
+              </Typography>
+              <Typography variant="body2" className="info-details-duration">
+                <VisibilityIcon style={{ color: "#f5c002" }} /> {course.luotXem}{" "}
+                Lượt xem
+              </Typography>
+              <Typography variant="body2">
+                <AutoGraphIcon style={{ color: "#42b294" }} /> All level
+              </Typography>
+            </Box>
+
+            <Rating
+              value={5}
+              readOnly
+              size="small"
+              className="info-details-rating"
+            />
+
+            <Box className="info-details-author">
+              <Avatar src={logoHuman} alt="Author Avatar" />
+              <Typography variant="body2"> Ẩn danh</Typography>
+            </Box>
+          </CardContent>
+
+          <Box className="info-details-actions">
+            <Button
+              variant="contained"
+              color="warning"
+              sx={{ textTransform: "none" }}
+              onClick={() => handleCancelCourse(course.maKhoaHoc)}
+            >
+              Hủy Khóa Học
+            </Button>
+          </Box>
+        </Card>
+      ))}
     </Box>
   );
 };

@@ -2,17 +2,20 @@ import { MenuItem, Button, Box, Typography, Grid, Card } from "@mui/material";
 import ModalInfo from "../ModalInfo/ModaldoInfo";
 import { useState } from "react";
 import AccessAlarmIcon from "@mui/icons-material/AccessAlarm";
-import LayersIcon from '@mui/icons-material/Layers';
-import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
-import SignalCellularAltIcon from '@mui/icons-material/SignalCellularAlt';
-import MenuBookIcon from '@mui/icons-material/MenuBook';
-import SchoolIcon from '@mui/icons-material/School';
+import LayersIcon from "@mui/icons-material/Layers";
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import SignalCellularAltIcon from "@mui/icons-material/SignalCellularAlt";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
+import SchoolIcon from "@mui/icons-material/School";
 import "./PersonalInfo.css";
+import { useFetchUserInfo } from "../../../../hooks/useInfo";
 
 const PersonalInfo = () => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const { inforUser } = useFetchUserInfo();
 
   return (
     <Box>
@@ -21,19 +24,20 @@ const PersonalInfo = () => {
           <Box>
             <MenuItem>
               <Typography variant="body1">
-                <span style={{ fontWeight: 600 }}>Tên: </span> Nguyễn Văn A
+                <span style={{ fontWeight: 600 }}>Tên: {inforUser.hoTen} </span>{" "}
+                {}
               </Typography>
             </MenuItem>
             <MenuItem>
               <Typography variant="body1">
                 <span style={{ fontWeight: 600 }}>Email: </span>{" "}
-                nguyenvana@example.com
+                {inforUser.email}
               </Typography>
             </MenuItem>
             <MenuItem>
               <Typography variant="body1">
-                <span style={{ fontWeight: 600 }}>Số điện thoại: </span> 0123
-                456 789
+                <span style={{ fontWeight: 600 }}>Số điện thoại: </span>{" "}
+                {inforUser.soDT}
               </Typography>
             </MenuItem>
           </Box>
@@ -43,19 +47,22 @@ const PersonalInfo = () => {
             <MenuItem>
               <Typography variant="body1">
                 {" "}
-                <span style={{ fontWeight: 600 }}>Tài khoảng: </span>A527
+                <span style={{ fontWeight: 600 }}>Tài khoảng: </span>{" "}
+                {inforUser.taiKhoan}
               </Typography>
             </MenuItem>
             <MenuItem>
               <Typography variant="body1">
                 {" "}
-                <span style={{ fontWeight: 600 }}>Nhóm: </span>GP01
+                <span style={{ fontWeight: 600 }}>Nhóm: </span>{" "}
+                {inforUser.maNhom}
               </Typography>
             </MenuItem>
             <MenuItem>
               <Typography variant="body1">
                 {" "}
-                <span style={{ fontWeight: 600 }}>Đối tượng: </span>Học viên
+                <span style={{ fontWeight: 600 }}>Đối tượng: </span>{" "}
+                {inforUser.maLoaiNguoiDung}
               </Typography>
             </MenuItem>
           </Box>
@@ -111,7 +118,7 @@ const PersonalInfo = () => {
                   Cấp độ <br /> <span>Trung cấp</span>
                 </Typography>
               </Card>
-              <Card className="timeStudyItem">  
+              <Card className="timeStudyItem">
                 <LibraryBooksIcon />
                 <Typography className="time-content">
                   Buổi học <br /> <span>40</span>
@@ -120,13 +127,13 @@ const PersonalInfo = () => {
               <Card className="timeStudyItem">
                 <SchoolIcon />
                 <Typography className="time-content">
-                Học lực <br /> <span>Xém Giỏi</span>
+                  Học lực <br /> <span>Xém Giỏi</span>
                 </Typography>
               </Card>
               <Card className="timeStudyItem">
                 <MenuBookIcon />
                 <Typography className="time-content">
-                Bài tập <br /> <span>1001</span>
+                  Bài tập <br /> <span>1001</span>
                 </Typography>
               </Card>
             </Box>
