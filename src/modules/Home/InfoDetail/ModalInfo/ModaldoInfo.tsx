@@ -1,15 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Typography, TextField, Button, Modal } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import {
+  updateInforUser,
+  setInforUser,
+  fetchInfoUserApi,
+} from "../../../../store/slices/infoSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "../../../../store";
+import { selectInforUser } from "../../../../store/slices/infoSlice";
+import { toast } from "react-toastify";
 
 // Định nghĩa kiểu cho form
 interface FormData {
+  taiKhoan: string;
   hoTen: string;
   email: string;
   matKhau: string;
-  soDt: string;
+  soDT: string;
 }
 
 // Định nghĩa kiểu cho props
@@ -20,30 +30,74 @@ interface ModalInfoProps {
 
 // Schema validate với Yup
 const schema = yup.object({
+  taiKhoan: yup.string().required("Tài khoản không được bỏ trống"),
   hoTen: yup.string().required("Họ và tên không được bỏ trống"),
   email: yup
     .string()
     .email("Email không hợp lệ")
     .required("Email không được bỏ trống"),
-  matKhau: yup.string().required("Mật khẩu không được bỏ trống"),
-  soDt: yup
+  matKhau: yup
     .string()
-    .matches(/^[0-9]+$/, "Số điện thoại chỉ chứa chữ số")
-    .required("Số điện thoại không được bỏ trống"),
+    .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
+    .required("Mật khẩu là bắt buộc"),
+  soDT: yup
+    .string()
+    .matches(/^[0-9]+$/, "Số điện thoại không hợp lệ")
+    .required("Số điện thoại là bắt buộc"),
 });
 
 const ModalInfo: React.FC<ModalInfoProps> = ({ open, onClose }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const inforUser = useSelector(selectInforUser).inforUser;
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<FormData>({
     resolver: yupResolver(schema),
+    defaultValues: {
+      taiKhoan: inforUser.taiKhoan,
+      hoTen: inforUser.hoTen,
+      email: inforUser.email,
+      matKhau: "",
+      soDT: inforUser.soDT,
+    },
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
-    onClose();
+  // Sử dụng reset để cập nhật giá trị khi mở modal
+  useEffect(() => {
+    if (open) {
+      reset({
+        taiKhoan: inforUser.taiKhoan,
+        hoTen: inforUser.hoTen,
+        email: inforUser.email,
+        matKhau: "",
+        soDT: inforUser.soDT,
+      });
+    }
+  }, [open, inforUser, reset]);
+
+  const onSubmit = async (data: FormData) => {
+    const userData = {
+      ...data,
+      maNhom: "GP01",
+      maLoaiNguoiDung: "HV",
+      taiKhoan: inforUser.taiKhoan,
+    };
+
+    try {
+      const response = await dispatch(updateInforUser(userData)).unwrap();
+      dispatch(setInforUser(response));
+      toast.success("Cập nhật thông tin thành công!");
+
+      dispatch(fetchInfoUserApi());
+
+      onClose();
+    } catch (error) {
+      toast.error(`Cập nhật thất bại: ${error}`);
+    }
   };
 
   return (
@@ -54,13 +108,13 @@ const ModalInfo: React.FC<ModalInfoProps> = ({ open, onClose }) => {
       aria-describedby="modal-modal-description"
     >
       <Box
-        className="modal-style"
         sx={{
           width: 400,
           margin: "100px auto",
           backgroundColor: "white",
           padding: 4,
           borderRadius: 2,
+          boxShadow: 24,
         }}
       >
         <Typography id="modal-modal-title" variant="h6" component="h2">
@@ -100,9 +154,9 @@ const ModalInfo: React.FC<ModalInfoProps> = ({ open, onClose }) => {
             placeholder="Số điện thoại"
             fullWidth
             margin="normal"
-            {...register("soDt")}
-            error={!!errors.soDt}
-            helperText={errors.soDt?.message}
+            {...register("soDT")}
+            error={!!errors.soDT}
+            helperText={errors.soDT?.message}
           />
           <Box mt={2}>
             <Button

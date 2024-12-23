@@ -10,8 +10,8 @@ import { fetchCategories } from "../../store/slices/categotySlice";
 import { AppDispatch } from "../../store";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { fetchCatelog } from "../../store/slices/categotySlice";
-import LogoutIcon from '@mui/icons-material/Logout';
-import "./LoggedHeader.css"
+import LogoutIcon from "@mui/icons-material/Logout";
+import "./LoggedHeader.css";
 import { useCategories } from "../../hooks/useCategories";
 import { logout } from "../../store/slices/authSlice";
 
@@ -41,9 +41,9 @@ export default function LoggedHeader() {
   };
 
   const handleLogout = () => {
-    dispatch(logout()); // Gọi hàm logout
+    dispatch(logout());
+    navigate(PATH.HOME.ROOT);
   };
-
 
   return (
     <div className="header__layout">
@@ -122,14 +122,20 @@ export default function LoggedHeader() {
       </div>
       <div className="header-info">
         <div className="avatar-container">
-          <Button className="avatar-button" onClick={() => navigate(PATH.HOME.INFO_DETAIL)}>
-            <img src="https://cdn.dribbble.com/users/2364329/screenshots/6676961/02.jpg?compress=1&resize=800x600" alt="Avatar" className="avatar" />
+          <Button
+            className="avatar-button"
+            onClick={() => navigate(PATH.HOME.INFO_DETAIL)}
+          >
+            <img
+              src="https://cdn.dribbble.com/users/2364329/screenshots/6676961/02.jpg?compress=1&resize=800x600"
+              alt="Avatar"
+              className="avatar"
+            />
           </Button>
-           
         </div>
         <div>
-        <Button className="logout-button" onClick={handleLogout}>
-            <LogoutIcon/>
+          <Button className="logout-button" onClick={handleLogout}>
+            <LogoutIcon />
           </Button>
         </div>
       </div>

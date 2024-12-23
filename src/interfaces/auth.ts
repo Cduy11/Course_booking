@@ -3,6 +3,6 @@
     hoTen: string;
     matKhau: string;
     email: string;
-    soDienThoai: string;
+    soDT: string;
     maNhom: string;
   }
