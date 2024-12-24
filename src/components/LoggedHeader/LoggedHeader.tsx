@@ -1,7 +1,6 @@
 import { Button, Menu, MenuItem, Box } from "@mui/material";
 import logo from "../../assets/logo.png";
 import "./../Header/Header.css";
-import SearchIcon from "@mui/icons-material/Search";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "../../routes/path";
@@ -14,6 +13,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import "./LoggedHeader.css";
 import { useCategories } from "../../hooks/useCategories";
 import { logout } from "../../store/slices/authSlice";
+import SearchBar from "../SearchBar/SearchBar";
 
 export default function LoggedHeader() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -51,12 +51,7 @@ export default function LoggedHeader() {
         <div className="logo">
           <img src={logo} alt="Logo" onClick={() => navigate(PATH.HOME.ROOT)} />
         </div>
-        <div className="search">
-          <input type="text" placeholder="Tìm kiếm" />
-          <Button className="search__button">
-            <SearchIcon />
-          </Button>
-        </div>
+        <SearchBar />
       </div>
       <div className="header__right">
         <div className="header__menu">

@@ -9,6 +9,7 @@ import CourseDetails from "../modules/Home/CourseDetails/CourseDetails";
 import CoursePagination from "../modules/Home/CoursePage/CoursePagination/CoursePagination";
 import CatalogCourse from "../modules/Home/CatalogCourse/CatalogCourse";
 import InfoDetail from "../modules/Home/InfoDetail/InfoDetail";
+import SearchCourse from "../modules/Home/SearchCourse/SearchCourse";
 
 const useRouteElements = () => {
   const routes = useRoutes([
@@ -29,13 +30,17 @@ const useRouteElements = () => {
           element: <CoursePagination />,
         },
         {
-          path: PATH.HOME.CATALOG_COURSE + "/:maDanhMucKhoaHoc", 
-          element: <CatalogCourse />
+          path: PATH.HOME.CATALOG_COURSE + "/:maDanhMucKhoaHoc",
+          element: <CatalogCourse />,
         },
         {
           path: PATH.HOME.INFO_DETAIL,
-          element: <InfoDetail />
-        }
+          element: <InfoDetail />,
+        },
+        {
+          path: PATH.HOME.SEARCH_COURSE,
+          element: <SearchCourse />,
+        },
       ],
     },
     {

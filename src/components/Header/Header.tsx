@@ -1,7 +1,6 @@
 import { Button, Menu, MenuItem, Box } from "@mui/material";
 import logo from "../../assets/logo.png";
 import "./Header.css";
-import SearchIcon from "@mui/icons-material/Search";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "../../routes/path";
@@ -11,6 +10,7 @@ import { AppDispatch } from "../../store";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { fetchCatelog } from "../../store/slices/categotySlice";
 import { useCategories } from "../../hooks/useCategories";
+import SearchBar from "../SearchBar/SearchBar";
 
 export default function Header() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -19,7 +19,6 @@ export default function Header() {
   const dispatch: AppDispatch = useDispatch();
   const { categoryList, isLoading, error } = useCategories();
 
-
   const handleEventClick = (event: React.MouseEvent<HTMLElement>) => {
     setEventAnchorEl(event.currentTarget);
   };
@@ -27,7 +26,6 @@ export default function Header() {
   const handleCloseEventMenu = () => {
     setEventAnchorEl(null);
   };
-
 
   const handleCategoryClick = (maDanhMuc: string) => {
     dispatch(fetchCatelog(maDanhMuc));
@@ -45,12 +43,7 @@ export default function Header() {
         <div className="logo">
           <img src={logo} alt="Logo" onClick={() => navigate(PATH.HOME.ROOT)} />
         </div>
-        <div className="search">
-          <input type="text" placeholder="Tìm kiếm" />
-          <Button className="search__button">
-            <SearchIcon />
-          </Button>
-        </div>
+        <SearchBar />
       </div>
       <div className="header__right">
         <div className="header__menu">
@@ -115,7 +108,10 @@ export default function Header() {
         </div>
       </div>
       <div className="login">
-        <Button onClick={() => navigate(PATH.AUTH.LOGIN)} className="login-button">
+        <Button
+          onClick={() => navigate(PATH.AUTH.LOGIN)}
+          className="login-button"
+        >
           Đăng nhập
         </Button>
       </div>
