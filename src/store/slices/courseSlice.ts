@@ -13,10 +13,15 @@ const initialState = {
 // call api danh sách khóa học
 export const fetchCourseList = createAsyncThunk(
   "course/fetchCourseList",
-  async ({ MaNhom }: { MaNhom: string }, { rejectWithValue }) => {
+  async (
+    { MaNhom, searchTerm }: { MaNhom: string; searchTerm?: string },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await fetcher.get(
-        `/QuanLyKhoaHoc/LayDanhSachKhoaHoc?MaNhom=${MaNhom}`
+        `/QuanLyKhoaHoc/LayDanhSachKhoaHoc?MaNhom=${MaNhom}${
+          searchTerm ? `&searchTerm=${searchTerm}` : ""
+        }`
       );
       return response.data;
     } catch (error: unknown) {
@@ -81,7 +86,7 @@ const courseSlice = createSlice({
     });
     builder.addCase(fetchCourseList.rejected, (state, { payload }) => {
       state.isLoading = false;
-      state.error = { message: payload as string || "Có lỗi xảy ra" };
+      state.error = { message: (payload as string) || "Có lỗi xảy ra" };
     });
     // call api chi tiết khóa học
     builder.addCase(fetchCourseDetails.pending, (state) => {
@@ -94,7 +99,7 @@ const courseSlice = createSlice({
     });
     builder.addCase(fetchCourseDetails.rejected, (state, { payload }) => {
       state.isLoading = false;
-      state.error = { message: payload as string || "Có lỗi xảy ra" };
+      state.error = { message: (payload as string) || "Có lỗi xảy ra" };
     });
 
     // call api danh sách khóa học theo trang
@@ -108,7 +113,7 @@ const courseSlice = createSlice({
     });
     builder.addCase(fetchCoursePagination.rejected, (state, { payload }) => {
       state.isLoading = false;
-      state.error = { message: payload as string || "Có lỗi xảy ra" };
+      state.error = { message: (payload as string) || "Có lỗi xảy ra" };
     });
   },
 });

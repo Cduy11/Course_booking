@@ -11,15 +11,15 @@ interface CourseState {
   error: string | null;
 }
 
-export const useCourses = () => {
+export const useCourses = (searchTerm: string) => {
   const dispatch = useDispatch<AppDispatch>();
   const { courseList } = useSelector(
     (state: RootState) => state.course
   ) as CourseState;
 
   useEffect(() => {
-    dispatch(fetchCourseList({ MaNhom: "GP09" }));
-  }, [dispatch]);
+    dispatch(fetchCourseList({ MaNhom: "GP09", searchTerm }));
+  }, [dispatch, searchTerm]);
 
   // Sắp xếp theo luotXem
   const topCourses = [...courseList]
@@ -30,11 +30,20 @@ export const useCourses = () => {
   const referenceCourses = [...courseList].slice(4, 8);
 
   // Khoá học theo danh mục
-  const courses = courseList.filter(course => {
-    return course.danhMucKhoaHoc.maDanhMucKhoahoc === "BackEnd"; 
-  }).slice(0, 4);
-  
+  const courses = courseList
+    .filter((course) => {
+      return course.danhMucKhoaHoc.maDanhMucKhoahoc === "BackEnd";
+    })
+    .slice(0, 4);
 
+  // filter khóa học theo tên
+  const filteredCourses = (searchTerm: string) => {
+    return courseList.filter(
+      (course) =>
+        course.tenKhoaHoc &&
+        course.tenKhoaHoc.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  };
 
-  return { topCourses, referenceCourses, courses };
+  return { topCourses, referenceCourses, courses, filteredCourses };
 };

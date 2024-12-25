@@ -8,8 +8,14 @@ export const useCoursePagination = (page: number) => {
   const { coursePagination } = useSelector((state: RootState) => state.course);
 
   useEffect(() => {
-    dispatch(fetchCoursePagination({ MaNhom: "GP01", SoTrang: page, SoPhanTuTrang: 12 }));
+    dispatch(
+      fetchCoursePagination({
+        MaNhom: "GP09",
+        SoTrang: page,
+        SoPhanTuTrang: 12,
+      })
+    );
   }, [dispatch, page]);
 
   return { coursePagination };
-}; 
+};

@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import fetcher from "../../apis/fetcher";
 import { ErrorState, ApiError } from "../../interfaces/errorTypes";
 
-
 // trạng thái ban đầu
 const initialState = {
   categoryList: [],
@@ -31,7 +30,7 @@ export const fetchCatelog = createAsyncThunk(
   async (maDanhMuc: string) => {
     try {
       const response = await fetcher.get(
-        `/QuanLyKhoaHoc/LayKhoaHocTheoDanhMuc?maDanhMuc=${maDanhMuc}&MaNhom=GP01`
+        `/QuanLyKhoaHoc/LayKhoaHocTheoDanhMuc?maDanhMuc=${maDanhMuc}&MaNhom=GP09`
       );
       return response.data;
     } catch (error: unknown) {
@@ -69,7 +68,9 @@ const categorySlice = createSlice({
     });
     builder.addCase(fetchCatelog.rejected, (state, action) => {
       state.isLoading = false;
-      state.error = { message: action.error.message || "Có lỗi xảy ra khi gọi API" };
+      state.error = {
+        message: action.error.message || "Có lỗi xảy ra khi gọi API",
+      };
     });
   },
 });

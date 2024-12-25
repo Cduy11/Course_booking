@@ -79,7 +79,9 @@ const InfoCourse = () => {
               color="text.secondary"
               className="info-details-description"
             >
-              {course.moTa}
+              {course.moTa.length > 150
+                ? course.moTa.slice(0, 150) + "..."
+                : course.moTa}
             </Typography>
 
             <Box className="info-details-info">
