@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-import AddSearchBar from "../components/HeaderBar";
 import {
   Box,
   Button,
@@ -14,10 +12,12 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { CustomTableCell } from "../components/CustomTableCell";
 import { useQuery } from "@tanstack/react-query";
+import React, { useState } from "react";
 import { courseApi } from "../../../apis/course.api";
 import { QueryKeys } from "../../../constants/queryKeys";
+import { CustomTableCell } from "../components/CustomTableCell";
+import AddSearchBar from "../components/HeaderBar";
 
 const CoursesManagement: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -46,7 +46,6 @@ const CoursesManagement: React.FC = () => {
         }
         return response;
       } catch (err) {
-        console.error("Error fetching data:", err);
         throw new Error("Có lỗi khi tải dữ liệu.");
       }
     },
