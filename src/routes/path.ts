@@ -5,7 +5,7 @@ export const PATH = {
         REGISTER: "/auth/register",
     },
     ADMIN: {
-        // route admin
+        // ápdasd
     },
   
     
