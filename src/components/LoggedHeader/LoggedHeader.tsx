@@ -91,7 +91,12 @@ export default function LoggedHeader() {
           >
             Khóa học
           </Button>
-          <Button className="header__menu-button">Blog</Button>
+          <Button
+            className="header__menu-button"
+            onClick={() => navigate(PATH.HOME.BLOG_PAGE)}
+          >
+            Blog
+          </Button>
           <Button className="header__menu-button" onClick={handleEventClick}>
             Sự kiện <KeyboardArrowDownIcon />
           </Button>

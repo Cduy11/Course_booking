@@ -1,0 +1,118 @@
+.blogContent {
+  padding: 20px 50px;
+}
+
+.blogLeft__title {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.blogLeft__icons {
+  color: #e984a6;
+  font-size: 35px;
+}
+
+.cardBlog {
+  margin-top: 10px;
+}
+
+.cardBlogContent {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  overflow: hidden;
+  transition: all 1s;
+}
+
+.imgCardBlog {
+  object-fit: cover;
+  width: 100%;
+  height: 302px;
+  min-height: 302px;
+}
+
+.contentBlog {
+  padding: 10px 15px;
+}
+
+.titleBlogCourse {
+  padding: 10px 0px;
+  font-size: 20px !important;
+}
+
+.timeBlogCourse {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.reviewBlogCourse {
+  display: flex;
+  align-items: center;
+}
+
+.reviewBlogCourse span {
+  padding-right: 20px;
+}
+
+.reviewBlogCourse icons {
+  color: #8ad4c2;
+}
+
+.desBlogCourse {
+  color: #9f9f9f;
+  padding: 10px 0;
+}
+
+button.btnBlogCourse {
+  padding: 5px 10px;
+  background-color: #f6ba35;
+  border: none;
+  transition: all 0.5s;
+  text-transform: uppercase;
+  font-size: 15px;
+  color: #fff;
+  width: 130px;
+}
+
+/* card right */
+.blogRightBox {
+  border: 1px solid #d0d0d0;
+  margin-bottom: 30px;
+  border-top: 3px solid #4baf92;
+  margin-top: 34px;
+}
+
+.blogMenu {
+  border-top: 2px solid #e2e2e2;
+}
+
+.titleBlogRight {
+  padding: 10px;
+  text-align: center;
+}
+
+.blogMenuName {
+  color: #969696 !important;
+  line-height: 2.5rem;
+}
+
+.blogMenuName:hover {
+  color: #4caf92 !important;
+  scale: 1s !important;
+}
+
+.postLog {
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.blogRightAvt img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}

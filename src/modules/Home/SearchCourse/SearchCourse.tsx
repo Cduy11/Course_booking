@@ -31,9 +31,24 @@ export default function SearchCourse() {
   const [searchTerm, setSearchTerm] = useState(searchTermFromUrl);
   const { filteredCourses } = useCourses(searchTerm);
 
+  // Thêm trạng thái cho các danh mục đã chọn
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
   useEffect(() => {
     setSearchTerm(searchTermFromUrl);
   }, [searchTermFromUrl]);
+
+  // Hàm để xử lý thay đổi checkbox
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategories([category]); 
+  };
+
+  // Cập nhật hàm lọc để chỉ hiển thị các khóa học thuộc danh mục đã chọn
+  const filteredByCategory = filteredCourses(searchTerm).filter(
+    (course) =>
+      selectedCategories.length === 0 ||
+      selectedCategories.includes(course.danhMucKhoaHoc.maDanhMucKhoahoc)
+  );
 
   return (
     <Box className="searchPageContainer">
@@ -59,44 +74,36 @@ export default function SearchCourse() {
                   flexDirection="column"
                   className="filter__control"
                 >
-                  <FormControlLabel
-                    control={<Checkbox className="custom-checkbox" />}
-                    label="Tất cả"
-                  />
-                  <FormControlLabel
-                    control={<Checkbox className="custom-checkbox" />}
-                    label="Front End"
-                  />
-                  <FormControlLabel
-                    control={<Checkbox className="custom-checkbox" />}
-                    label="Back End"
-                  />
-                  <FormControlLabel
-                    control={<Checkbox className="custom-checkbox" />}
-                    label="Di Động"
-                  />
-                  <FormControlLabel
-                    control={<Checkbox className="custom-checkbox" />}
-                    label="Full Stack"
-                  />
-                  <FormControlLabel
-                    control={<Checkbox className="custom-checkbox" />}
-                    label="Tư duy lập trình "
-                  />
-                  <FormControlLabel
-                    control={<Checkbox className="custom-checkbox" />}
-                    label="Web"
-                  />
+                  {[
+                    "BackEnd",
+                    "Design",
+                    "FullStack",
+                    "TuDuy",
+                    "FrontEnd",
+                    "DiDong",
+                  ].map((category) => (
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          className="custom-checkbox"
+                          checked={selectedCategories.includes(category)}
+                          onChange={() => handleCategoryChange(category)}
+                        />
+                      }
+                      label={category}
+                      key={category}
+                    />
+                  ))}
                 </Box>
               </Box>
             </Box>
           </Grid>
           <Grid item xs={12} sm={10}>
             <Typography className="filter__title_right">
-              Hiện thị {filteredCourses(searchTerm).length} kết quả
+              Hiện thị {filteredByCategory.length} kết quả
             </Typography>
             <Box mt={3}>
-              {filteredCourses(searchTerm).map((course) => {
+              {filteredByCategory.map((course) => {
                 return (
                   <Card className="info-details-card" key={course.maKhoaHoc}>
                     <CardMedia
@@ -118,9 +125,7 @@ export default function SearchCourse() {
                         color="text.secondary"
                         className="info-details-description"
                       >
-                        {course.moTa.length > 150
-                          ? course.moTa.slice(0, 150) + "..."
-                          : course.moTa}
+                        {course.moTa}
                       </Typography>
                       <Box className="info-details-info">
                         <Typography

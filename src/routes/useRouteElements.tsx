@@ -10,6 +10,7 @@ import CoursePagination from "../modules/Home/CoursePage/CoursePagination/Course
 import CatalogCourse from "../modules/Home/CatalogCourse/CatalogCourse";
 import InfoDetail from "../modules/Home/InfoDetail/InfoDetail";
 import SearchCourse from "../modules/Home/SearchCourse/SearchCourse";
+import BlogPage from "../modules/Home/BlogPage/BlogPage";
 
 const useRouteElements = () => {
   const routes = useRoutes([
@@ -40,6 +41,10 @@ const useRouteElements = () => {
         {
           path: PATH.HOME.SEARCH_COURSE,
           element: <SearchCourse />,
+        },
+        {
+          path: PATH.HOME.BLOG_PAGE,
+          element: <BlogPage />,
         },
       ],
     },
