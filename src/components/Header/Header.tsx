@@ -1,6 +1,6 @@
 import { Button, Menu, MenuItem, Box } from "@mui/material";
-import logo from "../../assets/logo.png";
-import "./Header.css";
+import logo from "../../assets/img/logo.png";
+import "../../assets/css/Header.css";
 import SearchIcon from "@mui/icons-material/Search";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";

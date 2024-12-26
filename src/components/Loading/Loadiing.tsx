@@ -1,5 +1,5 @@
 
-import "./Loading.css";
+import "../../assets/css/Loading.css";
 const Loadiing = () => {
   
     return <div className="loader"></div>;

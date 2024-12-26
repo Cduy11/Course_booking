@@ -5,10 +5,10 @@ export const PATH = {
         REGISTER: "/auth/register",
     },
     ADMIN: {
-        // ápdasd
-    },
-  
-    
+        ROOT: '/admin',
+        USERS_MANAGEMENT: "/admin/user-management",
+        COURSES_MANAGEMENT: "/admin/courses-management",
+    }, 
     HOME: {
         ROOT: "/",
         COURSE_DETAILS: "/course-details",
