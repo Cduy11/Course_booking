@@ -18,7 +18,8 @@ import AutoGraphIcon from "@mui/icons-material/AutoGraph";
 import logoHuman from "../../../assets/avatar2.bb9626e2.png";
 import { useState, useEffect } from "react";
 import { useCourses } from "../../../hooks/useCourse";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { PATH } from "../../../routes/path";
 
 // Hàm để lấy tham số từ URL
 const useQuery = () => {
@@ -49,6 +50,12 @@ export default function SearchCourse() {
       selectedCategories.length === 0 ||
       selectedCategories.includes(course.danhMucKhoaHoc.maDanhMucKhoahoc)
   );
+
+  const navigate = useNavigate();
+  const handleClick = (course) => {
+    navigate(`${PATH.HOME.COURSE_DETAILS}/${course.maKhoaHoc}`);
+  };
+  
 
   return (
     <Box className="searchPageContainer">
@@ -163,6 +170,7 @@ export default function SearchCourse() {
                         variant="contained"
                         color="warning"
                         sx={{ textTransform: "none" }}
+                        onClick={() => handleClick(course)}
                       >
                         Xem chi tiết
                       </Button>

@@ -19,8 +19,11 @@ import { cancelCourseApi } from "../../../../store/slices/bookingSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../store";
 import { ChiTietKhoaHoc } from "../../../../interfaces/info";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const InfoCourse = () => {
+  const navigate = useNavigate();
   const { inforUser } = useFetchUserInfo();
   const [courseHistory, setCourseHistory] = useState<ChiTietKhoaHoc[]>(
     inforUser.chiTietKhoaHocGhiDanh || []
@@ -37,8 +40,9 @@ const InfoCourse = () => {
       setCourseHistory((prev) =>
         prev.filter((course: ChiTietKhoaHoc) => course.maKhoaHoc !== maKhoaHoc)
       );
+      toast.success("Hủy khóa học thành công!");
     } else {
-      console.error("Hủy khóa học thất bại:", action.payload);
+      toast.error("Hủy khóa học thất bại! Vui lòng thử lại.");
     }
   };
 

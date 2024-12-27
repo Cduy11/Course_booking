@@ -203,4 +203,12 @@
   color: #f5ba37;
 }
 
+.btn-cancelBooking {
+  background: #f5ba37 !important;
+  color: #fff !important;
+}
 
+.btn-confirmBooking {
+  background: #4caa90 !important;
+  color: #fff !important;
+}

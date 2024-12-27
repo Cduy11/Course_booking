@@ -249,10 +249,10 @@ export default function CourseDetails() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={handleClose} className="btn-cancelBooking" >
             Hủy
           </Button>
-          <Button onClick={handleRegister} color="primary" autoFocus>
+          <Button onClick={handleRegister} className="btn-confirmBooking" autoFocus>
             Xác nhận
           </Button>
         </DialogActions>
