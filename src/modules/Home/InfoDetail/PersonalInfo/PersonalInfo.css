@@ -1,0 +1,95 @@
+/* Tổng quan layout */
+.info-skills {
+    padding: 30px 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .skills-all {
+    padding-bottom: 20px;
+  }
+  
+  .my-skills {
+    display: flex;
+    padding: 10px 0;
+    align-items: center;
+  }
+  
+  /* Nút kỹ năng */
+  .skillBtnCustom {
+    width: 60px;
+    height: 45px;
+    color: #fff !important;
+    border-radius: 8px;
+    border: none;
+    text-transform: uppercase;
+    margin-right: 15px;
+    font-size: 0.9rem;
+
+  }
+  
+  /* Màu sắc nút kỹ năng */
+  .skills-html .html-btn {
+    background-color: #f9ca9a;
+  }
+  
+  .skills-css .css-btn {
+    background-color: #f8bebb;
+  }
+  
+  .skills-js .js-btn {
+    background-color: #f0cc6b;
+  }
+  
+  .skills-react .react-btn {
+    background-color: #113d3d;
+  }
+  
+  /* Thanh tiến trình */
+  .progress {
+    width: 100%;
+    height: 1.5rem;
+    background-color: #e0e0e0;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    position: relative;
+    margin-left: 10px;
+  }
+  
+  .progress::before {
+    content: '';
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  
+  .html-progress::before {
+    width: 100%;
+    background-color: #f9ca9a;
+  }
+  
+  .css-progress::before {
+    width: 75%;
+    background-color: #f8bebb;
+  }
+  
+  .js-progress::before {
+    width: 50%;
+    background-color: #f0cc6b;
+  }
+  
+  .react-progress::before {
+    width: 25%;
+    background-color: #113d3d;
+  }
+  
+  /* Thông tin tóm tắt */
+
+
+  

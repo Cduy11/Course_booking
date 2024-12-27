@@ -1,28 +1,60 @@
 import { useForm } from "react-hook-form";
 import TextField from "@mui/material/TextField";
 import { Stack, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { PATH } from "../../../routes/path";
+import { useEffect } from "react";
+import useAuth from "../../../hooks/useAuth";
+
 interface RegisterProps {
   onToggle: () => void;
 }
 
 //định nghĩa kiểu dữ liệu cho form
-interface FormData {
+interface LoginFormData {
   taiKhoan: string;
   matKhau: string;
 }
 
 const Login: React.FC<RegisterProps> = () => {
-  const { register, handleSubmit } = useForm<FormData>({
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const { register, handleSubmit } = useForm<LoginFormData>({
     defaultValues: {
       taiKhoan: "",
       matKhau: "",
     },
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
+  // check url không cho thay đổi khi đăng nhập rồi
+  useEffect(() => {
+    const currentUser = localStorage.getItem("currentUser");
+    if (currentUser) {
+      navigate(PATH.HOME.ROOT);
+    }
+  }, [navigate]);
+
+  const onSubmit = (data: LoginFormData) => {
+    login(data)
+      .then((user) => {
+        if (user) {
+          toast.success("Đăng nhập thành công!");
+          if ( user.maLoaiNguoiDung === "QuanTri") {
+            navigate(PATH.ADMIN);
+          } else {
+            navigate(PATH.HOME.ROOT);
+          }
+        } else {
+          toast.error("Đăng nhập thất bại!");
+        }
+      })
+      .catch(() => {
+        toast.error("Đăng nhập thất bại!");
+      });
   };
+
   return (
     <div className="auth-form-container auth-sign-in">
       <form onSubmit={handleSubmit(onSubmit)}>

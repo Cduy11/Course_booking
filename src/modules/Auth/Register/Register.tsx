@@ -3,6 +3,12 @@ import "../Auth.css";
 import { Stack, TextField, Select, MenuItem } from "@mui/material";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { useDispatch } from "react-redux";
+import { registerApi } from "../../../store/slices/authSlice";
+import { toast } from "react-toastify";
+import { PATH } from "../../../routes/path";
+import { useNavigate } from "react-router-dom";
+import { AppDispatch } from "../../../store";
 
 //định nghĩa kiểu dữ liệu cho props
 interface RegisterProps {
@@ -10,12 +16,12 @@ interface RegisterProps {
 }
 
 //định nghĩa kiểu dữ liệu cho form
-interface FormData {
+interface UserRegisterData {
   taiKhoan: string;
   hoTen: string;
   matKhau: string;
   email: string;
-  soDienThoai: string;
+  soDT: string;
   maNhom: string;
 }
 
@@ -33,7 +39,7 @@ const schema = yup.object().shape({
     .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
     .required("Mật khẩu là bắt buộc"),
   email: yup.string().email("Email không hợp lệ").required("Email là bắt buộc"),
-  soDienThoai: yup
+  soDT: yup
     .string()
     .matches(/^[0-9]+$/, "Số điện thoại không hợp lệ")
     .required("Số điện thoại là bắt buộc"),
@@ -41,25 +47,34 @@ const schema = yup.object().shape({
 });
 
 const Register: React.FC<RegisterProps> = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<UserRegisterData>({
     defaultValues: {
       taiKhoan: "",
       hoTen: "",
       matKhau: "",
       email: "",
-      soDienThoai: "",
+      soDT: "",
       maNhom: "",
     },
-    resolver: yupResolver(schema),  
+    resolver: yupResolver(schema),
     mode: "onChange",
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
+  const onSubmit = async (data: UserRegisterData) => {
+    try {
+      await dispatch(registerApi(data));
+      toast.success("Đăng ký thành công");
+      navigate(PATH.AUTH.LOGIN);
+    } catch {
+      toast.error("Đăng ký thất bại");
+    }
   };
   return (
     <div className="auth-form-container auth-sign-up">
@@ -103,14 +118,14 @@ const Register: React.FC<RegisterProps> = () => {
           />
           <span className="text-error">{errors.email?.message}</span>
           <TextField
-            {...register("soDienThoai")}
+            {...register("soDT")}
             className="text-field"
             type="text"
             label="Số Điện Thoại"
             variant="outlined"
             fullWidth
           />
-          <span className="text-error">{errors.soDienThoai?.message}</span>
+          <span className="text-error">{errors.soDT?.message}</span>
           <Select
             className="text-field"
             {...register("maNhom")}

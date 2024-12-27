@@ -1,78 +1,62 @@
 import { Button, Menu, MenuItem, Box } from "@mui/material";
 import logo from "../../assets/logo.png";
 import "./Header.css";
-import SearchIcon from "@mui/icons-material/Search";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { PATH } from "../../routes/path";
-import { RootState } from "../../store";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { fetchCategories } from "../../store/slices/categotySlice";
 import { AppDispatch } from "../../store";
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-
-
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { fetchCatelog } from "../../store/slices/categotySlice";
+import { useCategories } from "../../hooks/useCategories";
+import SearchBar from "../SearchBar/SearchBar";
 
 export default function Header() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [eventAnchorEl, setEventAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const eventOpen = Boolean(eventAnchorEl);
-
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const navigate = useNavigate();
+  const dispatch: AppDispatch = useDispatch();
+  const { categoryList, isLoading, error } = useCategories();
 
   const handleEventClick = (event: React.MouseEvent<HTMLElement>) => {
     setEventAnchorEl(event.currentTarget);
   };
 
-  // lấy danh mục từ redux
-  const dispatch: AppDispatch = useDispatch();
-  const { categoryList, isLoading, error } = useSelector((state: RootState) => state.category) as {
-    categoryList: { tenDanhMuc: string }[];
-    isLoading: boolean;
-    error: string | null;
+  const handleCloseEventMenu = () => {
+    setEventAnchorEl(null);
+  };
+
+  const handleCategoryClick = (maDanhMuc: string) => {
+    dispatch(fetchCatelog(maDanhMuc));
+    setAnchorEl(null);
+    navigate(PATH.HOME.CATALOG_COURSE + `/${maDanhMuc}`);
   };
 
   useEffect(() => {
     dispatch(fetchCategories());
   }, [dispatch]);
 
-
   return (
     <div className="header__layout">
       <div className="header__left">
         <div className="logo">
-          <img src={logo} alt="Logo" />
+          <img src={logo} alt="Logo" onClick={() => navigate(PATH.HOME.ROOT)} />
         </div>
-        <div className="search">
-          <input type="text" placeholder="Tìm kiếm" />
-          <Button className="search__button">
-            <SearchIcon />
-          </Button>
-        </div>
+        <SearchBar />
       </div>
       <div className="header__right">
         <div className="header__menu">
           <Button
             className="header__menu-button"
-            id="fade-button"
-            aria-controls={open ? "fade-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
-            onClick={handleClick}
+            onClick={(event) => setAnchorEl(event.currentTarget)}
           >
             Danh Mục
             <KeyboardArrowDownIcon />
           </Button>
           <Menu
-            id="fade-menu"
-            MenuListProps={{
-              "aria-labelledby": "fade-button",
-            }}
             anchorEl={anchorEl}
-            open={open}
+            open={Boolean(anchorEl)}
             onClose={() => setAnchorEl(null)}
           >
             <Box className="menu-item-box">
@@ -81,55 +65,47 @@ export default function Header() {
               ) : error ? (
                 <MenuItem className="menu-item">Lỗi: {error}</MenuItem>
               ) : (
-                Array.isArray(categoryList) && categoryList.map((category, index) => (
+                categoryList.map((category) => (
                   <MenuItem
-                    key={index}
-                    onClick={() => setAnchorEl(null)}
+                    key={category.maDanhMuc}
+                    onClick={() => handleCategoryClick(category.maDanhMuc)}
                     className="menu-item"
                   >
-                    <span className="menu-item-text">{category.tenDanhMuc}</span>
+                    {category.tenDanhMuc}
                   </MenuItem>
                 ))
               )}
             </Box>
           </Menu>
-          <Button className="header__menu-button">Khóa học</Button>
-          <Button className="header__menu-button">Blog</Button>
           <Button
             className="header__menu-button"
-            id="event-button"
-            aria-controls={eventOpen ? "event-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={eventOpen ? "true" : undefined}
-            onClick={handleEventClick}
+            onClick={() => navigate(PATH.HOME.COURSE_PAGINATION)}
           >
-            Sự kiện
-            <KeyboardArrowDownIcon />
+            Khóa học
+          </Button>
+          <Button
+            className="header__menu-button"
+            onClick={() => navigate(PATH.HOME.BLOG_PAGE)}
+          >
+            Blog
+          </Button>
+          <Button className="header__menu-button" onClick={handleEventClick}>
+            Sự kiện <KeyboardArrowDownIcon />
           </Button>
           <Menu
-            id="event-menu"
-            MenuListProps={{
-              "aria-labelledby": "event-button",
-            }}
             anchorEl={eventAnchorEl}
-            open={eventOpen}
-            onClose={() => setEventAnchorEl(null)}
+            open={Boolean(eventAnchorEl)}
+            onClose={handleCloseEventMenu}
           >
             <Box className="menu-item-box">
-              <MenuItem onClick={() => setEventAnchorEl(null)} className="menu-item">
-                <Link to={PATH.ERROR} className="menu-item-text">
-                  Sự Kiện Cuối Năm
-                </Link>
+              <MenuItem className="menu-item" onClick={handleCloseEventMenu}>
+                Sự kiện sale cuối năm
               </MenuItem>
-              <MenuItem onClick={() => setEventAnchorEl(null)} className="menu-item">
-                <Link to={PATH.ERROR} className="menu-item-text">
-                  Sự kiện Giáng Sinh
-                </Link>
+              <MenuItem className="menu-item" onClick={handleCloseEventMenu}>
+                Sự kiện cuối giáng sinh
               </MenuItem>
-              <MenuItem onClick={() => setEventAnchorEl(null)} className="menu-item">
-                <Link to={PATH.ERROR} className="menu-item-text">
-                  Sự kiện Năm Mới
-                </Link>
+              <MenuItem className="menu-item" onClick={handleCloseEventMenu}>
+                Sự kiện Tết
               </MenuItem>
             </Box>
           </Menu>
@@ -137,7 +113,12 @@ export default function Header() {
         </div>
       </div>
       <div className="login">
-        <button>ĐĂNG NHẬP</button>
+        <Button
+          onClick={() => navigate(PATH.AUTH.LOGIN)}
+          className="login-button"
+        >
+          Đăng nhập
+        </Button>
       </div>
     </div>
   );

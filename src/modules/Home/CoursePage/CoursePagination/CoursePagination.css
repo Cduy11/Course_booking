@@ -1,0 +1,45 @@
+.coursePagination-title {
+    padding: 50px;
+    text-transform: uppercase;
+    background-color: #ffd60a;
+    color: #fff;   
+}
+
+.coursePagination-container {
+    padding: 50px;
+}
+
+.coursePagination-banner {
+    padding: 20px;
+
+}
+
+.coursePagination-item {
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    transition: transform 0.3s;
+    height: 130px
+}
+
+.coursePagination-item:hover {
+    transform: scale(1.05);
+}
+
+.coursePagination-item h6 {
+    font-size: 1.2rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.coursePagination-content  {
+   margin-top: 50px;
+}
+
+.coursePagination-content-title h6 {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 20px;
+}
+

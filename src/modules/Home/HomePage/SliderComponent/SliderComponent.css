@@ -1,0 +1,170 @@
+.slider-container{
+ padding-bottom: 40px;
+}
+
+.slider-item-left,
+.slider-item-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-width: 0;
+  width: 50%;
+  box-sizing: border-box;
+}
+
+.slider-slogan {
+  margin-top: 30%;
+  margin-left: 15%;
+}
+
+.slider-img {
+  position: absolute;
+  object-fit: contain;
+  right: 59%;
+  top: 13%;
+  width: 15%;
+  height: 40%;
+}
+.slider-slogan-text {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.line-break {
+  display: block;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.slider-slogan-text {
+  color: black;
+  font-size: 50px;
+}
+
+/* Animation typing */
+@keyframes typing {
+  0% {
+    width: 0;
+  }
+  50% {
+    width: 50%;
+  }
+  100% {
+    width: 0;
+  }
+}
+/* Animation typing */
+@keyframes blink {
+  0%, 50% {
+    border-color: transparent;
+  }
+}
+/* Animation typing */
+.slider-slogan-text-animate {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 3px solid;
+  animation: typing 4s steps(10, end) infinite, blink 0.75s step-end infinite;
+  color: #55b097;
+  font-size: 65px;
+  font-weight: 600;
+}
+
+.slider-button {
+  font-size: 20px;
+  font-weight: 700;
+  width: 200px;
+  height: 50px;
+  background-color: #f7ba35 !important;
+  color: white !important;
+}
+
+.slider-right {
+  position: relative;
+}
+
+.slider-img-main {
+  position: absolute;
+}
+
+.slider-img-main img {
+  width: 100%;
+  height: 100%;
+}
+
+.slider-img-message {
+  position: absolute;
+  animation: circularShake 2s infinite linear;
+}
+
+@keyframes circularShake {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(10px, -10px);
+  }
+  50% {
+    transform: translate(20px, 0);
+  }
+  75% {
+    transform: translate(10px, 10px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+.slider-img-message img {
+  width: 25%;
+  height: 100%;
+  margin-top: 55%;
+  margin-left: 28%;
+}
+
+@keyframes moveRight {
+  0% {
+    transform: translateX(10%);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(40%);
+    opacity: 0;
+  }
+}
+
+.slider-img-clouds {
+  position: absolute;
+  animation: moveRight 10s linear infinite;
+}
+
+.slider-img-clouds img {
+  width: 30%;
+  height: 100%;
+}
+
+.slider-img-clouds-2 {
+  position: absolute;
+}
+
+.slider-img-clouds-2 img {
+  width: 20%;
+  height: 100%;
+  margin-top: 50%;
+  animation: moveRight 5s linear infinite;
+}
+
+.slider-img-code {
+  position: absolute;
+}
+
+.slider-img-code img {
+  width: 15%;
+  height: 100%;
+  margin-top: 50%;
+  margin-left: 20%;
+}

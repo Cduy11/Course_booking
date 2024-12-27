@@ -1,0 +1,102 @@
+.review-container {
+    margin-top: 40px;
+    padding: 10px 50px;
+    position: relative;
+  }
+  
+  .review-student {
+    padding: relative;
+    padding: 50px 0;
+  }
+  .triangleTopRight {
+    transform: rotate(-45deg);
+    position: absolute;
+    top: 5% !important;
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 50px solid #f8b931;
+  }
+  
+  .smallBox {
+    position: absolute;
+    z-index: 1;
+    width: 15%;
+    height: 15%;
+    background-image: radial-gradient(#41b296 11%, transparent 11%),
+      radial-gradient(#b2f8e1 11%, transparent 11%);
+    background-size: 15px 15px;
+  }
+  
+  .smallboxLeftTop {
+    top: 0;
+    left: 33px;
+    height: 70px;
+    width: 10%;
+  }
+  
+  .smallboxLeftBottom {
+    border-radius: 50%;
+    bottom: 0;
+    left: 30%;
+    height: 80px;
+    width: 80px;
+  }
+  
+  .smallboxRightTop {
+    top: 0;
+    right: 22%;
+    height: 50px;
+    width: 120px;
+  }
+  
+  .review-col {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+  }
+  
+  .reviewImg {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    height: 100%;
+    align-items: center;
+  }
+  
+  .bgreviewImg {
+    top: -10%;
+    z-index: 1;
+    height: 220px;
+    width: 230px;
+    position: absolute;
+    background-color: #ed85aa;
+    border-radius: 10px 100px 110px;
+  }
+  
+  .reviewImg img {
+    width: 200px;
+    height: 200px;
+    position: relative;
+    z-index: 10;
+  }
+  
+  .review-right {
+    padding: 10px;
+  }
+  
+  .review-textQoute {
+    position: relative;
+    line-height: 30px;
+    font-size: 17px;
+  }
+  
+  .review-textQoute-name {
+    color: #ed85aa;
+  }
+  
+  .review-textQoute span {
+    color: #a5a5a5;
+  }

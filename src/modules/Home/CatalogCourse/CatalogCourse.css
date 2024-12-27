@@ -1,0 +1,43 @@
+.catalog {
+    padding: 50px;
+    text-transform: uppercase;
+    background-color: #ffd60a;
+    color: #fff;   
+}
+
+.catalog__title {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.75rem;
+}
+
+.catelog_listCourse {
+    padding: 50px;
+}
+
+.catelog__cateName {
+    display: flex;
+    align-items: center;
+}
+.catelog_button {
+    display: flex;
+    align-items: center;
+    border-radius: 25px;
+    padding: 12px 10px;
+    cursor: default;
+    border: 2px solid #e4e4e4;
+    outline: none;
+    transition: .5s linear;
+    font-weight: 600 !important;
+}
+
+.catelog_button:hover {
+    border: 2px solid #113d3c;
+    transform: scale(.98);
+}
+
+.catelog_button > svg {
+    margin-right: 8px;
+    color:#ffd60a;
+}
+

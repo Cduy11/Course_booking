@@ -4,16 +4,49 @@ import { MainLayout } from "../layouts/MainLayout";
 import { AuthLayout } from "../layouts/AuthLayout";
 import Auth from "../modules/Auth/Auth";
 import ErrorPage from "../components/ErrorPage/ErrorPage";
+import HomePage from "../modules/Home/HomePage/HomePage";
+import CourseDetails from "../modules/Home/CourseDetails/CourseDetails";
+import CoursePagination from "../modules/Home/CoursePage/CoursePagination/CoursePagination";
+import CatalogCourse from "../modules/Home/CatalogCourse/CatalogCourse";
+import InfoDetail from "../modules/Home/InfoDetail/InfoDetail";
+import SearchCourse from "../modules/Home/SearchCourse/SearchCourse";
+import BlogPage from "../modules/Home/BlogPage/BlogPage";
 
 const useRouteElements = () => {
   const routes = useRoutes([
     {
-      path: "/",
-      element: (
-        <MainLayout>
-          <div>Home Page</div>
-        </MainLayout>
-      ),
+      path: PATH.HOME.ROOT,
+      element: <MainLayout />,
+      children: [
+        {
+          index: true,
+          element: <HomePage />,
+        },
+        {
+          path: PATH.HOME.COURSE_DETAILS + "/:maKhoaHoc",
+          element: <CourseDetails />,
+        },
+        {
+          path: PATH.HOME.COURSE_PAGINATION,
+          element: <CoursePagination />,
+        },
+        {
+          path: PATH.HOME.CATALOG_COURSE + "/:maDanhMucKhoaHoc",
+          element: <CatalogCourse />,
+        },
+        {
+          path: PATH.HOME.INFO_DETAIL,
+          element: <InfoDetail />,
+        },
+        {
+          path: PATH.HOME.SEARCH_COURSE,
+          element: <SearchCourse />,
+        },
+        {
+          path: PATH.HOME.BLOG_PAGE,
+          element: <BlogPage />,
+        },
+      ],
     },
     {
       path: PATH.AUTH.ROOT,

@@ -1,0 +1,33 @@
+.searchPage {
+  padding: 20px 50px;
+}
+
+.filter__title_left {
+  font-size: 25px !important;
+  padding-bottom: 16px;
+  font-weight: 600 !important;
+}
+
+.filter__title_content {
+  font-size: 15px !important;
+  padding-bottom: 10px;
+  font-weight: 600 !important;
+}
+
+.filter__control {
+  padding-left: 15px;
+}
+
+.custom-checkbox {
+  color: #52ae91 !important;
+}
+
+.custom-checkbox.Mui-checked {
+  color: #49ae94 !important;
+}
+
+.filter__title_right {
+  padding-bottom: 16px;
+}
+
+

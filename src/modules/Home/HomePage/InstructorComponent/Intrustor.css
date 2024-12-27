@@ -1,0 +1,44 @@
+.instructor-container {
+    margin-top: 40px;
+  }
+  
+  .instructor-title {
+    margin-bottom: 40px !important;
+    color: black;
+    font-weight: bold !important;
+  }
+  
+  .instructor-content {
+    display: flex;
+    flex-direction: column;
+    box-shadow: none !important;
+    align-items: center;
+    text-align: center;
+    margin: 0 auto;
+  }
+  
+  .instructor-content:hover {
+    box-shadow: 0 0 10px 6px rgba(0, 0, 0, 0.13) !important;
+  }
+  
+  .intructor-img {
+    height: 80px;
+    width: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  
+  .intructor-name {
+    font-weight: bold !important;
+    padding-bottom: 5px;
+  }
+  
+  .instructor-rating-box {
+    align-items: center;
+  }
+  
+  .instructor-review-bot {
+    font-size: 13px;
+    color: #a9a9a9;
+  }
+  
