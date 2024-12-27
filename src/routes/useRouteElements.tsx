@@ -4,6 +4,9 @@ import { MainLayout } from "../layouts/MainLayout";
 import { AuthLayout } from "../layouts/AuthLayout";
 import Auth from "../modules/Auth/Auth";
 import ErrorPage from "../components/ErrorPage/ErrorPage";
+import AdminLayout from "../layouts/AdminLayout/AdminLayout";
+import { UsersManagement } from "../modules/admin/UsersManagement";
+import { CoursesManagement } from "../modules/admin/CoursesManagement";
 import HomePage from "../modules/Home/HomePage/HomePage";
 import CourseDetails from "../modules/Home/CourseDetails/CourseDetails";
 import CoursePagination from "../modules/Home/CoursePage/CoursePagination/CoursePagination";
@@ -67,6 +70,20 @@ const useRouteElements = () => {
               <Auth />
             </AuthLayout>
           ),
+        },
+      ],
+    },
+    {
+      path: PATH.ADMIN.ROOT,
+      element: <AdminLayout />,
+      children: [
+        {
+          path: PATH.ADMIN.USERS_MANAGEMENT,
+          element: <UsersManagement />,
+        },
+        {
+          path: PATH.ADMIN.COURSES_MANAGEMENT,
+          element: <CoursesManagement />,
         },
       ],
     },

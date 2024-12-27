@@ -1,5 +1,5 @@
 import { Button, Menu, MenuItem, Box } from "@mui/material";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/img/logo.png";
 import "./Header.css";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
