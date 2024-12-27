@@ -13,12 +13,12 @@ import { Course } from "../../../../interfaces/course";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "../../../../routes/path";
 import { fakeData } from "../FakeData/FakeData";
-
+import Loadiing from "../../../../components/Loading/Loadiing";
 
 export default function CoursePagination() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
-  const { coursePagination } = useCoursePagination(page);
+  const { coursePagination, loading } = useCoursePagination(page);
 
   const handleChange = (_: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
@@ -63,22 +63,31 @@ export default function CoursePagination() {
               <BookmarkIcon sx={{ color: "#eb86aa" }} /> Danh sách khoá học
             </Typography>
             <Box className="course-component-content">
+              {loading ? (
+                <Loadiing />
+              ) : (
                 <Grid
                   container
-                spacing={2}
-                justifyContent="center"
-                style={{ padding: "0px 40px",  }}
-              >
-                {coursePagination.map((course) => (
-                  <Grid item xs={12} sm={6} md={3}>
-                    <Box onClick={() => handleClick(course)}>
-                      <CoursePurchase course={course} />
-                    </Box>
-                  </Grid>
-                ))}
-              </Grid>
+                  spacing={2}
+                  justifyContent="center"
+                  style={{ padding: "0px 40px" }}
+                >
+                  {coursePagination.map((course: Course) => (
+                    <Grid item xs={12} sm={6} md={3} key={course.maKhoaHoc}>
+                      <Box onClick={() => handleClick(course)}>
+                        <CoursePurchase course={course} />
+                      </Box>
+                    </Grid>
+                  ))}
+                </Grid>
+              )}
               <Stack spacing={2} mt={5}>
-                <Pagination count={8} variant="outlined" shape="rounded" onChange={handleChange} />
+                <Pagination
+                  count={8}
+                  variant="outlined"
+                  shape="rounded"
+                  onChange={handleChange}
+                />
               </Stack>
             </Box>
           </Box>

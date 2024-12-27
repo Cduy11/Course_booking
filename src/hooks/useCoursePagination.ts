@@ -5,7 +5,9 @@ import { AppDispatch, RootState } from "../store";
 
 export const useCoursePagination = (page: number) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { coursePagination } = useSelector((state: RootState) => state.course);
+  const { coursePagination, isLoading } = useSelector(
+    (state: RootState) => state.course
+  );
 
   useEffect(() => {
     dispatch(
@@ -17,5 +19,5 @@ export const useCoursePagination = (page: number) => {
     );
   }, [dispatch, page]);
 
-  return { coursePagination };
+  return { coursePagination, loading: isLoading };
 };

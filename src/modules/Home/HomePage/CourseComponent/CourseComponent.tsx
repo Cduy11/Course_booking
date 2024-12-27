@@ -49,7 +49,7 @@ export default function CourseComponent() {
 
             return (
               <Grid item xs={12} sm={6} md={3} key={course.maKhoaHoc}>
-                <ReferenceCourse course={course} position={positionClass}  />
+                <ReferenceCourse course={course} position={positionClass} />
               </Grid>
             );
           })}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -20,16 +20,23 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../store";
 import { ChiTietKhoaHoc } from "../../../../interfaces/info";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 
 const InfoCourse = () => {
-  const navigate = useNavigate();
   const { inforUser } = useFetchUserInfo();
   const [courseHistory, setCourseHistory] = useState<ChiTietKhoaHoc[]>(
     inforUser.chiTietKhoaHocGhiDanh || []
   );
 
   const dispatch = useDispatch<AppDispatch>();
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredCourseHistory = courseHistory.filter((course) =>
+    course.tenKhoaHoc.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleCancelCourse = async (maKhoaHoc: string) => {
     const action = await dispatch(
@@ -58,10 +65,11 @@ const InfoCourse = () => {
           variant="outlined"
           size="small"
           className="info-details-search-field"
+          onChange={handleSearchChange}
         />
       </Box>
 
-      {courseHistory.map((course, index) => (
+      {filteredCourseHistory.map((course, index) => (
         <Card key={index} className="info-details-card">
           <CardMedia
             component="img"

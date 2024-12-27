@@ -13,7 +13,7 @@ import "./CatalogCourse.css";
 import ComputerIcon from "@mui/icons-material/Computer";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { fetchCatelog } from "../../../store/slices/categotySlice";
 import { Course } from "../../../interfaces/course";
 import {  useNavigate, useParams } from "react-router-dom";
@@ -25,6 +25,7 @@ import FaceIcon from "@mui/icons-material/Face";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import logoHuman from "../../../assets/avatar2.bb9626e2.png";
 import { PATH } from "../../../routes/path";
+import Loadiing from "../../../components/Loading/Loadiing";
 
 export default function CatalogCourse() {
   const { maDanhMucKhoaHoc } = useParams<{ maDanhMucKhoaHoc: string }>();
@@ -33,10 +34,12 @@ export default function CatalogCourse() {
   const { catelogList } = useSelector((state: RootState) => state.category) as {
     catelogList: Course[];
   };
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (maDanhMucKhoaHoc) {
-      dispatch(fetchCatelog(maDanhMucKhoaHoc));
+      setLoading(true);
+      dispatch(fetchCatelog(maDanhMucKhoaHoc)).finally(() => setLoading(false));
     }
   }, [dispatch, maDanhMucKhoaHoc]);
 
@@ -165,14 +168,18 @@ export default function CatalogCourse() {
 
   return (
     <Box>
-      <Box className="catalog">
-        <Typography className="catalog__title" sx={{ fontSize: "1.75rem" }}>
-          Khoá học theo danh mục
-        </Typography>
-        <Typography sx={{ fontSize: "13px" }}>
-          Hãy chọn khoá học mong muốn !!!
-        </Typography>
-      </Box>
+      {loading ? (
+        <Loadiing />
+      ) : (
+        <Box className="catalog">
+          <Typography className="catalog__title" sx={{ fontSize: "1.75rem" }}>
+            Khoá học theo danh mục
+          </Typography>
+          <Typography sx={{ fontSize: "13px" }}>
+            Hãy chọn khoá học mong muốn !!!
+          </Typography>
+        </Box>
+      )}
       <Box className="catelog_listCourse">
         <Typography className="catelog__cateName">
           <Typography className="catelog_button">
