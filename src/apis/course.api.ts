@@ -2,8 +2,6 @@ import { ApiResponse } from "../interfaces/api.interface";
 import { Courses } from "../interfaces/courses.interface";
 import fetcher from "./fetcher";
 
-
-
 export const courseApi = {
   getCourseListPagination: async ({ page = 1, pageSize = 5 }) => {
     try {

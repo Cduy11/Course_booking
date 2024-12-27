@@ -1,7 +1,13 @@
+import React, { useState } from "react";
 import {
   Box,
   Button,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Pagination,
   PaginationItem,
   Paper,
@@ -12,17 +18,27 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
+import { LoadingButton } from "@mui/lab";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { courseApi } from "../../../apis/course.api";
 import { QueryKeys } from "../../../constants/queryKeys";
 import { CustomTableCell } from "../components/CustomTableCell";
 import AddSearchBar from "../components/HeaderBar";
+import useOpen from "../../../hooks/useOpen";
+import { toast } from "react-toastify";
+import ErrorIcon from "@mui/icons-material/Error";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 const CoursesManagement: React.FC = () => {
   const [page, setPage] = useState(1);
   const [keyword, setKeyword] = useState("");
+  const [courseId, setCourseId] = useState(null);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [successDialogOpen, setSuccessDialogOpen] = useState(false); 
+  const [errorMessage, setErrorMessage] = useState("");
   const [flag, setFlag] = useState(true);
+  const { open, handleClickOpen, onClose } = useOpen();
+  const queryClient = useQueryClient();
   const pageSize = 5;
   const [totalPagesSearch, setTotalPagesSearch] = useState<number>(1);
   const [totalPagesList, setTotalPagesList] = useState<number>(1);
@@ -52,6 +68,40 @@ const CoursesManagement: React.FC = () => {
     enabled: true,
     staleTime: 0,
   });
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: (id) => {
+      return courseApi.deleteCourse(id);
+    },
+    onError: (error) => {
+      setErrorMessage(error?.message || "Xóa phim thất bại. Vui lòng thử lại");
+      setErrorDialogOpen(true);
+    },
+    onSuccess: (response) => {
+      toast.success("Xóa phim thành công");
+      setSuccessDialogOpen(true); 
+      queryClient.refetchQueries({ queryKey: [QueryKeys.LIST_COURSE, page] });
+    },
+    onSettled: () => {
+      onClose();
+      setCourseId(null);
+    },
+  });
+
+  const handleClose = () => {
+    if (!isPending) {
+      onClose();
+      setCourseId(null);
+    }
+  };
+
+  const handleDeleteCourse = () => {
+    if (!courseId) {
+      toast.error("Không thể xóa. Có lỗi xảy ra");
+      return;
+    }
+    mutate(courseId);
+  };
 
   const items = Array.isArray(data) ? data : data?.items || [];
   const totalPages = keyword ? totalPagesSearch : totalPagesList;
@@ -175,6 +225,10 @@ const CoursesManagement: React.FC = () => {
                         </Button>
                         <Button
                           sx={{ backgroundColor: "#e13346", color: "white" }}
+                          onClick={() => {
+                            setCourseId(course.maKhoaHoc);
+                            handleClickOpen();
+                          }}
                         >
                           Xoá
                         </Button>
@@ -217,6 +271,231 @@ const CoursesManagement: React.FC = () => {
           }}
         />
       </Box>
+      
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        sx={{
+          "& .MuiDialog-paper": {
+            borderRadius: "12px",
+            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.15)",
+            backgroundColor: "#fff",
+          },
+        }}
+      >
+        <DialogTitle
+          id="alert-dialog-title"
+          sx={{
+            fontWeight: "bold",
+            fontSize: "20px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#D32F2F",
+          }}
+        >
+          <ErrorIcon
+            sx={{ marginRight: "8px", fontSize: "24px", color: "#D32F2F" }}
+          />
+          Xoá khoá học này?
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText
+            id="alert-dialog-description"
+            sx={{
+              fontSize: "16px",
+              textAlign: "center",
+              color: "#333",
+              padding: "10px 0",
+            }}
+          >
+            Bạn có chắc chắn muốn xoá khoá học này? Việc này sẽ không thể khôi
+            phục lại!
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions
+          sx={{
+            justifyContent: "space-between",
+            padding: "15px 20px",
+          }}
+        >
+          <Button
+            variant="outlined"
+            color="secondary"
+            disabled={isPending}
+            onClick={handleClose}
+            sx={{
+              width: "48%",
+              fontWeight: "bold",
+              borderRadius: "8px",
+              "&:hover": {
+                backgroundColor: "#f2f2f2",
+              },
+            }}
+          >
+            Hủy
+          </Button>
+          <LoadingButton
+            loading={isPending}
+            variant="contained"
+            color="error"
+            disabled={isPending}
+            onClick={handleDeleteCourse}
+            autoFocus
+            sx={{
+              width: "48%",
+              fontWeight: "bold",
+              borderRadius: "8px",
+              backgroundColor: "#D32F2F",
+              "&:hover": {
+                backgroundColor: "#C2185B",
+              },
+            }}
+          >
+            Xoá
+          </LoadingButton>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={errorDialogOpen}
+        onClose={() => setErrorDialogOpen(false)}
+        aria-labelledby="error-dialog-title"
+        aria-describedby="error-dialog-description"
+        sx={{
+          "& .MuiDialog-paper": {
+            borderRadius: "12px",
+            boxShadow: "0px 6px 15px rgba(0, 0, 0, 0.1)",
+            backgroundColor: "#fff",
+          },
+        }}
+      >
+        <DialogTitle
+          id="error-dialog-title"
+          sx={{
+            fontWeight: "bold",
+            fontSize: "22px",
+            color: "#D32F2F",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ErrorIcon
+            sx={{ marginRight: "10px", fontSize: "28px", color: "#D32F2F" }}
+          />
+          Lỗi
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText
+            id="error-dialog-description"
+            sx={{
+              fontSize: "16px",
+              color: "#333",
+              textAlign: "center",
+              padding: "10px 0",
+            }}
+          >
+            Đã xảy ra lỗi vui lòng quay về trang chủ hoặc thử lại
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions
+          sx={{
+            justifyContent: "center",
+            padding: "20px",
+          }}
+        >
+          <Button
+            onClick={() => setErrorDialogOpen(false)}
+            autoFocus
+            sx={{
+              backgroundColor: "#D32F2F",
+              color: "#fff",
+              fontWeight: "bold",
+              borderRadius: "8px",
+              padding: "8px 16px",
+              "&:hover": {
+                backgroundColor: "#C2185B",
+              },
+            }}
+          >
+            Đóng
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={successDialogOpen}
+        onClose={() => setSuccessDialogOpen(false)}
+        aria-labelledby="success-dialog-title"
+        aria-describedby="success-dialog-description"
+        sx={{
+          "& .MuiDialog-paper": {
+            borderRadius: "16px",
+            boxShadow: "0px 6px 20px rgba(0, 0, 0, 0.1)",
+            backgroundColor: "#ffffff",
+            animation: "fadeIn 0.3s ease-in-out",
+          },
+        }}
+      >
+        <DialogTitle
+          id="success-dialog-title"
+          sx={{
+            fontWeight: "bold",
+            fontSize: "24px",
+            color: "#388E3C",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "16px",
+          }}
+        >
+          <CheckCircleIcon
+            sx={{ marginRight: "12px", fontSize: "36px", color: "#388E3C" }}
+          />
+          Thành công
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText
+            id="success-dialog-description"
+            sx={{
+              fontSize: "16px",
+              textAlign: "center",
+              color: "#555",
+              padding: "10px 0",
+            }}
+          >
+            Khoá học đã được xoá thành công.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions
+          sx={{
+            justifyContent: "center",
+            padding: "20px",
+          }}
+        >
+          <Button
+            onClick={() => setSuccessDialogOpen(false)}
+            autoFocus
+            sx={{
+              backgroundColor: "#388E3C",
+              color: "white",
+              fontWeight: "bold",
+              padding: "8px 24px",
+              borderRadius: "30px",
+              transition: "background-color 0.3s ease, transform 0.3s ease",
+              "&:hover": {
+                backgroundColor: "#2c6b29",
+                transform: "scale(1.05)",
+              },
+            }}
+          >
+            Đóng
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
