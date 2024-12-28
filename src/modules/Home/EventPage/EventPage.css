@@ -144,3 +144,87 @@
   background-color: #f6ba35 !important;
   color: #fff !important;
 }
+
+/* speecher */
+
+.speecher {
+  position: relative;
+  z-index: 1;
+  padding: 50px;
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url(../../../assets/img/lightTech.32807735.jpg);
+  margin-top: 20px;
+}
+
+.speecher::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(124, 121, 122, 0.5),
+    rgba(111, 183, 241, 0.5) 100%
+  );
+}
+
+.speecher h6 {
+  color: #f6b936;
+  text-transform: uppercase;
+  text-align: center;
+  font-size: 30px !important;
+  padding: 20px;
+  font-weight: 600;
+}
+
+.speakerCard {
+  background: none !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.speakerDes .body2 {
+  padding: 5px 0 !important;
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  color: #fff !important;
+}
+
+/* donors */
+
+.donors {
+  padding: 100px 50px;
+}
+
+.donors h6 {
+  color: #f6b936;
+  text-transform: uppercase;
+  text-align: center;
+  font-size: 30px !important;
+  padding: 20px;
+  font-weight: 600;
+}
+
+.donordImg {
+  box-shadow: none !important;
+}
+
+.donordImg img {
+  object-fit: cover;
+  border-radius: 10px;
+  width: 100%;
+  height: 220px;
+  min-height: 220px;
+}
+
+.donorName {
+  font-size: 20px !important;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 500 !important;
+}
