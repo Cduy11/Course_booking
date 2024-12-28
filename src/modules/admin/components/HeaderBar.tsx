@@ -14,20 +14,24 @@ import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "../../../routes/path";
 
+
 interface HeaderBarProps {
   buttonLabel: string;
   searchPlaceholder: string;
   onSearch: (query: string) => void;
+  handleOpenDialogAdd?: ()=> void;
 }
 
 export const HeaderBar: React.FC<HeaderBarProps> = ({
   buttonLabel,
   searchPlaceholder,
   onSearch,
+  handleOpenDialogAdd
 }) => {
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState("");
-
+  const currentUserString = localStorage.getItem("currentUser");
+  const currentUser = currentUserString ? JSON.parse(currentUserString) : null;
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
   };
@@ -69,6 +73,11 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
     handleMenuClose();
   };
 
+  const handleLogOut = () => {
+    localStorage.removeItem("currentUser");
+    navigate(PATH.HOME.ROOT);
+  };
+
   return (
     <Box
       sx={{
@@ -107,6 +116,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           fontSize: "16px",
           height: "40px",
         }}
+        onClick={handleOpenDialogAdd}
       >
         {buttonLabel}
       </Button>
@@ -145,7 +155,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           variant="body1"
           sx={{ fontWeight: "bold", marginRight: "5px" }}
         >
-          Chào,
+          Chào, {currentUser.taiKhoan}
         </Typography>
         <Avatar
           alt="User Avatar"
@@ -171,8 +181,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
         open={Boolean(avatarAnchorEl)}
         onClose={handleAvatarMenuClose}
       >
-        <MenuItem onClick={() => {}}>Cập nhật thông tin</MenuItem>
-        <MenuItem onClick={() => {}}>Đăng xuất</MenuItem>
+        <MenuItem onClick={handleLogOut}>Đăng xuất</MenuItem>
       </Menu>
     </Box>
   );

@@ -1,4 +1,9 @@
-import React, { useState } from "react";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ErrorIcon from "@mui/icons-material/Error";
+import StarIcon from '@mui/icons-material/Star';
+import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
+import PersonIcon from "@mui/icons-material/Person";
+import { LoadingButton } from "@mui/lab";
 import {
   Box,
   Button,
@@ -11,30 +16,31 @@ import {
   Pagination,
   PaginationItem,
   Paper,
+  Stack,
   Table,
   TableBody,
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
+  Typography
 } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import React, { useState } from "react";
 import { courseApi } from "../../../apis/course.api";
 import { QueryKeys } from "../../../constants/queryKeys";
-import { CustomTableCell } from "../components/CustomTableCell";
-import AddSearchBar from "../components/HeaderBar";
 import useOpen from "../../../hooks/useOpen";
-import { toast } from "react-toastify";
-import ErrorIcon from "@mui/icons-material/Error";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { CustomTableCell } from "../components/CustomTableCell";
+import FormItem from "../components/FormItem/FormItem";
+import AddSearchBar from "../components/HeaderBar";
+import { Courses } from "../../../interfaces/courses.interface";
 
 const CoursesManagement: React.FC = () => {
   const [page, setPage] = useState(1);
   const [keyword, setKeyword] = useState("");
   const [courseId, setCourseId] = useState(null);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
-  const [successDialogOpen, setSuccessDialogOpen] = useState(false); 
+  const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+  const [isAddOrEditDialog, setIsAddOrEditDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [flag, setFlag] = useState(true);
   const { open, handleClickOpen, onClose } = useOpen();
@@ -70,17 +76,24 @@ const CoursesManagement: React.FC = () => {
   });
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (id) => {
-      return courseApi.deleteCourse(id);
-    },
+    mutationFn: (id: string) => courseApi.deleteCourse(id),
     onError: (error) => {
       setErrorMessage(error?.message || "Xóa phim thất bại. Vui lòng thử lại");
       setErrorDialogOpen(true);
     },
-    onSuccess: (response) => {
-      toast.success("Xóa phim thành công");
-      setSuccessDialogOpen(true); 
-      queryClient.refetchQueries({ queryKey: [QueryKeys.LIST_COURSE, page] });
+    onSuccess: () => {
+      setSuccessDialogOpen(true);
+      queryClient.setQueryData([QueryKeys.LIST_COURSE, keyword, page], (oldData: any) => {
+        if (!oldData) return oldData;
+        const updatedItems = oldData.items
+          ? oldData.items.filter((item: Courses) => item.maKhoaHoc !== courseId)
+          : oldData.filter((item: any) => item.maKhoaHoc !== courseId);
+
+        return {
+          ...oldData,
+          items: updatedItems,
+        };
+      });
     },
     onSettled: () => {
       onClose();
@@ -97,7 +110,6 @@ const CoursesManagement: React.FC = () => {
 
   const handleDeleteCourse = () => {
     if (!courseId) {
-      toast.error("Không thể xóa. Có lỗi xảy ra");
       return;
     }
     mutate(courseId);
@@ -123,6 +135,9 @@ const CoursesManagement: React.FC = () => {
         buttonLabel="Thêm khoá học"
         searchPlaceholder="Nhập vào tên khoá học cần tìm"
         onSearch={handleSearch}
+        handleOpenDialogAdd={() => {
+          setIsAddOrEditDialog(true);
+        }}
       />
       <Box sx={{ margin: "10px 20px" }}>
         {isLoading && (
@@ -175,13 +190,23 @@ const CoursesManagement: React.FC = () => {
             <Table className="container-fluid">
               <TableHead>
                 <TableRow>
-                  <CustomTableCell>STT</CustomTableCell>
-                  <CustomTableCell>Mã khoá học</CustomTableCell>
-                  <CustomTableCell>Tên khoá học</CustomTableCell>
-                  <CustomTableCell>Hình ảnh</CustomTableCell>
-                  <CustomTableCell>Lượt xem</CustomTableCell>
-                  <CustomTableCell>Người tạo</CustomTableCell>
-                  <CustomTableCell>⚙</CustomTableCell>
+                  <CustomTableCell sx={{ width: "20px" }}>STT</CustomTableCell>
+                  <CustomTableCell sx={{ width: "150px" }}>
+                    Mã khoá học
+                  </CustomTableCell>
+                  <CustomTableCell sx={{ width: "200px" }}>
+                    Tên khoá học
+                  </CustomTableCell>
+                  <CustomTableCell sx={{ width: "200px" }}>
+                    Hình ảnh
+                  </CustomTableCell>
+                  <CustomTableCell sx={{ width: "200px" }}>
+                    Lượt xem
+                  </CustomTableCell>
+                  <CustomTableCell sx={{ width: "200px" }}>
+                    Người tạo
+                  </CustomTableCell>
+                  <CustomTableCell sx={{ fontSize: "30px" }}>⚙</CustomTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -207,24 +232,40 @@ const CoursesManagement: React.FC = () => {
                       {course.luotXem}
                     </CustomTableCell>
                     <CustomTableCell variant="body">
-                      {course.nguoiTao?.hoTen}
+                      {course.nguoiTao?.hoTen || "N/A"}
                     </CustomTableCell>
                     <CustomTableCell variant="body">
                       <Box
-                        sx={{ display: "flex", justifyContent: "space-around" }}
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-around",
+                          padding: "0 20px",
+                        }}
                       >
                         <Button
-                          sx={{ backgroundColor: "#47b094", color: "white" }}
+                          sx={{
+                            textTransform: "none",
+                            backgroundColor: "#47b094",
+                            color: "white",
+                          }}
                         >
                           Ghi danh
                         </Button>
                         <Button
-                          sx={{ backgroundColor: "#fcc205", color: "black" }}
+                          sx={{
+                            textTransform: "none",
+                            backgroundColor: "#fcc205",
+                            color: "black",
+                          }}
                         >
                           Sửa
                         </Button>
                         <Button
-                          sx={{ backgroundColor: "#e13346", color: "white" }}
+                          sx={{
+                            textTransform: "none",
+                            backgroundColor: "#e13346",
+                            color: "white",
+                          }}
                           onClick={() => {
                             setCourseId(course.maKhoaHoc);
                             handleClickOpen();
@@ -271,7 +312,7 @@ const CoursesManagement: React.FC = () => {
           }}
         />
       </Box>
-      
+
       <Dialog
         open={open}
         onClose={handleClose}
@@ -495,6 +536,23 @@ const CoursesManagement: React.FC = () => {
             Đóng
           </Button>
         </DialogActions>
+      </Dialog>
+
+      {/* thêm khoá học ở đây */}
+      <Dialog
+        open={isAddOrEditDialog}
+        onClose={() => setIsAddOrEditDialog(false)}
+      >
+        <form>
+          <DialogTitle className="text-center" sx={{ fontWeight: "bold" }}>
+            THÊM KHOÁ HỌC
+          </DialogTitle>
+          <Stack spacing={2} p={3}>
+            <FormItem icon={<PersonIcon/>} placeholder="Mã khoá học"/>
+            <FormItem icon={<HomeRepairServiceIcon/>} isDropdown={true} placeholder="Danh mục khoá học"/>
+            <FormItem icon={<StarIcon/>} placeholder="Đánh giá"/>
+          </Stack>
+        </form>
       </Dialog>
     </div>
   );

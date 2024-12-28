@@ -46,5 +46,13 @@ export const courseApi = {
     } catch (error) {
       throw error;
     }
-  }
+  },
+  // addCourse: async (formData) => {
+  //   try {
+  //     const response = await fetcher.post("/QuanLyKhoaHoc/ThemKhoaHoc", formData)
+  //     return response.data.content
+  //   } catch (error) {
+  //     throw error
+  //   }
+  // }
 }

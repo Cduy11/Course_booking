@@ -41,8 +41,8 @@ const Login: React.FC<RegisterProps> = () => {
       .then((user) => {
         if (user) {
           toast.success("Đăng nhập thành công!");
-          if ( user.maLoaiNguoiDung === "QuanTri") {
-            navigate(PATH.ADMIN);
+          if ( user.maLoaiNguoiDung === "GV") {
+            navigate(PATH.ADMIN.COURSES_MANAGEMENT);
           } else {
             navigate(PATH.HOME.ROOT);
           }

@@ -38,4 +38,12 @@ export const userApi = {
       throw error;
     }
   },
+  deleteUser: async (userId: string) => {
+    try {
+      const response = await fetcher.delete(`/QuanLyNguoiDung/XoaNguoiDung?TaiKhoan=${userId}`)
+      return response.data
+    } catch (error) {
+      throw error;
+    }
+  },
 };
