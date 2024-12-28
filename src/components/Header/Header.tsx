@@ -19,10 +19,6 @@ export default function Header() {
   const dispatch: AppDispatch = useDispatch();
   const { categoryList, isLoading, error } = useCategories();
 
-  const handleEventClick = (event: React.MouseEvent<HTMLElement>) => {
-    setEventAnchorEl(event.currentTarget);
-  };
-
   const handleCloseEventMenu = () => {
     setEventAnchorEl(null);
   };
@@ -89,8 +85,11 @@ export default function Header() {
           >
             Blog
           </Button>
-          <Button className="header__menu-button" onClick={handleEventClick}>
-            Sự kiện <KeyboardArrowDownIcon />
+          <Button
+            className="header__menu-button"
+            onClick={() => navigate(PATH.HOME.EVENT_PAGE)}
+          >
+            Sự kiện
           </Button>
           <Menu
             anchorEl={eventAnchorEl}

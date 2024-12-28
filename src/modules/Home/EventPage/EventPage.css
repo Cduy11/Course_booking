@@ -1,0 +1,146 @@
+.sliderEvent {
+  position: relative;
+  background-image: url(../../../assets/img/backroundTech.a989a5f8.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  filter: grayscale(50%);
+}
+
+.sliderEvent::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  background-image: url(../../../assets/img/high-techbrain.2f38d2ab.png);
+  background-repeat: no-repeat;
+  background-position: 100%;
+  background-size: contain;
+}
+
+.timeEvent {
+  position: relative;
+  z-index: 20;
+  padding: 200px 50px;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.countDownEvent {
+  display: flex;
+}
+
+.events {
+  padding-right: 50px;
+}
+
+.dayEvent {
+  text-align: center;
+  font-size: 60px !important;
+  font-weight: 600 !important;
+}
+
+.events small {
+  font-size: 1.5rem;
+}
+
+.eventTitle {
+  font-size: 40px !important;
+  padding: 10px 0;
+  font-weight: 600 !important;
+}
+
+.eventDate {
+  font-size: 18px !important;
+}
+
+/* eventdetails */
+.eventDetails {
+  padding: 50px;
+}
+
+.imgEvent img {
+  width: 100%;
+  height: 270px;
+  object-fit: contain;
+  animation: shakeVertical 2s ease infinite;
+}
+
+.imgEvent.animate {
+  -webkit-animation: animeSlider 3s linear infinite;
+  animation: animeSlider 3s linear infinite;
+  will-change: transform;
+}
+
+/* Định nghĩa keyframes cho animation */
+@keyframes animeSlider {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(10px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes shakeVertical {
+  0% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(-5px);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+  75% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.infoEvent H4 {
+  padding-bottom: 10px;
+  text-transform: uppercase;
+  color: #9f1f56;
+  font-size: 30px;
+  font-weight: 600;
+}
+
+.infoEvent H5 {
+  font-weight: 500;
+  font-size: 20px;
+}
+
+.infoEvent h6 {
+  margin-top: 20px;
+  font-size: 15px;
+  color: #919191;
+}
+
+.btnGlobal {
+  display: flex;
+  padding: 5px 0px;
+  border: none;
+  transition: all 0.5s;
+  text-transform: uppercase;
+  font-size: 15px;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btnJoin {
+  background-color: #41b394 !important;
+  color: #fff !important;
+}
+
+.btnLearnMore {
+  background-color: #f6ba35 !important;
+  color: #fff !important;
+}

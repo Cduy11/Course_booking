@@ -14,6 +14,7 @@ import CatalogCourse from "../modules/Home/CatalogCourse/CatalogCourse";
 import InfoDetail from "../modules/Home/InfoDetail/InfoDetail";
 import SearchCourse from "../modules/Home/SearchCourse/SearchCourse";
 import BlogPage from "../modules/Home/BlogPage/BlogPage";
+import EventPage from "../modules/Home/EventPage/EventPage";
 
 const useRouteElements = () => {
   const routes = useRoutes([
@@ -48,6 +49,10 @@ const useRouteElements = () => {
         {
           path: PATH.HOME.BLOG_PAGE,
           element: <BlogPage />,
+        },
+        {
+          path: PATH.HOME.EVENT_PAGE,
+          element: <EventPage />,
         },
       ],
     },
