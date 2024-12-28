@@ -10,6 +10,7 @@ import {
   Pagination,
   PaginationItem,
   Paper,
+  Stack,
   Table,
   TableBody,
   TableContainer,
@@ -17,6 +18,9 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import { useForm, Controller } from "react-hook-form";
+import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { userApi } from "../../../apis/user.api";
@@ -25,10 +29,29 @@ import { CustomTableCell } from "../components/CustomTableCell";
 import AddSearchBar from "../components/HeaderBar";
 import useOpen from "../../../hooks/useOpen";
 import { LoadingButton } from "@mui/lab";
-import ErrorIcon from '@mui/icons-material/Error';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ErrorIcon from "@mui/icons-material/Error";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { Users } from "../../../interfaces/users.interface";
+import FormItem from "../components/FormItem/FormItem";
+import PersonIcon from "@mui/icons-material/Person";
+import PeopleIcon from "@mui/icons-material/People";
+import EmailIcon from "@mui/icons-material/Email";
+import KeyIcon from "@mui/icons-material/Key";
+import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
+import HomeRepairServiceIcon from "@mui/icons-material/HomeRepairService";
 
+const validationSchema = Yup.object({
+  taiKhoan: Yup.string().required("Tài khoản không được bỏ trống"),
+  hoTen: Yup.string().required("Họ và tên không được bỏ trống"),
+  email: Yup.string()
+    .email("Email không hợp lệ")
+    .required("Email không được bỏ trống"),
+  matKhau: Yup.string().required("Mật khẩu không được bỏ trống"),
+  soDT: Yup.string()
+    .matches(/^[0-9]{10}$/, "Số điện thoại không hợp lệ")
+    .required("Số điện thoại không được bỏ trống"),
+  loaiNguoiDung: Yup.string().required("Xin vui lòng chọn loại người dùng"),
+});
 const UsersManagement: React.FC = () => {
   const [page, setPage] = useState(1);
   const [keyword, setKeyword] = useState("");
@@ -36,13 +59,24 @@ const UsersManagement: React.FC = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+  const [isAddOrEditDialog, setIsAddOrEditDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const { open, handleClickOpen, onClose } = useOpen();
   const queryClient = useQueryClient();
   const [totalPagesSearch, setTotalPagesSearch] = useState<number>(1);
   const [totalPagesList, setTotalPagesList] = useState<number>(1);
   const pageSize = 5;
-
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+  });
+  const onSubmit = (data: any) => {
+    console.log("data", data);
+  };
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [QueryKeys.LIST_USER, keyword, page],
     queryFn: async () => {
@@ -78,23 +112,28 @@ const UsersManagement: React.FC = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: (id: string) => userApi.deleteUser(id),
     onError: (error) => {
-      setErrorMessage(error?.message || "Xóa người dùng thất bại. Vui lòng thử lại.");
+      setErrorMessage(
+        error?.message || "Xóa người dùng thất bại. Vui lòng thử lại."
+      );
       setErrorDialogOpen(true);
     },
     onSuccess: () => {
       setSuccessDialogOpen(true);
-      queryClient.setQueryData([QueryKeys.LIST_USER, keyword, page], (oldData: any) => {
-        if (!oldData) return oldData;
+      queryClient.setQueryData(
+        [QueryKeys.LIST_USER, keyword, page],
+        (oldData: any) => {
+          if (!oldData) return oldData;
 
-        const updatedItems = oldData.items
-          ? oldData.items.filter((item: Users) => item.taiKhoan !== userId)
-          : oldData.filter((item: any) => item.taiKhoan !== userId);
+          const updatedItems = oldData.items
+            ? oldData.items.filter((item: Users) => item.taiKhoan !== userId)
+            : oldData.filter((item: any) => item.taiKhoan !== userId);
 
-        return {
-          ...oldData,
-          items: updatedItems,
-        };
-      });
+          return {
+            ...oldData,
+            items: updatedItems,
+          };
+        }
+      );
     },
     onSettled: () => {
       onClose();
@@ -122,12 +161,25 @@ const UsersManagement: React.FC = () => {
     setPage(1);
   };
 
+  const dropdownItems = [
+    {
+      content: "Giáo vụ",
+      value: "GV",
+    },
+    {
+      content: "Học viên",
+      value: "HV",
+    },
+  ];
   return (
     <div>
       <AddSearchBar
         buttonLabel="Thêm người dùng"
         searchPlaceholder="Nhập vào họ tên người dùng hoặc tài khoản cần tìm"
         onSearch={handleSearch}
+        handleOpenDialogAdd={() => {
+          setIsAddOrEditDialog(true);
+        }}
       />
       <Box sx={{ margin: "10px 20px" }}>
         {isLoading && (
@@ -180,11 +232,21 @@ const UsersManagement: React.FC = () => {
               <TableHead>
                 <TableRow>
                   <CustomTableCell sx={{ width: "20px" }}>STT</CustomTableCell>
-                  <CustomTableCell sx={{ width: "150px" }}>Tài khoản</CustomTableCell>
-                  <CustomTableCell sx={{ width: "200px" }}>Loại người dùng</CustomTableCell>
-                  <CustomTableCell sx={{ width: "200px" }}>Họ và tên</CustomTableCell>
-                  <CustomTableCell sx={{ width: "20px" }}>Email</CustomTableCell>
-                  <CustomTableCell sx={{ width: "200px" }}>Số điện thoại</CustomTableCell>
+                  <CustomTableCell sx={{ width: "150px" }}>
+                    Tài khoản
+                  </CustomTableCell>
+                  <CustomTableCell sx={{ width: "200px" }}>
+                    Loại người dùng
+                  </CustomTableCell>
+                  <CustomTableCell sx={{ width: "200px" }}>
+                    Họ và tên
+                  </CustomTableCell>
+                  <CustomTableCell sx={{ width: "20px" }}>
+                    Email
+                  </CustomTableCell>
+                  <CustomTableCell sx={{ width: "200px" }}>
+                    Số điện thoại
+                  </CustomTableCell>
                   <CustomTableCell sx={{ fontSize: "30px" }}>⚙</CustomTableCell>
                 </TableRow>
               </TableHead>
@@ -242,7 +304,7 @@ const UsersManagement: React.FC = () => {
                             color: "white",
                           }}
                           onClick={() => {
-                            setUserId(item.taiKhoan)
+                            setUserId(item.taiKhoan);
                             handleClickOpen();
                           }}
                         >
@@ -268,7 +330,9 @@ const UsersManagement: React.FC = () => {
             <PaginationItem
               {...item}
               components={{
-                previous: () => <span style={{ color: "black" }}>{"< Trước"}</span>,
+                previous: () => (
+                  <span style={{ color: "black" }}>{"< Trước"}</span>
+                ),
                 next: () => <span style={{ color: "black" }}>{"Sau >"}</span>,
               }}
             />
@@ -455,6 +519,86 @@ const UsersManagement: React.FC = () => {
             Đóng
           </Button>
         </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={isAddOrEditDialog}
+        onClose={() => setIsAddOrEditDialog(false)}
+      >
+        <form className="w-[450px]" onSubmit={handleSubmit(onSubmit)}>
+          <DialogTitle className="text-center" sx={{ fontWeight: "bold" }}>
+            THÔNG TIN NGƯỜI DÙNG
+          </DialogTitle>
+          <Stack spacing={2} p={3}>
+            <FormItem
+              icon={<PersonIcon />}
+              placeholder="Tài khoản"
+              error={errors.taiKhoan?.message}
+              control={control}
+              name="taiKhoan"
+            />
+            <FormItem
+              icon={<PeopleIcon />}
+              placeholder="Họ và tên"
+              error={errors.hoTen?.message}
+              control={control}
+              name="hoTen"
+            />
+            <FormItem
+              icon={<EmailIcon />}
+              placeholder="Email"
+              error={errors.email?.message}
+              control={control}
+              name="email"
+            />
+            <FormItem
+              icon={<KeyIcon />}
+              placeholder="Mật khẩu"
+              error={errors.matKhau?.message}
+              control={control}
+              name="matKhau"
+            />
+            <FormItem
+              icon={<PhoneEnabledIcon />}
+              placeholder="Số điện thoại"
+              error={errors.soDT?.message}
+              control={control}
+              name="soDT"
+            />
+            <FormItem
+              icon={<HomeRepairServiceIcon />}
+              placeholder="Loại người dùng"
+              isDropdown={true}
+              dropdownItems={dropdownItems}
+              error={errors.loaiNguoiDung?.message}
+              control={control}
+              name="loaiNguoiDung"
+            />
+          </Stack>
+          <DialogActions>
+            <Button
+              type="submit"
+              sx={{
+                color: "white",
+                backgroundColor: "#3fb394",
+              }}
+            >
+              Thêm người dùng
+            </Button>
+            <Button
+              onClick={() => {
+                reset();
+                setIsAddOrEditDialog(false);
+              }}
+              sx={{
+                color: "white",
+                backgroundColor: "#e13247",
+              }}
+            >
+              Huỷ
+            </Button>
+          </DialogActions>
+        </form>
       </Dialog>
     </div>
   );
