@@ -15,6 +15,7 @@ import InfoDetail from "../modules/Home/InfoDetail/InfoDetail";
 import SearchCourse from "../modules/Home/SearchCourse/SearchCourse";
 import BlogPage from "../modules/Home/BlogPage/BlogPage";
 import EventPage from "../modules/Home/EventPage/EventPage";
+import InfoPage from "../modules/Home/InfoPage/InfoPage";
 
 const useRouteElements = () => {
   const routes = useRoutes([
@@ -53,6 +54,10 @@ const useRouteElements = () => {
         {
           path: PATH.HOME.EVENT_PAGE,
           element: <EventPage />,
+        },
+        {
+          path: PATH.HOME.INFO_PAGE,
+          element: <InfoPage />,
         },
       ],
     },

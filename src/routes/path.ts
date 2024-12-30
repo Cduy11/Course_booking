@@ -19,6 +19,7 @@ export const PATH = {
     SEARCH_COURSE: "/search",
     BLOG_PAGE: "/blog",
     EVENT_PAGE: "/event",
+    INFO_PAGE: "/info-page",
   },
   ERROR: "/404",
   LOADING: "/loading",

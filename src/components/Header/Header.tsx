@@ -108,7 +108,12 @@ export default function Header() {
               </MenuItem>
             </Box>
           </Menu>
-          <Button className="header__menu-button">Thông tin</Button>
+          <Button
+            className="header__menu-button"
+            onClick={() => navigate(PATH.HOME.INFO_PAGE)}
+          >
+            Thông tin
+          </Button>
         </div>
       </div>
       <div className="login">

@@ -97,8 +97,11 @@ export default function LoggedHeader() {
           >
             Blog
           </Button>
-          <Button className="header__menu-button" onClick={handleEventClick}>
-            Sự kiện <KeyboardArrowDownIcon />
+          <Button
+            className="header__menu-button"
+            onClick={() => navigate(PATH.HOME.EVENT_PAGE)}
+          >
+            Sự kiện
           </Button>
           <Menu
             anchorEl={eventAnchorEl}
@@ -117,7 +120,12 @@ export default function LoggedHeader() {
               </MenuItem>
             </Box>
           </Menu>
-          <Button className="header__menu-button">Thông tin</Button>
+          <Button
+            className="header__menu-button"
+            onClick={() => navigate(PATH.HOME.INFO_PAGE)}
+          >
+            Thông tin
+          </Button>
         </div>
       </div>
       <div className="header-info">
