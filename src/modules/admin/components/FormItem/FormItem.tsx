@@ -1,5 +1,12 @@
 import React from "react";
-import { Box, MenuItem, Select, TextField, Typography, FormHelperText } from "@mui/material";
+import {
+  Box,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+  FormHelperText,
+} from "@mui/material";
 import { Controller } from "react-hook-form";
 
 interface FormItemProps {
@@ -7,10 +14,11 @@ interface FormItemProps {
   placeholder?: string;
   isDropdown?: boolean;
   dropdownItems?: { content: string; value: string }[];
-  control: any; 
-  name: string;   
-  error?: string; 
-  defaultValue?: string; 
+  control: any;
+  name: string;
+  error?: string;
+  defaultValue?: string;
+  disabled?: boolean;
 }
 
 const FormItem: React.FC<FormItemProps> = ({
@@ -21,7 +29,8 @@ const FormItem: React.FC<FormItemProps> = ({
   control,
   name,
   error,
-  defaultValue = "", 
+  defaultValue = "",
+  disabled,
 }) => {
   return (
     <Box
@@ -53,10 +62,11 @@ const FormItem: React.FC<FormItemProps> = ({
           <Controller
             name={name}
             control={control}
-            defaultValue={defaultValue} 
+            defaultValue={defaultValue}
             render={({ field }) => (
               <Select
-                {...field} 
+                {...field}
+                disabled={disabled}
                 displayEmpty
                 sx={{
                   flex: 1,
@@ -82,12 +92,13 @@ const FormItem: React.FC<FormItemProps> = ({
           />
         ) : (
           <Controller
-            name={name} 
+            name={name}
             control={control}
-            defaultValue={defaultValue} 
+            defaultValue={defaultValue}
             render={({ field }) => (
               <TextField
-                {...field} 
+                {...field}
+                disabled={disabled}
                 placeholder={placeholder}
                 sx={{
                   "& .MuiInputBase-root": {

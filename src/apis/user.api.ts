@@ -46,4 +46,20 @@ export const userApi = {
       throw error;
     }
   },
+  addUser: async (formData: Users) => {
+    try {
+      const response = await fetcher.post("/QuanLyNguoiDung/ThemNguoiDung", formData)
+      return response.data.content
+    } catch (error) {
+      throw error
+    }
+  },
+  updateUser: async (formData: Users) => {
+    try {
+      const response = await fetcher.put("/QuanLyNguoiDung/CapNhatThongTinNguoiDung", formData)
+      return response.data.content
+    } catch (error) {
+      throw error
+    }
+  }
 };

@@ -1,3 +1,13 @@
+import { yupResolver } from "@hookform/resolvers/yup";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import EmailIcon from "@mui/icons-material/Email";
+import ErrorIcon from "@mui/icons-material/Error";
+import HomeRepairServiceIcon from "@mui/icons-material/HomeRepairService";
+import KeyIcon from "@mui/icons-material/Key";
+import PeopleIcon from "@mui/icons-material/People";
+import PersonIcon from "@mui/icons-material/Person";
+import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
+import { LoadingButton } from "@mui/lab";
 import {
   Box,
   Button,
@@ -18,27 +28,28 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { useForm, Controller } from "react-hook-form";
-import * as Yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import * as Yup from "yup";
 import { userApi } from "../../../apis/user.api";
 import { QueryKeys } from "../../../constants/queryKeys";
-import { CustomTableCell } from "../components/CustomTableCell";
-import AddSearchBar from "../components/HeaderBar";
 import useOpen from "../../../hooks/useOpen";
-import { LoadingButton } from "@mui/lab";
-import ErrorIcon from "@mui/icons-material/Error";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { Users } from "../../../interfaces/users.interface";
+import { CustomTableCell } from "../components/CustomTableCell";
 import FormItem from "../components/FormItem/FormItem";
-import PersonIcon from "@mui/icons-material/Person";
-import PeopleIcon from "@mui/icons-material/People";
-import EmailIcon from "@mui/icons-material/Email";
-import KeyIcon from "@mui/icons-material/Key";
-import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
-import HomeRepairServiceIcon from "@mui/icons-material/HomeRepairService";
+import AddSearchBar from "../components/HeaderBar";
+interface DataEdit {
+  taiKhoan: string;
+  matKhau: string;
+  hoTen: string;
+  soDt: string;
+  maLoaiNguoiDung: string;
+  maNhom: string;
+  email: string;
+  tenLoaiNguoiDung: string;
+}
 
 const validationSchema = Yup.object({
   taiKhoan: Yup.string().required("Tài khoản không được bỏ trống"),
@@ -50,11 +61,12 @@ const validationSchema = Yup.object({
   soDT: Yup.string()
     .matches(/^[0-9]{10}$/, "Số điện thoại không hợp lệ")
     .required("Số điện thoại không được bỏ trống"),
-  loaiNguoiDung: Yup.string().required("Xin vui lòng chọn loại người dùng"),
+  maLoaiNguoiDung: Yup.string().required("Xin vui lòng chọn loại người dùng"),
 });
 const UsersManagement: React.FC = () => {
   const [page, setPage] = useState(1);
   const [keyword, setKeyword] = useState("");
+  const [dataEdit, setDataEdit] = useState<DataEdit | null>(null);
   const [flag, setFlag] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
@@ -69,14 +81,13 @@ const UsersManagement: React.FC = () => {
   const {
     control,
     handleSubmit,
+    getValues,
     reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(validationSchema),
   });
-  const onSubmit = (data: any) => {
-    console.log("data", data);
-  };
+
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [QueryKeys.LIST_USER, keyword, page],
     queryFn: async () => {
@@ -140,12 +151,78 @@ const UsersManagement: React.FC = () => {
       setUserId(null);
     },
   });
+  const { mutate: addUser } = useMutation({
+    mutationFn: (formData: Users) => userApi.addUser(formData),
+    onError: (error: any) => {
+      toast.error(
+        error.response.data || "Thêm người dùng thất bại. Vui lòng thử lại."
+      );
+    },
+    onSuccess: (newUser) => {
+      toast.success("Thêm người dùng thành công!");
 
+      queryClient.setQueryData(
+        [QueryKeys.LIST_USER, keyword, page],
+        (oldData: any) => {
+          if (!oldData) return { items: [newUser], totalPages: 1 };
+
+          const updatedItems = oldData.items
+            ? [newUser, ...oldData.items]
+            : [newUser];
+          return {
+            ...oldData,
+            items: updatedItems,
+          };
+        }
+      );
+
+      reset();
+      setIsAddOrEditDialog(false);
+    },
+  });
+  const { mutate: updateUser } = useMutation({
+    mutationFn: (formData: Users) => userApi.updateUser(formData),
+    onError: (error: any) => {
+      toast.error(
+        error.response.data || "Cập nhật người dùng thất bại. Vui lòng thử lại."
+      );
+    },
+    onSuccess: (newUser) => {
+      toast.success("Cập nhật người dùng thành công!");
+
+      queryClient.setQueryData(
+        [QueryKeys.LIST_USER, keyword, page],
+        (oldData: any) => {
+          if (!oldData) return { items: [newUser], totalPages: 1 };
+
+          const updatedItems = oldData.items
+            ? [newUser, ...oldData.items]
+            : [newUser];
+          return {
+            ...oldData,
+            items: updatedItems,
+          };
+        }
+      );
+      queryClient.refetchQueries({
+        queryKey: [QueryKeys.LIST_USER, keyword, page],
+      });
+      reset();
+      setIsAddOrEditDialog(false);
+    },
+  });
+
+  useEffect(() => {
+    if (dataEdit) {
+      reset(dataEdit);
+    }
+  }, [dataEdit, reset]);
   const handleClose = () => {
     if (!isPending) {
       onClose();
       setUserId(null);
     }
+    setDataEdit(null);
   };
 
   const handleDeleteUser = () => {
@@ -160,7 +237,10 @@ const UsersManagement: React.FC = () => {
     setKeyword(value);
     setPage(1);
   };
-
+  const onSubmit = (data: any) => {
+    addUser({ ...data, maNhom: "GP01" });
+    reset();
+  };
   const dropdownItems = [
     {
       content: "Giáo vụ",
@@ -178,7 +258,16 @@ const UsersManagement: React.FC = () => {
         searchPlaceholder="Nhập vào họ tên người dùng hoặc tài khoản cần tìm"
         onSearch={handleSearch}
         handleOpenDialogAdd={() => {
+          reset({
+            taiKhoan: "",
+            hoTen: "",
+            email: "",
+            matKhau: "",
+            soDT: "",
+            maLoaiNguoiDung: "",
+          });
           setIsAddOrEditDialog(true);
+          setDataEdit(null);
         }}
       />
       <Box sx={{ margin: "10px 20px" }}>
@@ -251,69 +340,75 @@ const UsersManagement: React.FC = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {paginatedItems.map((item, index) => (
-                  <TableRow key={item.taiKhoan || index}>
-                    <CustomTableCell variant="body">
-                      {(page - 1) * pageSize + index + 1}
-                    </CustomTableCell>
-                    <CustomTableCell variant="body">
-                      {item.taiKhoan}
-                    </CustomTableCell>
-                    <CustomTableCell variant="body">
-                      {item.tenLoaiNguoiDung}
-                    </CustomTableCell>
-                    <CustomTableCell variant="body">
-                      {item.hoTen}
-                    </CustomTableCell>
-                    <CustomTableCell variant="body">
-                      {item.email}
-                    </CustomTableCell>
-                    <CustomTableCell variant="body">
-                      {item.soDT || item.soDt}
-                    </CustomTableCell>
-                    <CustomTableCell variant="body">
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-around",
-                          padding: "0 20px",
-                        }}
-                      >
-                        <Button
+                {paginatedItems.map((item, index) =>
+                  item ? (
+                    <TableRow key={item.taiKhoan || index}>
+                      <CustomTableCell variant="body">
+                        {(page - 1) * pageSize + index + 1}
+                      </CustomTableCell>
+                      <CustomTableCell variant="body">
+                        {item.taiKhoan || "N/A"}
+                      </CustomTableCell>
+                      <CustomTableCell variant="body">
+                        {item.tenLoaiNguoiDung}
+                      </CustomTableCell>
+                      <CustomTableCell variant="body">
+                        {item.hoTen}
+                      </CustomTableCell>
+                      <CustomTableCell variant="body">
+                        {item.email}
+                      </CustomTableCell>
+                      <CustomTableCell variant="body">
+                        {item.soDT || item.soDt}
+                      </CustomTableCell>
+                      <CustomTableCell variant="body">
+                        <Box
                           sx={{
-                            textTransform: "none",
-                            backgroundColor: "#47b094",
-                            color: "white",
+                            display: "flex",
+                            justifyContent: "space-around",
+                            padding: "0 20px",
                           }}
                         >
-                          Ghi danh
-                        </Button>
-                        <Button
-                          sx={{
-                            textTransform: "none",
-                            backgroundColor: "#fcc205",
-                            color: "black",
-                          }}
-                        >
-                          Sửa
-                        </Button>
-                        <Button
-                          sx={{
-                            textTransform: "none",
-                            backgroundColor: "#e13346",
-                            color: "white",
-                          }}
-                          onClick={() => {
-                            setUserId(item.taiKhoan);
-                            handleClickOpen();
-                          }}
-                        >
-                          Xoá
-                        </Button>
-                      </Box>
-                    </CustomTableCell>
-                  </TableRow>
-                ))}
+                          <Button
+                            sx={{
+                              textTransform: "none",
+                              backgroundColor: "#47b094",
+                              color: "white",
+                            }}
+                          >
+                            Ghi danh
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              setIsAddOrEditDialog(true);
+                              setDataEdit(item);
+                            }}
+                            sx={{
+                              textTransform: "none",
+                              backgroundColor: "#fcc205",
+                              color: "black",
+                            }}
+                          >
+                            Sửa
+                          </Button>
+                          <Button
+                            sx={{
+                              textTransform: "none",
+                              backgroundColor: "#e13346",
+                              color: "white",
+                            }}
+                            onClick={() => {
+                              setUserId(item.taiKhoan);
+                              handleClickOpen();
+                            }}
+                          >
+                            Xoá
+                          </Button>
+                        </Box>
+                      </CustomTableCell>
+                    </TableRow>
+                  ) : null
+                )}
               </TableBody>
             </Table>
           </TableContainer>
@@ -527,7 +622,7 @@ const UsersManagement: React.FC = () => {
       >
         <form className="w-[450px]" onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle className="text-center" sx={{ fontWeight: "bold" }}>
-            THÔNG TIN NGƯỜI DÙNG
+            {dataEdit ? "CẬP NHẬT THÔNG TIN" : "THÔNG TIN NGƯỜI DÙNG"}
           </DialogTitle>
           <Stack spacing={2} p={3}>
             <FormItem
@@ -536,6 +631,7 @@ const UsersManagement: React.FC = () => {
               error={errors.taiKhoan?.message}
               control={control}
               name="taiKhoan"
+              disabled={dataEdit ? true : false}
             />
             <FormItem
               icon={<PeopleIcon />}
@@ -551,13 +647,15 @@ const UsersManagement: React.FC = () => {
               control={control}
               name="email"
             />
-            <FormItem
-              icon={<KeyIcon />}
-              placeholder="Mật khẩu"
-              error={errors.matKhau?.message}
-              control={control}
-              name="matKhau"
-            />
+            {!dataEdit && (
+              <FormItem
+                icon={<KeyIcon />}
+                placeholder="Mật khẩu"
+                error={errors.matKhau?.message}
+                control={control}
+                name="matKhau"
+              />
+            )}
             <FormItem
               icon={<PhoneEnabledIcon />}
               placeholder="Số điện thoại"
@@ -570,25 +668,56 @@ const UsersManagement: React.FC = () => {
               placeholder="Loại người dùng"
               isDropdown={true}
               dropdownItems={dropdownItems}
-              error={errors.loaiNguoiDung?.message}
+              error={errors.maLoaiNguoiDung?.message}
               control={control}
-              name="loaiNguoiDung"
+              name="maLoaiNguoiDung"
             />
           </Stack>
           <DialogActions>
-            <Button
-              type="submit"
-              sx={{
-                color: "white",
-                backgroundColor: "#3fb394",
-              }}
-            >
-              Thêm người dùng
-            </Button>
+            {!dataEdit ? (
+              <Button
+                type="submit"
+                sx={{
+                  color: "white",
+                  backgroundColor: "#3fb394",
+                }}
+              >
+                Thêm người dùng
+              </Button>
+            ) : (
+              <Button
+                onClick={() => {
+                  type UpdatedDataType = {
+                    taiKhoan: string;
+                    hoTen: string;
+                    email: string;
+                    maLoaiNguoiDung?: string;
+                    maNhom?: string;
+                  };
+                  const updatedData = getValues() as UpdatedDataType;
+                  const updateMaLoaiNguoiDung = getValues("maLoaiNguoiDung");
+                  const tenLoaiNguoiDung =
+                    updateMaLoaiNguoiDung === "HV" ? "Học viên" : "Giáo vụ";
+                  updateUser({
+                    ...updatedData,
+                    maLoaiNguoiDung: updateMaLoaiNguoiDung,
+                    tenLoaiNguoiDung,
+                    maNhom: updatedData?.maNhom || "GP01",
+                  });
+                }}
+                sx={{
+                  color: "white",
+                  backgroundColor: "#3fb394",
+                }}
+              >
+                Cập nhật
+              </Button>
+            )}
             <Button
               onClick={() => {
-                reset();
                 setIsAddOrEditDialog(false);
+                setDataEdit(null);
+                reset();
               }}
               sx={{
                 color: "white",

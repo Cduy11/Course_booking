@@ -5,5 +5,5 @@ export interface Users{
     maNhom: null;
     email: string;
     maLoaiNguoiDung: string;
-    tenLoaiNguoiDung: string;
+    tenLoaiNguoiDung?: string;
 }
