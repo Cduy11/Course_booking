@@ -58,7 +58,7 @@ export default function InfoCourseComponent() {
   return (
     <Box className="info-course-box">
       <Grid container spacing={3} className="info-course-grid">
-        <Grid item xs={12} md={4} className="infoItemHome infoLargeItem">
+        <Grid item xs={12} sm={6} md={4} className="infoItemHome infoLargeItem" style={{ flex: '1' }}>
           <img src={astronaut} alt="astronaut" />
           <Typography className="info-course-title">
             {mockData[0].title}
@@ -73,14 +73,16 @@ export default function InfoCourseComponent() {
             ))}
           </ul>
         </Grid>
-        <Grid item xs={12} md={4} className="info-course-grid-small ">
+        <Grid item xs={12} sm={6} md={4} className="info-course-grid-small ">
           {mockData.slice(1, 3).map((data, index) => (
             <Grid
               item
               xs={12}
+              sm={6}
               md={12}
               key={index}
               className={`infoSmallItem${index}`}
+              style={{ flex: '1' }}
             >
               <Typography className="info-course-title">
                 {data.title}
@@ -96,14 +98,16 @@ export default function InfoCourseComponent() {
             </Grid>
           ))}
         </Grid>
-        <Grid item xs={12} md={4} className="info-course-grid-small">
+        <Grid item xs={12} sm={6} md={4} className="info-course-grid-small">
           {mockData.slice(3).map((data, index) => (
             <Grid
               item
               xs={12}
+              sm={6}
               md={12}
               key={index}
               className={`infoSmallItem${index}`}
+              style={{ flex: '1' }}
             >
               <Typography className="info-course-title">
                 {data.title}

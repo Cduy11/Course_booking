@@ -20,13 +20,13 @@ export default function Review() {
         <Box className="smallBox smallboxLeftBottom"></Box>
         <Box className="smallBox smallboxRightTop"></Box>
         <Grid container spacing={2} className="review-col">
-          <Grid item xs={6} className="review-left">
+          <Grid item xs={12} sm={6} md={6} className="review-left">
             <div className="reviewImg">
               <div className="bgreviewImg"></div>
               <img src={reviewImg} alt="" />
             </div>
           </Grid>
-          <Grid item xs={6} className="review-right">
+          <Grid item xs={12} sm={6} md={6} className="review-right">
             <div className="review-textQoute">
               <p>{reviews[0].text}</p>
               <p className="review-textQoute-name">{reviews[0].name}</p>

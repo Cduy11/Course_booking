@@ -19,7 +19,7 @@ export default function NumberComponent() {
     <Box className="number_container">
       <Grid container spacing={2}>
         {data.map((item, index) => (
-          <Grid item xs={3} key={index}>
+          <Grid item xs={12} sm={6} md={3} key={index}>
             <Box className="number-content">
               <div className="number-img">
                 <img src={item.img} alt={item.title} />

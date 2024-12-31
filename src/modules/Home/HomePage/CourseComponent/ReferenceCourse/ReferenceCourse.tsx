@@ -6,6 +6,7 @@ import {
   Typography,
   Box,
   Button,
+  useMediaQuery,
 } from "@mui/material";
 import AccessAlarmsIcon from "@mui/icons-material/AccessAlarms";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
@@ -26,11 +27,13 @@ interface ReferenceCourseProps {
 
 function ReferenceCourse({ course, position }: ReferenceCourseProps) {
   const navigate = useNavigate();
+  const isMobile = useMediaQuery('(max-width:600px)');
   const handleClick = () => {
     navigate(`${PATH.HOME.COURSE_DETAILS}/${course.maKhoaHoc}`);
   };
+  const positionClass = isMobile ? "" : position;
   return (
-    <div className={`card-container ${position}`}>
+    <div className={`card-container ${positionClass}`} onClick={handleClick}>
       {/* card */}
       <Card className="course-item-card">
         <CardMedia
@@ -89,8 +92,8 @@ function ReferenceCourse({ course, position }: ReferenceCourseProps) {
           </Box>
         </CardActions>
       </Card>
-      {/* tooltip */}
-      <Card className={`tooltip`}>
+      {/* Tooltip chỉ hiển thị trên màn hình lớn */}
+      <Card className={`tooltip ${isMobile ? "hidden" : ""}`}>
         <Box className="tooltip-content">
           <Box className="tooltip-content-header">
             <img
@@ -128,7 +131,10 @@ function ReferenceCourse({ course, position }: ReferenceCourseProps) {
               <span className="tooltip-content-footer-item-text">1000+</span>
             </Typography>
           </Box>
-          <Button className="tooltip-content-footer-item-button" onClick={handleClick}>
+          <Button
+            className="tooltip-content-footer-item-button"
+            onClick={handleClick}
+          >
             Xem chi tiết
           </Button>
         </Box>

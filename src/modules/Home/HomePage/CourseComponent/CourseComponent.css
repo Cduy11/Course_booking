@@ -246,7 +246,6 @@
 .tooltip-content-header-image {
   height: 50px;
   width: 50px;
-  
 }
 
 .tooltip-content-header-text {
@@ -255,7 +254,6 @@
   color: #8a8a8a;
   margin-left: 15px !important;
   font-weight: bold !important;
-
 }
 
 .tooltip-content-name {
@@ -323,27 +321,26 @@
 }
 
 .card-sale::before {
-  bottom: -5px ;
-  left: 0 ;
+  bottom: -5px;
+  left: 0;
   border-top: 5px solid #f90303 !important;
 }
 
 .card-sale::after {
-  top: 0 ;
-  right: -5px ;
+  top: 0;
+  right: -5px;
   border-left: 5px solid #f90303 !important;
 }
 
 .course-component-content {
   display: grid;
   place-items: center;
-  padding: 0px 40px;
 }
 
 .card-container.last-card-inner {
   position: relative;
-  transform: translateX(-10%); 
-  z-index: 10; 
+  transform: translateX(-10%);
+  z-index: 10;
 }
 
 .card-container.last-card-inner .tooltip {
@@ -354,6 +351,91 @@
 
 .card-container.last-card-inner .card-sale {
   left: auto;
-  right: 0; 
+  right: 0;
   z-index: 3;
+}
+/* Màn hình vừa (Tablet - width từ 768px đến 1024px) */
+@media (max-width: 1024px) {
+  .course-component {
+    padding: 0 20px;
+  }
+
+  .course-item-card {
+    width: 240px;
+    min-width: 240px;
+    min-height: 340px;
+    height: 380px;
+  }
+
+  .course-component-title-text {
+    font-size: 18px;
+  }
+
+  .course-card-footer-price-discount {
+    font-size: 18px;
+  }
+}
+
+/* Màn hình nhỏ (Mobile - width dưới 768px) */
+
+.course-component-content {
+  padding: 0px 0px;
+}
+@media (max-width: 768px) {
+  .tooltip {
+    position: relative;
+    width: 100%;
+    top: auto;
+    right: auto;
+    height: auto;
+  }
+
+  .course-component {
+    padding: 0 10px;
+  }
+
+  .course-item-card {
+    min-width: 100%;
+    width: 100%;
+    height: auto;
+  }
+
+  .course-component-title-text {
+    font-size: 16px;
+  }
+
+  .course-card-footer-price-discount {
+    font-size: 16px;
+  }
+
+  .course-component-content {
+    padding: 0px 0px;
+    gap: 32px;
+  }
+  .course-component-grid {
+    padding: 0px 0px !important;
+  }
+  .middle-card {
+    padding: 0; 
+  }
+
+  .card-container {
+    height: 0px !important;
+  }
+
+  .course-card-grid {
+    height: 470px;
+    overflow-y: hidden;
+    overflow-x: hidden;
+  }
+  .course-card-grid1 {
+    height: 470px;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    width: 100% !important;
+  }
+}
+
+.hidden {
+  display: none !important;
 }

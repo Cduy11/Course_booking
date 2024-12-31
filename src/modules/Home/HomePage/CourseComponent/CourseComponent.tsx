@@ -21,6 +21,7 @@ export default function CourseComponent() {
           spacing={2}
           justifyContent="center"
           style={{ padding: "0px 40px" }}
+          className="course-component-grid"
         >
           {topCourses.map((course) => (
             <Grid item xs={12} sm={6} md={3} key={course.maKhoaHoc}>
@@ -40,6 +41,7 @@ export default function CourseComponent() {
           spacing={2}
           justifyContent="center"
           style={{ padding: "0px 40px" }}
+          className="course-component-grid"
         >
           {referenceCourses.map((course, index) => {
             const positionClass =
@@ -48,7 +50,14 @@ export default function CourseComponent() {
                 : "middle-card";
 
             return (
-              <Grid item xs={12} sm={6} md={3} key={course.maKhoaHoc}>
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={3}
+                key={course.maKhoaHoc}
+                className="course-card-grid"
+              >
                 <ReferenceCourse course={course} position={positionClass} />
               </Grid>
             );
@@ -66,6 +75,7 @@ export default function CourseComponent() {
           spacing={2}
           justifyContent="center"
           style={{ padding: "0px 40px" }}
+          className="course-component-grid"
         >
           {courses.map((course, index) => {
             const positionClass =
@@ -74,7 +84,14 @@ export default function CourseComponent() {
                 : "middle-card";
 
             return (
-              <Grid item xs={12} sm={6} md={3} key={course.maKhoaHoc}>
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={3}
+                key={course.maKhoaHoc}
+                className="course-card-grid"
+              >
                 <Courses course={course} position={positionClass} />
               </Grid>
             );

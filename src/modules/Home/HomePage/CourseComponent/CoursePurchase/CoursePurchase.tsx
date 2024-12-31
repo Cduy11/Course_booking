@@ -9,11 +9,20 @@ import {
 import StarIcon from "@mui/icons-material/Star";
 import logoHuman from "../../../../../assets/avatar2.bb9626e2.png";
 import { Course } from "../../../../../interfaces/course";
+import { useNavigate } from "react-router-dom";
+import { PATH } from "../../../../../routes/path";
+  
 
 
 function CoursePurchase({ course }: { course: Course }) {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`${PATH.HOME.COURSE_DETAILS}/${course.maKhoaHoc}`);
+  };
+
   return (
-    <Card className="course-item-card">
+    <Card className="course-item-card" onClick={handleClick}>
       <CardMedia
         className="course-item-card-media"
         sx={{ height: 185 }}

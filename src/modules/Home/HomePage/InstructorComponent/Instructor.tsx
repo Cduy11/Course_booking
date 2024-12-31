@@ -62,7 +62,7 @@ export default function Instructor() {
       <Typography className="instructor-title">Giảng viên hàng đầu</Typography>
       <Grid container spacing={2} className="instructor-items">
         {instructors.map((instructor) => (
-          <Grid item xs={2} key={instructor.id}>
+          <Grid item xs={6} sm={2} key={instructor.id}>
             <Card className="instructor-content">
               <CardContent>
                 <img
