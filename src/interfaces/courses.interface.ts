@@ -5,11 +5,12 @@ export interface Courses {
     moTa: string;
     luotXem: number;
     hinhAnh: string;
+    danhGia: number;
     maNhom: string;
     ngayTao: string;
-    soLuongHocVien: number;
-    nguoiTao: NguoiTAO;
-    danhMucKhoaHoc: DanhMucKhoaHoc;
+    soLuongHocVien?: number;
+    nguoiTao?: NguoiTAO;
+    danhMucKhoaHoc?: DanhMucKhoaHoc;
 }
 
 export interface DanhMucKhoaHoc {

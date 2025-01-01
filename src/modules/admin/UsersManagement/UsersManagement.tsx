@@ -1,13 +1,10 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import EmailIcon from "@mui/icons-material/Email";
-import ErrorIcon from "@mui/icons-material/Error";
 import HomeRepairServiceIcon from "@mui/icons-material/HomeRepairService";
 import KeyIcon from "@mui/icons-material/Key";
 import PeopleIcon from "@mui/icons-material/People";
 import PersonIcon from "@mui/icons-material/Person";
 import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
-import { LoadingButton } from "@mui/lab";
 import {
   Box,
   Button,
@@ -15,14 +12,17 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
+  MenuItem,
   Pagination,
   PaginationItem,
   Paper,
+  Select,
+  SelectChangeEvent,
   Stack,
   Table,
   TableBody,
+  TableCell,
   TableContainer,
   TableHead,
   TableRow,
@@ -34,12 +34,22 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import { userApi } from "../../../apis/user.api";
+import DialogDelete from "../../../components/DialogDelete/DialogDelete";
+import DialogEnrollSuccess from "../../../components/DialogEnrollSuccess/DialogEnrollSuccess";
+import DialogError from "../../../components/DialogError/DialogError";
+import DialogSuccess from "../../../components/DialogSuccess/DialogSuccess";
 import { QueryKeys } from "../../../constants/queryKeys";
 import useOpen from "../../../hooks/useOpen";
 import { Users } from "../../../interfaces/users.interface";
 import { CustomTableCell } from "../components/CustomTableCell";
 import FormItem from "../components/FormItem/FormItem";
 import AddSearchBar from "../components/HeaderBar";
+import {
+  enrollCourse,
+  unenrolledCourse,
+} from "./../../../apis/enrolledCourse.api";
+import { loaiNguoiDung } from "../../../constants/dropdownItems";
+
 interface DataEdit {
   taiKhoan: string;
   matKhau: string;
@@ -50,7 +60,11 @@ interface DataEdit {
   email: string;
   tenLoaiNguoiDung: string;
 }
-
+interface Course {
+  biDanh?: string;
+  maKhoaHoc: string;
+  tenKhoaHoc: string;
+}
 const validationSchema = Yup.object({
   taiKhoan: Yup.string().required("Tài khoản không được bỏ trống"),
   hoTen: Yup.string().required("Họ và tên không được bỏ trống"),
@@ -69,9 +83,16 @@ const UsersManagement: React.FC = () => {
   const [dataEdit, setDataEdit] = useState<DataEdit | null>(null);
   const [flag, setFlag] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
+  const [unenrolledCourseState, setUnenrolledCourseState] = useState<
+    Course[] | null
+  >(null);
+  const [selectedCourse, setSelectedCourse] = useState<string>("");
+  const [selectedCourseId, setSelectedCourseId] = useState<string>("");
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+  const [successEnrollDialogOpen, setSuccessEnrollDialogOpen] = useState(false);
   const [isAddOrEditDialog, setIsAddOrEditDialog] = useState(false);
+  const [enrollDialogOpen, setEnrollDialogOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const { open, handleClickOpen, onClose } = useOpen();
   const queryClient = useQueryClient();
@@ -241,18 +262,47 @@ const UsersManagement: React.FC = () => {
     addUser({ ...data, maNhom: "GP01" });
     reset();
   };
-  const dropdownItems = [
-    {
-      content: "Giáo vụ",
-      value: "GV",
-    },
-    {
-      content: "Học viên",
-      value: "HV",
-    },
-  ];
+
+  const handleSelectChange = (event: SelectChangeEvent<string>) => {
+    const selectedCourseName = event.target.value;
+    const course = unenrolledCourseState?.find(
+      (c) => c.tenKhoaHoc === selectedCourseName
+    );
+    setSelectedCourse(selectedCourseName);
+    setSelectedCourseId(course?.maKhoaHoc || "");
+  };
+  const handleFetchUnenrolledCourse = async (userId: string) => {
+    try {
+      const result = await unenrolledCourse(userId);
+      setUnenrolledCourseState(result);
+      return result;
+    } catch (error) {
+      console.error("Error fetching unenrolled courses:", error);
+    }
+  };
+  const handleEnroll = async (courseId: string, userId: string | null) => {
+    const dataEnroll = {
+      maKhoaHoc: courseId,
+      taiKhoan: userId,
+    };
+    try {
+      await enrollCourse(dataEnroll);
+      setSelectedCourse("");
+      if (userId) {
+        await handleFetchUnenrolledCourse(userId);
+      }
+      setSuccessEnrollDialogOpen(true);
+    } catch (error) {
+      setErrorDialogOpen(true);
+      setErrorMessage("Xảy ra lỗi, xin vui lòng thử lại!");
+    }
+  };
+  // const handleGetEnrolledCourse = async (userId: string) => {
+  //   const result = await getUserEnrolledCourses(userId);
+  //   return result;
+  // };
   return (
-    <div>
+    <Box>
       <AddSearchBar
         buttonLabel="Thêm người dùng"
         searchPlaceholder="Nhập vào họ tên người dùng hoặc tài khoản cần tìm"
@@ -370,6 +420,11 @@ const UsersManagement: React.FC = () => {
                           }}
                         >
                           <Button
+                            onClick={() => {
+                              setEnrollDialogOpen(true);
+                              setUserId(item.taiKhoan);
+                              handleFetchUnenrolledCourse(item.taiKhoan);
+                            }}
                             sx={{
                               textTransform: "none",
                               backgroundColor: "#47b094",
@@ -449,172 +504,28 @@ const UsersManagement: React.FC = () => {
           }}
         />
       </Box>
-      <Dialog
+      <DialogDelete
         open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        sx={{
-          "& .MuiDialog-paper": {
-            borderRadius: "12px",
-            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.15)",
-            backgroundColor: "#fff",
-          },
+        message="người dùng"
+        handleClose={handleClose}
+        isPending={isPending}
+        handleDelete={handleDeleteUser}
+      />
+
+      <DialogSuccess
+        message="Người dùng"
+        isOpen={successDialogOpen}
+        onClose={() => {
+          setSuccessDialogOpen(false);
         }}
-      >
-        <DialogTitle
-          id="alert-dialog-title"
-          sx={{
-            fontWeight: "bold",
-            fontSize: "20px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#D32F2F",
-          }}
-        >
-          <ErrorIcon
-            sx={{ marginRight: "8px", fontSize: "24px", color: "#D32F2F" }}
-          />
-          Xoá người dùng này?
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText
-            id="alert-dialog-description"
-            sx={{
-              fontSize: "16px",
-              textAlign: "center",
-              color: "#333",
-              padding: "10px 0",
-            }}
-          >
-            Bạn có chắc chắn muốn xoá người dùng này? Việc này sẽ không thể khôi
-            phục lại!
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions
-          sx={{
-            justifyContent: "space-between",
-            padding: "15px 20px",
-          }}
-        >
-          <Button
-            variant="outlined"
-            color="secondary"
-            disabled={isPending}
-            onClick={handleClose}
-            sx={{
-              width: "48%",
-              fontWeight: "bold",
-              borderRadius: "8px",
-              "&:hover": {
-                backgroundColor: "#f2f2f2",
-              },
-            }}
-          >
-            Hủy
-          </Button>
-          <LoadingButton
-            loading={isPending}
-            variant="contained"
-            color="error"
-            disabled={isPending}
-            onClick={handleDeleteUser}
-            sx={{
-              width: "48%",
-              fontWeight: "bold",
-              borderRadius: "8px",
-              backgroundColor: "#D32F2F",
-              "&:hover": {
-                backgroundColor: "#C2185B",
-              },
-            }}
-          >
-            Xoá
-          </LoadingButton>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog
-        open={successDialogOpen}
-        onClose={() => setSuccessDialogOpen(false)}
-        aria-labelledby="success-dialog-title"
-      >
-        <DialogTitle
-          id="success-dialog-title"
-          sx={{
-            color: "#388E3C",
-            fontWeight: "bold",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <CheckCircleIcon sx={{ marginRight: "8px" }} />
-          Xoá thành công
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText
-            sx={{
-              textAlign: "center",
-              fontSize: "16px",
-            }}
-          >
-            Người dùng đã được xoá thành công khỏi hệ thống.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => setSuccessDialogOpen(false)}
-            color="primary"
-            autoFocus
-            sx={{
-              textTransform: "none",
-            }}
-          >
-            Đóng
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog
-        open={errorDialogOpen}
-        onClose={() => setErrorDialogOpen(false)}
-        aria-labelledby="error-dialog-title"
-      >
-        <DialogTitle
-          id="error-dialog-title"
-          sx={{
-            color: "#D32F2F",
-            fontWeight: "bold",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <ErrorIcon sx={{ marginRight: "8px" }} />
-          Lỗi
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText
-            sx={{
-              textAlign: "center",
-              fontSize: "16px",
-            }}
-          >
-            {errorMessage}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => setErrorDialogOpen(false)}
-            color="primary"
-            autoFocus
-          >
-            Đóng
-          </Button>
-        </DialogActions>
-      </Dialog>
+      />
+      <DialogError
+        isOpen={errorDialogOpen}
+        onClose={() => {
+          setErrorDialogOpen(false);
+        }}
+        errorMessage={errorMessage}
+      />
 
       <Dialog
         open={isAddOrEditDialog}
@@ -667,7 +578,7 @@ const UsersManagement: React.FC = () => {
               icon={<HomeRepairServiceIcon />}
               placeholder="Loại người dùng"
               isDropdown={true}
-              dropdownItems={dropdownItems}
+              dropdownItems={loaiNguoiDung}
               error={errors.maLoaiNguoiDung?.message}
               control={control}
               name="maLoaiNguoiDung"
@@ -729,7 +640,124 @@ const UsersManagement: React.FC = () => {
           </DialogActions>
         </form>
       </Dialog>
-    </div>
+
+      <Dialog
+        open={enrollDialogOpen}
+        onClose={() => setEnrollDialogOpen(false)}
+        className="w-full max-w-lg mx-auto"
+        PaperProps={{
+          sx: {
+            width: "500px",
+            maxWidth: "unset",
+          },
+        }}
+      >
+        <DialogTitle className="text-center text-lg font-semibold">
+          Chọn khóa học
+        </DialogTitle>
+        <DialogContent>
+          <Box className="flex items-center gap-4 mb-4">
+            <Select
+              value={selectedCourse || ""}
+              onChange={handleSelectChange}
+              displayEmpty
+              sx={{
+                flex: 1,
+                height: "40px",
+                borderRadius: "4px",
+              }}
+            >
+              <MenuItem value="">
+                <Typography color="#adadad">Chọn khoá học</Typography>
+              </MenuItem>
+              {unenrolledCourseState?.map((course) => (
+                <MenuItem key={course.maKhoaHoc} value={course.tenKhoaHoc}>
+                  {course.tenKhoaHoc}
+                </MenuItem>
+              ))}
+            </Select>
+            <Button
+              variant="contained"
+              sx={{
+                textTransform: "none",
+                backgroundColor: "#47b094",
+                color: "white",
+                minWidth: "100px",
+                height: "40px",
+              }}
+              onClick={() => {
+                handleEnroll(selectedCourseId, userId);
+              }}
+            >
+              Ghi danh
+            </Button>
+          </Box>
+          <Box className="mb-6">
+            <Typography className="text-sm font-semibold mb-2">
+              Khóa học chờ xác thực
+            </Typography>
+            <Table className="border">
+              <TableHead>
+                <TableRow>
+                  <TableCell className="font-bold text-center">STT</TableCell>
+                  <TableCell className="font-bold text-center">
+                    Tên khóa học
+                  </TableCell>
+                  <TableCell className="font-bold text-center">
+                    Chờ xác nhận
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow>
+                  <TableCell className="text-center">1</TableCell>
+                  <TableCell className="text-center">Khóa học A</TableCell>
+                  <TableCell className="text-center">Đang chờ</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </Box>
+          <Box>
+            <Typography className="text-sm font-semibold mb-2">
+              Khóa học đã ghi danh
+            </Typography>
+            <Table className="border">
+              <TableHead>
+                <TableRow>
+                  <TableCell className="font-bold text-center">STT</TableCell>
+                  <TableCell className="font-bold text-center">
+                    Tên khóa học
+                  </TableCell>
+                  <TableCell className="font-bold text-center">
+                    Chờ xác nhận
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow>
+                  <TableCell className="text-center">1</TableCell>
+                  <TableCell className="text-center">Khóa học B</TableCell>
+                  <TableCell className="text-center">Đã xác nhận</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </Box>
+        </DialogContent>
+        <DialogActions className="justify-center">
+          <Button
+            onClick={() => setEnrollDialogOpen(false)}
+            variant="contained"
+            className="bg-gray-500 text-white hover:bg-gray-600"
+          >
+            Đóng
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <DialogEnrollSuccess
+        onClose={() => setSuccessEnrollDialogOpen(false)}
+        isOpen={successEnrollDialogOpen}
+      />
+    </Box>
   );
 };
 

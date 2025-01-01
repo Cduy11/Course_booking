@@ -14,7 +14,7 @@ interface FormItemProps {
   placeholder?: string;
   isDropdown?: boolean;
   dropdownItems?: { content: string; value: string }[];
-  control: any;
+  control?: any;
   name: string;
   error?: string;
   defaultValue?: string;

@@ -1,17 +1,17 @@
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import ErrorIcon from "@mui/icons-material/Error";
-import StarIcon from '@mui/icons-material/Star';
-import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
+import { yupResolver } from "@hookform/resolvers/yup";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import ContactsIcon from "@mui/icons-material/Contacts";
+import HomeRepairServiceIcon from "@mui/icons-material/HomeRepairService";
 import PersonIcon from "@mui/icons-material/Person";
-import { LoadingButton } from "@mui/lab";
+import StarIcon from "@mui/icons-material/Star";
+import TextSnippetIcon from "@mui/icons-material/TextSnippet";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import {
   Box,
   Button,
   CircularProgress,
   Dialog,
   DialogActions,
-  DialogContent,
-  DialogContentText,
   DialogTitle,
   Pagination,
   PaginationItem,
@@ -22,18 +22,66 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography
+  TextField,
+  Typography,
 } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import * as yup from "yup";
 import { courseApi } from "../../../apis/course.api";
+import DialogDelete from "../../../components/DialogDelete/DialogDelete";
+import DialogError from "../../../components/DialogError/DialogError";
+import DialogSuccess from "../../../components/DialogSuccess/DialogSuccess";
+import { danhMucKhoaHoc, maNhom } from "../../../constants/dropdownItems";
 import { QueryKeys } from "../../../constants/queryKeys";
 import useOpen from "../../../hooks/useOpen";
+import { Courses } from "../../../interfaces/courses.interface";
 import { CustomTableCell } from "../components/CustomTableCell";
 import FormItem from "../components/FormItem/FormItem";
 import AddSearchBar from "../components/HeaderBar";
-import { Courses } from "../../../interfaces/courses.interface";
-
+const validationSchema = yup.object({
+  maKhoaHoc: yup.string().required("Mã khóa học không được để trống"),
+  biDanh: yup.string().required("Bí danh không được để trống"),
+  tenKhoaHoc: yup.string().required("Tên khóa học không được để trống"),
+  moTa: yup.string().required("Mô tả không được để trống"),
+  luotXem: yup
+    .number()
+    .required("Lượt xem không được để trống")
+    .min(0, "Lượt xem không được âm"),
+  danhGia: yup
+    .number()
+    .required("Đánh giá không được để trống")
+    .min(0, "Đánh giá không được âm"),
+  hinhAnh: yup
+    .mixed<FileList>()
+    .required("Hình ảnh không được để trống")
+    .test("fileSize", "Hình ảnh không được để trống", (value) => {
+      if (value && value[0]) {
+        const file = value[0];
+        const allowedFormats = ["image/jpeg", "image/jpg", "image/png"];
+        return allowedFormats.includes(file.type);
+      }
+      return false;
+    })
+    .test(
+      "fileCount",
+      "Chỉ được chọn một tệp tin",
+      (value) => value && value.length === 1
+    ),
+  maNhom: yup.string().required("Xin vui lòng chọn mã nhóm"),
+  ngayTao: yup
+    .string()
+    .required("Xin vui lòng nhập ngày tạo")
+    .matches(
+      /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(19|20)\d\d$/,
+      "Ngày tạo phải có định dạng dd/mm/yyyy"
+    ),
+  maDanhMucKhoaHoc: yup
+    .string()
+    .required("Xin vui lòng chọn danh mục khoá học"),
+});
 const CoursesManagement: React.FC = () => {
   const [page, setPage] = useState(1);
   const [keyword, setKeyword] = useState("");
@@ -48,6 +96,15 @@ const CoursesManagement: React.FC = () => {
   const pageSize = 5;
   const [totalPagesSearch, setTotalPagesSearch] = useState<number>(1);
   const [totalPagesList, setTotalPagesList] = useState<number>(1);
+  const {
+    control,
+    handleSubmit,
+    getValues,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+  });
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [QueryKeys.LIST_COURSE, keyword, page],
     queryFn: async () => {
@@ -83,21 +140,22 @@ const CoursesManagement: React.FC = () => {
     },
     onSuccess: () => {
       setSuccessDialogOpen(true);
-      queryClient.setQueryData([QueryKeys.LIST_COURSE, keyword, page], (oldData: any) => {
-        if (!oldData) return oldData;
-        const updatedItems = oldData.items
-          ? oldData.items.filter((item: Courses) => item.maKhoaHoc !== courseId)
-          : oldData.filter((item: any) => item.maKhoaHoc !== courseId);
+      queryClient.setQueryData(
+        [QueryKeys.LIST_COURSE, keyword, page],
+        (oldData: any) => {
+          if (!oldData) return oldData;
+          const updatedItems = oldData.items
+            ? oldData.items.filter(
+                (item: Courses) => item.maKhoaHoc !== courseId
+              )
+            : oldData.filter((item: any) => item.maKhoaHoc !== courseId);
 
-        return {
-          ...oldData,
-          items: updatedItems,
-        };
-      });
-    },
-    onSettled: () => {
-      onClose();
-      setCourseId(null);
+          return {
+            ...oldData,
+            items: updatedItems,
+          };
+        }
+      );
     },
   });
 
@@ -122,13 +180,54 @@ const CoursesManagement: React.FC = () => {
     : items.slice((page - 1) * pageSize, page * pageSize);
   const hasNoDataCondition =
     !isLoading && !isError && paginatedItems.length === 0;
+  const { mutate: addCourse } = useMutation({
+    mutationFn: (formData: Courses) => courseApi.addCourse(formData),
+    onError: (error: any) => {
+      toast.error(
+        error.response.data || "Thêm khoá học thất bại. Vui lòng thử lại."
+      );
+    },
+    onSuccess: (newCourse) => {
+      toast.success("Thêm khoá học thành công!");
 
+      queryClient.setQueryData(
+        [QueryKeys.LIST_COURSE, keyword, page],
+        (oldData: any) => {
+          if (!oldData) return { items: [newCourse], totalPages: 1 };
+
+          const updatedItems = oldData.items
+            ? [newCourse, ...oldData.items]
+            : [newCourse];
+          return {
+            ...oldData,
+            items: updatedItems,
+          };
+        }
+      );
+
+      reset();
+      setIsAddOrEditDialog(false);
+    },
+  });
   const handleSearch = (value: string) => {
     setFlag(false);
     setKeyword(value);
     setPage(1);
   };
 
+  const onSubmit = (data: any) => {
+    const currentUser = localStorage.getItem("currentUser");
+    if (currentUser) {
+      const user = JSON.parse(currentUser);
+      data.taiKhoanNguoiTao = user.taiKhoan;
+    }
+    const { hinhAnh } = data;
+    if (hinhAnh && hinhAnh[0]) {
+      data.hinhAnh = hinhAnh[0].name;
+    }
+    addCourse(data);
+    reset()
+  };
   return (
     <div>
       <AddSearchBar
@@ -210,73 +309,77 @@ const CoursesManagement: React.FC = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {paginatedItems.map((course, index) => (
-                  <TableRow key={course.maKhoaHoc}>
-                    <CustomTableCell variant="body">
-                      {(page - 1) * pageSize + index + 1}
-                    </CustomTableCell>
-                    <CustomTableCell variant="body">
-                      {course.maKhoaHoc}
-                    </CustomTableCell>
-                    <CustomTableCell variant="body">
-                      {course.tenKhoaHoc}
-                    </CustomTableCell>
-                    <CustomTableCell variant="body">
-                      <img
-                        src={course.hinhAnh}
-                        alt={course.tenKhoaHoc}
-                        style={{ width: "100px", height: "auto" }}
-                      />
-                    </CustomTableCell>
-                    <CustomTableCell variant="body">
-                      {course.luotXem}
-                    </CustomTableCell>
-                    <CustomTableCell variant="body">
-                      {course.nguoiTao?.hoTen || "N/A"}
-                    </CustomTableCell>
-                    <CustomTableCell variant="body">
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-around",
-                          padding: "0 20px",
-                        }}
-                      >
-                        <Button
+                {paginatedItems.map((course, index) =>
+                  course ? (
+                    <TableRow key={course.maKhoaHoc}>
+                      <CustomTableCell variant="body">
+                        {(page - 1) * pageSize + index + 1}
+                      </CustomTableCell>
+                      <CustomTableCell variant="body">
+                        {course?.maKhoaHoc || "Không có mã khóa học"}
+                      </CustomTableCell>
+                      <CustomTableCell variant="body">
+                        {course?.tenKhoaHoc || "Không có tên khóa học"}
+                      </CustomTableCell>
+                      <CustomTableCell variant="body">
+                        <img
+                          src={course?.hinhAnh || ""}
+                          alt={
+                            course?.tenKhoaHoc || "Khóa học không có hình ảnh"
+                          }
+                          style={{ width: "100px", height: "auto" }}
+                        />
+                      </CustomTableCell>
+                      <CustomTableCell variant="body">
+                        {course?.luotXem || 0}
+                      </CustomTableCell>
+                      <CustomTableCell variant="body">
+                        {course?.nguoiTao?.hoTen || "N/A"}
+                      </CustomTableCell>
+                      <CustomTableCell variant="body">
+                        <Box
                           sx={{
-                            textTransform: "none",
-                            backgroundColor: "#47b094",
-                            color: "white",
+                            display: "flex",
+                            justifyContent: "space-around",
+                            padding: "0 20px",
                           }}
                         >
-                          Ghi danh
-                        </Button>
-                        <Button
-                          sx={{
-                            textTransform: "none",
-                            backgroundColor: "#fcc205",
-                            color: "black",
-                          }}
-                        >
-                          Sửa
-                        </Button>
-                        <Button
-                          sx={{
-                            textTransform: "none",
-                            backgroundColor: "#e13346",
-                            color: "white",
-                          }}
-                          onClick={() => {
-                            setCourseId(course.maKhoaHoc);
-                            handleClickOpen();
-                          }}
-                        >
-                          Xoá
-                        </Button>
-                      </Box>
-                    </CustomTableCell>
-                  </TableRow>
-                ))}
+                          <Button
+                            sx={{
+                              textTransform: "none",
+                              backgroundColor: "#47b094",
+                              color: "white",
+                            }}
+                          >
+                            Ghi danh
+                          </Button>
+                          <Button
+                            sx={{
+                              textTransform: "none",
+                              backgroundColor: "#fcc205",
+                              color: "black",
+                            }}
+                          >
+                            Sửa
+                          </Button>
+                          <Button
+                            sx={{
+                              textTransform: "none",
+                              backgroundColor: "#e13346",
+                              color: "white",
+                            }}
+                            onClick={() => {
+                              setCourseId(course.maKhoaHoc);
+                              handleClickOpen();
+                            }}
+                          >
+                            Xoá
+                          </Button>
+                        </Box>
+                      </CustomTableCell>
+                    </TableRow>
+                  ) : null
+                )}
               </TableBody>
             </Table>
           </TableContainer>
@@ -313,245 +416,173 @@ const CoursesManagement: React.FC = () => {
         />
       </Box>
 
-      <Dialog
+      <DialogDelete
         open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        sx={{
-          "& .MuiDialog-paper": {
-            borderRadius: "12px",
-            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.15)",
-            backgroundColor: "#fff",
-          },
-        }}
-      >
-        <DialogTitle
-          id="alert-dialog-title"
-          sx={{
-            fontWeight: "bold",
-            fontSize: "20px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#D32F2F",
-          }}
-        >
-          <ErrorIcon
-            sx={{ marginRight: "8px", fontSize: "24px", color: "#D32F2F" }}
-          />
-          Xoá khoá học này?
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText
-            id="alert-dialog-description"
-            sx={{
-              fontSize: "16px",
-              textAlign: "center",
-              color: "#333",
-              padding: "10px 0",
-            }}
-          >
-            Bạn có chắc chắn muốn xoá khoá học này? Việc này sẽ không thể khôi
-            phục lại!
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions
-          sx={{
-            justifyContent: "space-between",
-            padding: "15px 20px",
-          }}
-        >
-          <Button
-            variant="outlined"
-            color="secondary"
-            disabled={isPending}
-            onClick={handleClose}
-            sx={{
-              width: "48%",
-              fontWeight: "bold",
-              borderRadius: "8px",
-              "&:hover": {
-                backgroundColor: "#f2f2f2",
-              },
-            }}
-          >
-            Hủy
-          </Button>
-          <LoadingButton
-            loading={isPending}
-            variant="contained"
-            color="error"
-            disabled={isPending}
-            onClick={handleDeleteCourse}
-            autoFocus
-            sx={{
-              width: "48%",
-              fontWeight: "bold",
-              borderRadius: "8px",
-              backgroundColor: "#D32F2F",
-              "&:hover": {
-                backgroundColor: "#C2185B",
-              },
-            }}
-          >
-            Xoá
-          </LoadingButton>
-        </DialogActions>
-      </Dialog>
+        message="khoá học"
+        isPending={isPending}
+        handleClose={handleClose}
+        handleDelete={handleDeleteCourse}
+      />
 
-      <Dialog
-        open={errorDialogOpen}
-        onClose={() => setErrorDialogOpen(false)}
-        aria-labelledby="error-dialog-title"
-        aria-describedby="error-dialog-description"
-        sx={{
-          "& .MuiDialog-paper": {
-            borderRadius: "12px",
-            boxShadow: "0px 6px 15px rgba(0, 0, 0, 0.1)",
-            backgroundColor: "#fff",
-          },
+      <DialogError
+        isOpen={errorDialogOpen}
+        onClose={() => {
+          setErrorDialogOpen(false);
+          reset();
         }}
-      >
-        <DialogTitle
-          id="error-dialog-title"
-          sx={{
-            fontWeight: "bold",
-            fontSize: "22px",
-            color: "#D32F2F",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <ErrorIcon
-            sx={{ marginRight: "10px", fontSize: "28px", color: "#D32F2F" }}
-          />
-          Lỗi
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText
-            id="error-dialog-description"
-            sx={{
-              fontSize: "16px",
-              color: "#333",
-              textAlign: "center",
-              padding: "10px 0",
-            }}
-          >
-            Đã xảy ra lỗi vui lòng quay về trang chủ hoặc thử lại
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions
-          sx={{
-            justifyContent: "center",
-            padding: "20px",
-          }}
-        >
-          <Button
-            onClick={() => setErrorDialogOpen(false)}
-            autoFocus
-            sx={{
-              backgroundColor: "#D32F2F",
-              color: "#fff",
-              fontWeight: "bold",
-              borderRadius: "8px",
-              padding: "8px 16px",
-              "&:hover": {
-                backgroundColor: "#C2185B",
-              },
-            }}
-          >
-            Đóng
-          </Button>
-        </DialogActions>
-      </Dialog>
+        errorMessage={errorMessage}
+      />
 
-      <Dialog
-        open={successDialogOpen}
-        onClose={() => setSuccessDialogOpen(false)}
-        aria-labelledby="success-dialog-title"
-        aria-describedby="success-dialog-description"
-        sx={{
-          "& .MuiDialog-paper": {
-            borderRadius: "16px",
-            boxShadow: "0px 6px 20px rgba(0, 0, 0, 0.1)",
-            backgroundColor: "#ffffff",
-            animation: "fadeIn 0.3s ease-in-out",
-          },
+      <DialogSuccess
+        message="Khoá học"
+        isOpen={successDialogOpen}
+        onClose={() => {
+          setSuccessDialogOpen(false);
         }}
-      >
-        <DialogTitle
-          id="success-dialog-title"
-          sx={{
-            fontWeight: "bold",
-            fontSize: "24px",
-            color: "#388E3C",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "16px",
-          }}
-        >
-          <CheckCircleIcon
-            sx={{ marginRight: "12px", fontSize: "36px", color: "#388E3C" }}
-          />
-          Thành công
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText
-            id="success-dialog-description"
-            sx={{
-              fontSize: "16px",
-              textAlign: "center",
-              color: "#555",
-              padding: "10px 0",
-            }}
-          >
-            Khoá học đã được xoá thành công.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions
-          sx={{
-            justifyContent: "center",
-            padding: "20px",
-          }}
-        >
-          <Button
-            onClick={() => setSuccessDialogOpen(false)}
-            autoFocus
-            sx={{
-              backgroundColor: "#388E3C",
-              color: "white",
-              fontWeight: "bold",
-              padding: "8px 24px",
-              borderRadius: "30px",
-              transition: "background-color 0.3s ease, transform 0.3s ease",
-              "&:hover": {
-                backgroundColor: "#2c6b29",
-                transform: "scale(1.05)",
-              },
-            }}
-          >
-            Đóng
-          </Button>
-        </DialogActions>
-      </Dialog>
-
+      />
       {/* thêm khoá học ở đây */}
       <Dialog
         open={isAddOrEditDialog}
-        onClose={() => setIsAddOrEditDialog(false)}
+        onClose={() => {
+          setIsAddOrEditDialog(false);
+        }}
       >
-        <form>
+        <form className="w-[600px]" onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle className="text-center" sx={{ fontWeight: "bold" }}>
             THÊM KHOÁ HỌC
           </DialogTitle>
-          <Stack spacing={2} p={3}>
-            <FormItem icon={<PersonIcon/>} placeholder="Mã khoá học"/>
-            <FormItem icon={<HomeRepairServiceIcon/>} isDropdown={true} placeholder="Danh mục khoá học"/>
-            <FormItem icon={<StarIcon/>} placeholder="Đánh giá"/>
+          <Stack direction="row" spacing={3} p={2}>
+            <Box sx={{ width: "50%" }}>
+              <Stack spacing={2}>
+                <FormItem
+                  icon={<PersonIcon />}
+                  placeholder="Mã khoá học"
+                  error={errors.maKhoaHoc?.message}
+                  control={control}
+                  name="maKhoaHoc"
+                />
+                <FormItem
+                  icon={<HomeRepairServiceIcon />}
+                  placeholder="Danh mục khoá học"
+                  isDropdown={true}
+                  dropdownItems={danhMucKhoaHoc}
+                  error={errors.maDanhMucKhoaHoc?.message}
+                  control={control}
+                  name="maDanhMucKhoaHoc"
+                />
+                <FormItem
+                  icon={<StarIcon />}
+                  placeholder="Đánh giá"
+                  error={errors.danhGia?.message}
+                  control={control}
+                  name="danhGia"
+                />
+                <FormItem
+                  icon={<HomeRepairServiceIcon />}
+                  placeholder="Mã nhóm"
+                  isDropdown={true}
+                  dropdownItems={maNhom}
+                  error={errors.maNhom?.message}
+                  control={control}
+                  name="maNhom"
+                />
+                <Box>
+                  <input
+                    type="file"
+                    accept="image/jpeg, image/jpg, image/png"
+                    {...control.register("hinhAnh")}
+                  />
+                  {errors.hinhAnh && (
+                    <Typography color="error" fontSize="14px" mt={1}>
+                      {errors.hinhAnh.message as string}
+                    </Typography>
+                  )}
+                </Box>
+              </Stack>
+            </Box>
+            <Box sx={{ width: "50%" }}>
+              <Stack spacing={2}>
+                <FormItem
+                  icon={<ContactsIcon />}
+                  placeholder="Tên khoá học"
+                  error={errors.tenKhoaHoc?.message}
+                  control={control}
+                  name="tenKhoaHoc"
+                />
+                <FormItem
+                  icon={<CalendarMonthIcon />}
+                  placeholder="Ngày tạo"
+                  error={errors.ngayTao?.message}
+                  control={control}
+                  name="ngayTao"
+                />
+                <FormItem
+                  icon={<VisibilityIcon />}
+                  placeholder="Lượt xem"
+                  error={errors.luotXem?.message}
+                  control={control}
+                  name="luotXem"
+                />
+                <FormItem
+                  icon={<TextSnippetIcon />}
+                  placeholder="Bí danh"
+                  error={errors.biDanh?.message}
+                  control={control}
+                  name="biDanh"
+                />
+              </Stack>
+            </Box>
           </Stack>
+          <Box p={2}>
+            <Typography
+              sx={{
+                padding: "0.8rem 0",
+                paddingLeft: "10px",
+                backgroundColor: "#f9f9f9",
+                borderRadius: "4px 4px 0 0",
+                fontWeight: "bold",
+                fontSize: "1.2rem",
+                mb: 1,
+                borderBottom: "1px solid #cacaca",
+              }}
+            >
+              Mô tả khóa học
+            </Typography>
+            <Stack direction="row" alignItems="flex-start" spacing={2}>
+              <TextField
+                placeholder="Nhập mô tả"
+                multiline
+                rows={4}
+                fullWidth
+                {...control.register("moTa")}
+                error={!!errors.moTa}
+                helperText={errors.moTa?.message}
+              />
+            </Stack>
+          </Box>
+          <DialogActions>
+            <Button
+              type="submit"
+              sx={{
+                color: "white",
+                backgroundColor: "#3fb394",
+              }}
+            >
+              Thêm khoá học
+            </Button>
+            <Button
+              onClick={() => {
+                setIsAddOrEditDialog(false);
+                reset()
+              }}
+              sx={{
+                color: "white",
+                backgroundColor: "#e13247",
+              }}
+            >
+              Huỷ
+            </Button>
+          </DialogActions>
         </form>
       </Dialog>
     </div>
