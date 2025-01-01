@@ -16,7 +16,7 @@ import { AppDispatch, RootState } from "../../../store";
 import { useEffect, useState } from "react";
 import { fetchCatelog } from "../../../store/slices/categotySlice";
 import { Course } from "../../../interfaces/course";
-import {  useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import AccessAlarmsIcon from "@mui/icons-material/AccessAlarms";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import SignalCellularAltIcon from "@mui/icons-material/SignalCellularAlt";
@@ -51,8 +51,18 @@ export default function CatalogCourse() {
         navigate(`${PATH.HOME.COURSE_DETAILS}/${course.maKhoaHoc}`);
       };
       return (
-        <Grid item xs={12} sm={6} md={3} key={course.maKhoaHoc}>
-          <div className={`card-container ${positionClass}`}>
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          md={3}
+          key={course.maKhoaHoc}
+          className="course-card-grid"
+        >
+          <div
+            className={`card-container ${positionClass}`}
+            onClick={handleClick}
+          >
             <Card className="course-item-card">
               <CardMedia
                 className="course-item-card-media"
@@ -195,6 +205,7 @@ export default function CatalogCourse() {
           spacing={2}
           mt={5}
           style={{ padding: "0px 40px", marginLeft: "10px" }}
+          className="catelog_grid"
         >
           {renderCourses(catelogList)}
         </Grid>
