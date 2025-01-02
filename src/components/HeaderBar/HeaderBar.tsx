@@ -12,21 +12,20 @@ import React, { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
-import { PATH } from "../../../routes/path";
-
+import { PATH } from "../../routes/path";
 
 interface HeaderBarProps {
   buttonLabel: string;
   searchPlaceholder: string;
   onSearch: (query: string) => void;
-  handleOpenDialogAdd?: ()=> void;
+  handleOpenDialogAdd?: () => void;
 }
 
 export const HeaderBar: React.FC<HeaderBarProps> = ({
   buttonLabel,
   searchPlaceholder,
   onSearch,
-  handleOpenDialogAdd
+  handleOpenDialogAdd,
 }) => {
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState("");

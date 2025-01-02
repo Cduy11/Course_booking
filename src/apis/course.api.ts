@@ -54,5 +54,13 @@ export const courseApi = {
     } catch (error) {
       throw error
     }
+  },
+  updateCourse: async (formData: Courses) => {
+    try {
+      const response = await fetcher.put("/QuanLyKhoaHoc/CapNhatKhoaHoc", formData)
+      return response.data.content
+    } catch (error) {
+      throw error
+    }
   }
 }

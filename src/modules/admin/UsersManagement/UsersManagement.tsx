@@ -14,8 +14,6 @@ import {
   DialogContent,
   DialogTitle,
   MenuItem,
-  Pagination,
-  PaginationItem,
   Paper,
   Select,
   SelectChangeEvent,
@@ -35,20 +33,24 @@ import { toast } from "react-toastify";
 import * as Yup from "yup";
 import { userApi } from "../../../apis/user.api";
 import DialogDelete from "../../../components/DialogDelete/DialogDelete";
-import DialogEnrollSuccess from "../../../components/DialogEnrollSuccess/DialogEnrollSuccess";
 import DialogError from "../../../components/DialogError/DialogError";
 import DialogSuccess from "../../../components/DialogSuccess/DialogSuccess";
 import { QueryKeys } from "../../../constants/queryKeys";
 import useOpen from "../../../hooks/useOpen";
 import { Users } from "../../../interfaces/users.interface";
-import { CustomTableCell } from "../components/CustomTableCell";
-import FormItem from "../components/FormItem/FormItem";
-import AddSearchBar from "../components/HeaderBar";
+
+import { CustomTableCell } from "../../../components/CustomTableCell/CustomTableCell";
+import FormItem from "../../../components/FormItem/FormItem";
+import HeaderBar from "../../../components/HeaderBar/HeaderBar";
+import PaginationCustom from "../../../components/PaginationCustom/PaginationCustom";
+import { loaiNguoiDung } from "../../../constants/dropdownItems";
 import {
+  cancelEnrollCourse,
   enrollCourse,
+  getPendingCourseList,
+  getUserEnrolledCourses,
   unenrolledCourse,
 } from "./../../../apis/enrolledCourse.api";
-import { loaiNguoiDung } from "../../../constants/dropdownItems";
 
 interface DataEdit {
   taiKhoan: string;
@@ -79,6 +81,7 @@ const validationSchema = Yup.object({
 });
 const UsersManagement: React.FC = () => {
   const [page, setPage] = useState(1);
+  const [enrolledCourseListPage, setEnrolledCourseListPage] = useState(1);
   const [keyword, setKeyword] = useState("");
   const [dataEdit, setDataEdit] = useState<DataEdit | null>(null);
   const [flag, setFlag] = useState(true);
@@ -86,11 +89,17 @@ const UsersManagement: React.FC = () => {
   const [unenrolledCourseState, setUnenrolledCourseState] = useState<
     Course[] | null
   >(null);
+  const [enrolledCourseList, setEnrolledCourseList] = useState<Course[] | null>(
+    null
+  );
+  const [pendingCourseList, setPendingCourseList] = useState<Course[] | null>(
+    null
+  );
+  const [pendingCourseListPage, setPendingCourseListPage] = useState(1);
   const [selectedCourse, setSelectedCourse] = useState<string>("");
   const [selectedCourseId, setSelectedCourseId] = useState<string>("");
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
-  const [successEnrollDialogOpen, setSuccessEnrollDialogOpen] = useState(false);
   const [isAddOrEditDialog, setIsAddOrEditDialog] = useState(false);
   const [enrollDialogOpen, setEnrollDialogOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -280,30 +289,84 @@ const UsersManagement: React.FC = () => {
       console.error("Error fetching unenrolled courses:", error);
     }
   };
-  const handleEnroll = async (courseId: string, userId: string | null) => {
-    const dataEnroll = {
-      maKhoaHoc: courseId,
-      taiKhoan: userId,
-    };
+  const handleEnroll = async (maKhoaHoc: string, taiKhoan: string | null) => {
     try {
-      await enrollCourse(dataEnroll);
-      setSelectedCourse("");
+      await enrollCourse({ maKhoaHoc, taiKhoan });
+
       if (userId) {
-        await handleFetchUnenrolledCourse(userId);
+        const [unenrolled, enrolled, pending] = await Promise.all([
+          handleFetchUnenrolledCourse(userId),
+          handleGetEnrolledCourse(userId),
+          handleFetchPendingCourseList(userId),
+        ]);
+        setUnenrolledCourseState(unenrolled);
+        setEnrolledCourseList(enrolled);
+        setPendingCourseList(pending);
       }
-      setSuccessEnrollDialogOpen(true);
+
+      setSelectedCourse("");
+      toast.success("Ghi danh thành công!");
     } catch (error) {
       setErrorDialogOpen(true);
       setErrorMessage("Xảy ra lỗi, xin vui lòng thử lại!");
     }
   };
-  // const handleGetEnrolledCourse = async (userId: string) => {
-  //   const result = await getUserEnrolledCourses(userId);
-  //   return result;
-  // };
+  const handleGetEnrolledCourse = async (userId: string | null) => {
+    try {
+      const result = await getUserEnrolledCourses(userId);
+      setEnrolledCourseList(result);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const startIndex = (enrolledCourseListPage - 1) * 2;
+  const paginatedEnrolledCourse = enrolledCourseList?.slice(
+    startIndex,
+    startIndex + 2
+  );
+  const startIndexPending = (pendingCourseListPage - 1) * 2;
+  const paginatedPendingCourse = pendingCourseList?.slice(
+    startIndexPending,
+    startIndexPending + 2
+  );
+
+  const handleCancelEnrollCourse = async (
+    maKhoaHoc: string,
+    taiKhoan: string | null
+  ) => {
+    try {
+      await cancelEnrollCourse({ maKhoaHoc, taiKhoan });
+      if (userId) {
+        const [enrolled, unenrolled, pending] = await Promise.all([
+          handleGetEnrolledCourse(userId),
+          handleFetchUnenrolledCourse(userId),
+          handleFetchPendingCourseList(userId),
+        ]);
+        setEnrolledCourseList(enrolled);
+        setUnenrolledCourseState(unenrolled);
+        setPendingCourseList(pending);
+      }
+
+      toast.success("Huỷ ghi danh thành công!");
+    } catch (error) {
+      setErrorDialogOpen(true);
+      setErrorMessage("Xảy ra lỗi khi hủy ghi danh!");
+    }
+  };
+  const handleFetchPendingCourseList = async (taiKhoan: string | null) => {
+    try {
+      const res = await getPendingCourseList(taiKhoan);
+      setPendingCourseList(res);
+      return res;
+    } catch (error) {
+      throw error;
+    }
+  };
   return (
     <Box>
-      <AddSearchBar
+      <HeaderBar
         buttonLabel="Thêm người dùng"
         searchPlaceholder="Nhập vào họ tên người dùng hoặc tài khoản cần tìm"
         onSearch={handleSearch}
@@ -424,6 +487,8 @@ const UsersManagement: React.FC = () => {
                               setEnrollDialogOpen(true);
                               setUserId(item.taiKhoan);
                               handleFetchUnenrolledCourse(item.taiKhoan);
+                              handleGetEnrolledCourse(item.taiKhoan);
+                              handleFetchPendingCourseList(item.taiKhoan);
                             }}
                             sx={{
                               textTransform: "none",
@@ -469,41 +534,12 @@ const UsersManagement: React.FC = () => {
           </TableContainer>
         </Box>
       )}
-      <Box my={5} display="flex" justifyContent="center">
-        <Pagination
-          size="large"
-          count={totalPages > 1 ? totalPages : 1}
-          page={page}
-          onChange={(_event, page) => setPage(page)}
-          shape="rounded"
-          renderItem={(item) => (
-            <PaginationItem
-              {...item}
-              components={{
-                previous: () => (
-                  <span style={{ color: "black" }}>{"< Trước"}</span>
-                ),
-                next: () => <span style={{ color: "black" }}>{"Sau >"}</span>,
-              }}
-            />
-          )}
-          sx={{
-            "& .MuiPaginationItem-root": {
-              backgroundColor: "white",
-              color: "black",
-              border: "1px solid #40b394",
-              "&.Mui-selected": {
-                backgroundColor: "#40b394",
-                color: "white",
-              },
-              "&:hover": {
-                backgroundColor: "#40b394",
-                color: "white",
-              },
-            },
-          }}
-        />
-      </Box>
+      <PaginationCustom
+        size="large"
+        count={totalPages > 1 ? totalPages : 1}
+        page={page}
+        onChange={(_event, page) => setPage(page)}
+      />
       <DialogDelete
         open={open}
         message="người dùng"
@@ -513,7 +549,7 @@ const UsersManagement: React.FC = () => {
       />
 
       <DialogSuccess
-        message="Người dùng"
+        message="Người dùng đã được xoá thành công khỏi hệ thống!"
         isOpen={successDialogOpen}
         onClose={() => {
           setSuccessDialogOpen(false);
@@ -704,18 +740,68 @@ const UsersManagement: React.FC = () => {
                     Tên khóa học
                   </TableCell>
                   <TableCell className="font-bold text-center">
-                    Chờ xác nhận
+                    Thao tác
                   </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                <TableRow>
-                  <TableCell className="text-center">1</TableCell>
-                  <TableCell className="text-center">Khóa học A</TableCell>
-                  <TableCell className="text-center">Đang chờ</TableCell>
-                </TableRow>
+                {paginatedPendingCourse?.map((course, index) => (
+                  <TableRow key={course.maKhoaHoc}>
+                    <TableCell className="text-center">
+                      {startIndexPending + index + 1}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {course.tenKhoaHoc}
+                    </TableCell>
+                    <TableCell className="text-center d-flex">
+                      <Box
+                        sx={{
+                          display: "flex",
+                        }}
+                      >
+                        <Button
+                          onClick={async () => {
+                            await handleEnroll(course.maKhoaHoc, userId);
+                          }}
+                          sx={{
+                            backgroundColor: "#47b094",
+                            color: "white",
+                            fontSize: "10px",
+                            minWidth: "80px",
+                            mr: 1,
+                          }}
+                        >
+                          Xác thực
+                        </Button>
+                        <Button
+                          onClick={async () => {
+                            await handleCancelEnrollCourse(
+                              course.maKhoaHoc,
+                              userId
+                            );
+                          }}
+                          sx={{
+                            backgroundColor: "#de3442",
+                            color: "white",
+                            fontSize: "10px",
+                          }}
+                        >
+                          Xoá
+                        </Button>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
+            {pendingCourseList && pendingCourseList.length > 0 && (
+              <PaginationCustom
+                size="small"
+                count={Math.ceil((pendingCourseList?.length || 0) / 2)}
+                page={pendingCourseListPage}
+                onChange={(_event, page) => setPendingCourseListPage(page)}
+              />
+            )}
           </Box>
           <Box>
             <Typography className="text-sm font-semibold mb-2">
@@ -734,13 +820,42 @@ const UsersManagement: React.FC = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                <TableRow>
-                  <TableCell className="text-center">1</TableCell>
-                  <TableCell className="text-center">Khóa học B</TableCell>
-                  <TableCell className="text-center">Đã xác nhận</TableCell>
-                </TableRow>
+                {paginatedEnrolledCourse?.map((course, index) => (
+                  <TableRow key={course.maKhoaHoc}>
+                    <TableCell className="text-center">{index + 1}</TableCell>
+                    <TableCell className="text-center">
+                      {course.tenKhoaHoc}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Button
+                        onClick={() => {
+                          handleCancelEnrollCourse(course.maKhoaHoc, userId);
+                          if (userId) {
+                            handleGetEnrolledCourse(userId);
+                            handleFetchUnenrolledCourse(userId);
+                          }
+                        }}
+                        sx={{
+                          backgroundColor: "#de3442",
+                          color: "white",
+                          fontSize: "10px",
+                        }}
+                      >
+                        Xoá
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
+            {enrolledCourseList && enrolledCourseList.length > 0 && (
+              <PaginationCustom
+                size="small"
+                count={Math.ceil((enrolledCourseList?.length || 0) / 2)}
+                page={enrolledCourseListPage}
+                onChange={(_event, page) => setEnrolledCourseListPage(page)}
+              />
+            )}
           </Box>
         </DialogContent>
         <DialogActions className="justify-center">
@@ -753,10 +868,6 @@ const UsersManagement: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      <DialogEnrollSuccess
-        onClose={() => setSuccessEnrollDialogOpen(false)}
-        isOpen={successEnrollDialogOpen}
-      />
     </Box>
   );
 };

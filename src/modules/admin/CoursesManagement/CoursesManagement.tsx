@@ -13,8 +13,6 @@ import {
   Dialog,
   DialogActions,
   DialogTitle,
-  Pagination,
-  PaginationItem,
   Paper,
   Stack,
   Table,
@@ -23,24 +21,40 @@ import {
   TableHead,
   TableRow,
   TextField,
-  Typography,
+  Typography
 } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as yup from "yup";
 import { courseApi } from "../../../apis/course.api";
+import { CustomTableCell } from "../../../components/CustomTableCell/CustomTableCell";
 import DialogDelete from "../../../components/DialogDelete/DialogDelete";
 import DialogError from "../../../components/DialogError/DialogError";
 import DialogSuccess from "../../../components/DialogSuccess/DialogSuccess";
+import FormItem from "../../../components/FormItem/FormItem";
+import HeaderBar from "../../../components/HeaderBar/HeaderBar";
+import PaginationCustom from "../../../components/PaginationCustom/PaginationCustom";
 import { danhMucKhoaHoc, maNhom } from "../../../constants/dropdownItems";
 import { QueryKeys } from "../../../constants/queryKeys";
 import useOpen from "../../../hooks/useOpen";
 import { Courses } from "../../../interfaces/courses.interface";
-import { CustomTableCell } from "../components/CustomTableCell";
-import FormItem from "../components/FormItem/FormItem";
-import AddSearchBar from "../components/HeaderBar";
+
+interface CourseEdit {
+  maKhoaHoc: string;
+  tenKhoaHoc: string;
+  moTa: string;
+  ngayTao: string;
+  maDanhMucKhoaHoc: string;
+  maNhom: string;
+  hinhAnh: string | FileList | null;
+  luotXem: number | string;
+  danhGia: number | string;
+  biDanh: string;
+  taiKhoanNguoiTao?: string;
+}
+
 const validationSchema = yup.object({
   maKhoaHoc: yup.string().required("Mã khóa học không được để trống"),
   biDanh: yup.string().required("Bí danh không được để trống"),
@@ -89,6 +103,7 @@ const CoursesManagement: React.FC = () => {
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const [isAddOrEditDialog, setIsAddOrEditDialog] = useState(false);
+  const [dataEdit, setDataEdit] = useState<CourseEdit | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [flag, setFlag] = useState(true);
   const { open, handleClickOpen, onClose } = useOpen();
@@ -140,6 +155,7 @@ const CoursesManagement: React.FC = () => {
     },
     onSuccess: () => {
       setSuccessDialogOpen(true);
+      onClose();
       queryClient.setQueryData(
         [QueryKeys.LIST_COURSE, keyword, page],
         (oldData: any) => {
@@ -164,6 +180,7 @@ const CoursesManagement: React.FC = () => {
       onClose();
       setCourseId(null);
     }
+    setDataEdit(null);
   };
 
   const handleDeleteCourse = () => {
@@ -209,6 +226,42 @@ const CoursesManagement: React.FC = () => {
       setIsAddOrEditDialog(false);
     },
   });
+  const { mutate: updateCourse } = useMutation({
+    mutationFn: (formData: Courses) => courseApi.updateCourse(formData),
+    onError: (error: any) => {
+      toast.error(
+        error.response.data ||
+          "Cập nhật thông tin khoá học thất bại. Vui lòng thử lại."
+      );
+    },
+    onSuccess: (updatedCourse) => {
+      toast.success("Cập nhật thông tin khoá học thành công!");
+
+      queryClient.setQueryData(
+        [QueryKeys.LIST_COURSE, keyword, page],
+        (oldData: any) => {
+          if (!oldData) return { items: [updatedCourse], totalPages: 1 };
+
+          const updatedItems = oldData.items.map((item: Courses) =>
+            item.maKhoaHoc === updatedCourse.maKhoaHoc ? updatedCourse : item
+          );
+
+          return {
+            ...oldData,
+            items: updatedItems,
+          };
+        }
+      );
+
+      reset();
+      setIsAddOrEditDialog(false);
+    },
+  });
+  useEffect(() => {
+    if (dataEdit) {
+      reset(dataEdit);
+    }
+  }, [dataEdit, reset]);
   const handleSearch = (value: string) => {
     setFlag(false);
     setKeyword(value);
@@ -217,20 +270,47 @@ const CoursesManagement: React.FC = () => {
 
   const onSubmit = (data: any) => {
     const currentUser = localStorage.getItem("currentUser");
+    let taiKhoanNguoiTao = "";
+
     if (currentUser) {
       const user = JSON.parse(currentUser);
-      data.taiKhoanNguoiTao = user.taiKhoan;
+      taiKhoanNguoiTao = user.taiKhoan;
     }
-    const { hinhAnh } = data;
+
+    const formData = { ...data };
+    const { hinhAnh } = formData;
+
     if (hinhAnh && hinhAnh[0]) {
-      data.hinhAnh = hinhAnh[0].name;
+      if (typeof hinhAnh === "string") {
+        formData.hinhAnh = hinhAnh;
+      } else {
+        formData.hinhAnh = hinhAnh[0].name;
+      }
     }
-    addCourse(data);
-    reset()
+
+    if (dataEdit) {
+      updateCourse({
+        ...formData,
+        maKhoaHoc: dataEdit.maKhoaHoc,
+        taiKhoanNguoiTao,
+      });
+    } else {
+      addCourse({
+        ...formData,
+        taiKhoanNguoiTao,
+      });
+    }
+  };
+  const handleEdit = (courseData: CourseEdit) => {
+    setDataEdit({
+      ...courseData,
+      hinhAnh: courseData.hinhAnh as string,
+    });
+    setIsAddOrEditDialog(true);
   };
   return (
     <div>
-      <AddSearchBar
+      <HeaderBar
         buttonLabel="Thêm khoá học"
         searchPlaceholder="Nhập vào tên khoá học cần tìm"
         onSearch={handleSearch}
@@ -354,6 +434,7 @@ const CoursesManagement: React.FC = () => {
                             Ghi danh
                           </Button>
                           <Button
+                            onClick={() => handleEdit(course)}
                             sx={{
                               textTransform: "none",
                               backgroundColor: "#fcc205",
@@ -386,35 +467,12 @@ const CoursesManagement: React.FC = () => {
         </Box>
       )}
 
-      <Box my={5} display="flex" justifyContent="center">
-        <Pagination
-          size="large"
-          count={totalPages > 1 ? totalPages : 1}
-          page={page}
-          onChange={(_, value) => setPage(value)}
-          shape="rounded"
-          renderItem={(item) => (
-            <PaginationItem
-              {...item}
-              components={{
-                previous: () => <span>{"< Trước"}</span>,
-                next: () => <span>{"Sau >"}</span>,
-              }}
-            />
-          )}
-          sx={{
-            "& .MuiPaginationItem-root": {
-              backgroundColor: "white",
-              color: "black",
-              border: "1px solid #40b394",
-              "&.Mui-selected": {
-                backgroundColor: "#40b394",
-                color: "white",
-              },
-            },
-          }}
-        />
-      </Box>
+      <PaginationCustom
+        size="large"
+        count={totalPages > 1 ? totalPages : 1}
+        page={page}
+        onChange={(_event, page) => setPage(page)}
+      />
 
       <DialogDelete
         open={open}
@@ -434,7 +492,7 @@ const CoursesManagement: React.FC = () => {
       />
 
       <DialogSuccess
-        message="Khoá học"
+        message="Khoá học đã được xoá thành công khỏi hệ thống!"
         isOpen={successDialogOpen}
         onClose={() => {
           setSuccessDialogOpen(false);
@@ -449,7 +507,7 @@ const CoursesManagement: React.FC = () => {
       >
         <form className="w-[600px]" onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle className="text-center" sx={{ fontWeight: "bold" }}>
-            THÊM KHOÁ HỌC
+            {dataEdit ? "CẬP NHẬT THÔNG TIN" : "THÊM KHOÁ HỌC"}
           </DialogTitle>
           <Stack direction="row" spacing={3} p={2}>
             <Box sx={{ width: "50%" }}>
@@ -568,12 +626,13 @@ const CoursesManagement: React.FC = () => {
                 backgroundColor: "#3fb394",
               }}
             >
-              Thêm khoá học
+              {dataEdit ? "Cập nhật" : "Thêm khoá học"}
             </Button>
             <Button
               onClick={() => {
                 setIsAddOrEditDialog(false);
-                reset()
+                setDataEdit(null);
+                reset();
               }}
               sx={{
                 color: "white",

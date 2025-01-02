@@ -40,7 +40,7 @@ const DialogSuccess: React.FC<DialogSuccessProps> = ({ message, isOpen, onClose 
             fontSize: "16px",
           }}
         >
-          {message} đã được xoá thành công khỏi hệ thống!
+          {message} 
         </DialogContentText>
       </DialogContent>
       <DialogActions>
