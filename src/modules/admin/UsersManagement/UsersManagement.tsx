@@ -680,11 +680,12 @@ const UsersManagement: React.FC = () => {
       <Dialog
         open={enrollDialogOpen}
         onClose={() => setEnrollDialogOpen(false)}
-        className="w-full max-w-lg mx-auto"
+        maxWidth="md" 
+        fullWidth 
         PaperProps={{
           sx: {
-            width: "500px",
-            maxWidth: "unset",
+            width: "600px", 
+            maxWidth: "90vw", 
           },
         }}
       >

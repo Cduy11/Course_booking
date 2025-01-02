@@ -1,8 +1,6 @@
+import DataEnroll from "../interfaces/dataEnroll.interface"
 import fetcher from "./fetcher"
-interface DataEnroll {
-    maKhoaHoc: string,
-    taiKhoan: string | null;
-}
+
 export const unenrolledCourse = async (userId: string) => {
     try {
         const response = await fetcher.post(`/QuanLyNguoiDung/LayDanhSachKhoaHocChuaGhiDanh?TaiKhoan=${userId}`)

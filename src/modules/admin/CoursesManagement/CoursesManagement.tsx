@@ -12,16 +12,21 @@ import {
   CircularProgress,
   Dialog,
   DialogActions,
+  DialogContent,
   DialogTitle,
+  MenuItem,
   Paper,
+  Select,
+  SelectChangeEvent,
   Stack,
   Table,
   TableBody,
+  TableCell,
   TableContainer,
   TableHead,
   TableRow,
   TextField,
-  Typography
+  Typography,
 } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
@@ -40,6 +45,15 @@ import { danhMucKhoaHoc, maNhom } from "../../../constants/dropdownItems";
 import { QueryKeys } from "../../../constants/queryKeys";
 import useOpen from "../../../hooks/useOpen";
 import { Courses } from "../../../interfaces/courses.interface";
+import {
+  getEnrolledUsers,
+  getPendingUsers,
+  getUnenrolledUser,
+} from "../../../apis/userEnroll.api";
+import {
+  cancelEnrollCourse,
+  enrollCourse,
+} from "../../../apis/enrolledCourse.api";
 
 interface CourseEdit {
   maKhoaHoc: string;
@@ -48,13 +62,17 @@ interface CourseEdit {
   ngayTao: string;
   maDanhMucKhoaHoc: string;
   maNhom: string;
-  hinhAnh: string | FileList | null;
-  luotXem: number | string;
-  danhGia: number | string;
+  hinhAnh: FileList;
+  luotXem: number;
+  danhGia: number;
   biDanh: string;
   taiKhoanNguoiTao?: string;
 }
-
+interface User {
+  taiKhoan: string;
+  hoTen: string;
+  biDanh: string;
+}
 const validationSchema = yup.object({
   maKhoaHoc: yup.string().required("Mã khóa học không được để trống"),
   biDanh: yup.string().required("Bí danh không được để trống"),
@@ -98,17 +116,36 @@ const validationSchema = yup.object({
 });
 const CoursesManagement: React.FC = () => {
   const [page, setPage] = useState(1);
+  const [enrolledUserListPage, setEnrolledUserListPage] = useState(1);
+  const [pendingUserListPage, setPendingUserListPage] = useState(1);
   const [keyword, setKeyword] = useState("");
   const [courseId, setCourseId] = useState(null);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const [isAddOrEditDialog, setIsAddOrEditDialog] = useState(false);
+  const [enrollDialogOpen, setEnrollDialogOpen] = useState(false);
   const [dataEdit, setDataEdit] = useState<CourseEdit | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [unenrolledUser, setUnenrolledUser] = useState<User[] | null>(null);
+  const [selectedUser, setSelectedUser] = useState<string>("");
+  const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [flag, setFlag] = useState(true);
   const { open, handleClickOpen, onClose } = useOpen();
   const queryClient = useQueryClient();
+  const [enrolledUsers, setEnrolledUsers] = useState<User[]>([]);
+  const [pendingUsers, setPendingUsers] = useState<User[]>([]);
+  const [selectedCourseId, setSelectedCourseId] = useState<string>("");
   const pageSize = 5;
+  const startIndex = (enrolledUserListPage - 1) * 2;
+  const paginatedEnrolledUser = enrolledUsers?.slice(
+    startIndex,
+    startIndex + 2
+  );
+  const startIndexPending = (pendingUserListPage - 1) * 2;
+  const paginatedPendingUser = pendingUsers?.slice(
+    startIndexPending,
+    startIndexPending + 2
+  );
   const [totalPagesSearch, setTotalPagesSearch] = useState<number>(1);
   const [totalPagesList, setTotalPagesList] = useState<number>(1);
   const {
@@ -255,11 +292,37 @@ const CoursesManagement: React.FC = () => {
 
       reset();
       setIsAddOrEditDialog(false);
+      setDataEdit(null);
     },
   });
   useEffect(() => {
     if (dataEdit) {
-      reset(dataEdit);
+      const resetData = {
+        maKhoaHoc: dataEdit.maKhoaHoc,
+        biDanh: dataEdit.biDanh,
+        tenKhoaHoc: dataEdit.tenKhoaHoc,
+        moTa: dataEdit.moTa,
+        luotXem: dataEdit.luotXem,
+        danhGia: dataEdit.danhGia,
+        hinhAnh: dataEdit.hinhAnh,
+        maNhom: dataEdit.maNhom,
+        ngayTao: dataEdit.ngayTao,
+        maDanhMucKhoaHoc: dataEdit.maDanhMucKhoaHoc,
+      };
+      reset(resetData);
+    } else {
+      reset({
+        maKhoaHoc: '',
+        biDanh: '',
+        tenKhoaHoc: '',
+        moTa: '',
+        luotXem: 0,
+        danhGia: 0,
+        hinhAnh: undefined,
+        maNhom: '',
+        ngayTao: '',
+        maDanhMucKhoaHoc: '',
+      });
     }
   }, [dataEdit, reset]);
   const handleSearch = (value: string) => {
@@ -271,23 +334,19 @@ const CoursesManagement: React.FC = () => {
   const onSubmit = (data: any) => {
     const currentUser = localStorage.getItem("currentUser");
     let taiKhoanNguoiTao = "";
-
     if (currentUser) {
       const user = JSON.parse(currentUser);
       taiKhoanNguoiTao = user.taiKhoan;
     }
-
     const formData = { ...data };
     const { hinhAnh } = formData;
-
-    if (hinhAnh && hinhAnh[0]) {
+    if (hinhAnh) {
       if (typeof hinhAnh === "string") {
         formData.hinhAnh = hinhAnh;
-      } else {
+      } else if (hinhAnh instanceof FileList && hinhAnh.length > 0) {
         formData.hinhAnh = hinhAnh[0].name;
       }
     }
-
     if (dataEdit) {
       updateCourse({
         ...formData,
@@ -304,9 +363,87 @@ const CoursesManagement: React.FC = () => {
   const handleEdit = (courseData: CourseEdit) => {
     setDataEdit({
       ...courseData,
-      hinhAnh: courseData.hinhAnh as string,
+      hinhAnh: courseData.hinhAnh,
     });
     setIsAddOrEditDialog(true);
+  };
+  const handleSelectChange = (event: SelectChangeEvent<string>) => {
+    const selectedUserId = event.target.value;
+    const user = unenrolledUser?.find((u) => u.taiKhoan === selectedUserId);
+    setSelectedUser(user?.hoTen || "");
+    setSelectedUserId(selectedUserId);
+  };
+  const handleFetchUnenrolledUser = async (maKhoaHoc: string) => {
+    try {
+      const res = await getUnenrolledUser(maKhoaHoc);
+      setUnenrolledUser(res);
+      return res;
+    } catch (error) {
+      throw error;
+    }
+  };
+  const handleEnrollUser = async (maKhoaHoc: string, taiKhoan: string) => {
+    try {
+      await enrollCourse({ maKhoaHoc, taiKhoan });
+
+      if (selectedCourseId) {
+        const [unenrolled, enrolled, pending] = await Promise.all([
+          handleFetchUnenrolledUser(selectedCourseId),
+          handleGetEnrolledUser(selectedCourseId),
+          handleFetchPendingUserList(selectedCourseId),
+        ]);
+        setUnenrolledUser(unenrolled);
+        setEnrolledUsers(enrolled);
+        setPendingUsers(pending);
+      }
+
+      setSelectedUser("");
+      toast.success("Ghi danh thành công!");
+    } catch (error) {
+      setErrorDialogOpen(true);
+      setErrorMessage("Xảy ra lỗi, xin vui lòng thử lại!");
+    }
+  };
+  const handleGetEnrolledUser = async (maKhoaHoc: string | null) => {
+    try {
+      const result = await getEnrolledUsers(maKhoaHoc);
+      setEnrolledUsers(result);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  };
+  const handleCancelEnrollUser = async (
+    maKhoaHoc: string,
+    taiKhoan: string | null
+  ) => {
+    try {
+      await cancelEnrollCourse({ maKhoaHoc, taiKhoan });
+      if (selectedCourseId) {
+        const [enrolled, unenrolled, pending] = await Promise.all([
+          handleGetEnrolledUser(selectedCourseId),
+          handleFetchUnenrolledUser(selectedCourseId),
+          handleFetchPendingUserList(selectedCourseId),
+        ]);
+        setEnrolledUsers(enrolled);
+        setUnenrolledUser(unenrolled);
+        setPendingUsers(pending);
+      }
+
+      toast.success("Huỷ ghi danh thành công!");
+    } catch (error) {
+      setErrorDialogOpen(true);
+      setErrorMessage("Xảy ra lỗi khi hủy ghi danh!");
+    }
+  };
+  const handleFetchPendingUserList = async (maKhoaHoc: string | null) => {
+    try {
+      const res = await getPendingUsers(maKhoaHoc);
+      setPendingUsers(res);
+      return res;
+    } catch (error) {
+      throw error;
+    }
   };
   return (
     <div>
@@ -425,6 +562,13 @@ const CoursesManagement: React.FC = () => {
                           }}
                         >
                           <Button
+                            onClick={() => {
+                              setEnrollDialogOpen(true);
+                              setSelectedCourseId(course.maKhoaHoc);
+                              handleFetchUnenrolledUser(course.maKhoaHoc);
+                              handleGetEnrolledUser(course.maKhoaHoc);
+                              handleFetchPendingUserList(course.maKhoaHoc);
+                            }}
                             sx={{
                               textTransform: "none",
                               backgroundColor: "#47b094",
@@ -498,7 +642,6 @@ const CoursesManagement: React.FC = () => {
           setSuccessDialogOpen(false);
         }}
       />
-      {/* thêm khoá học ở đây */}
       <Dialog
         open={isAddOrEditDialog}
         onClose={() => {
@@ -527,6 +670,7 @@ const CoursesManagement: React.FC = () => {
                   error={errors.maDanhMucKhoaHoc?.message}
                   control={control}
                   name="maDanhMucKhoaHoc"
+                  defaultValue={dataEdit?.maDanhMucKhoaHoc || ""}
                 />
                 <FormItem
                   icon={<StarIcon />}
@@ -643,6 +787,213 @@ const CoursesManagement: React.FC = () => {
             </Button>
           </DialogActions>
         </form>
+      </Dialog>
+
+      <Dialog
+        open={enrollDialogOpen}
+        onClose={() => setEnrollDialogOpen(false)}
+        maxWidth="md" 
+        fullWidth 
+        PaperProps={{
+          sx: {
+            width: "600px", 
+            maxWidth: "90vw", 
+          },
+        }}
+      >
+        <DialogTitle className="text-center text-lg font-semibold">
+          Chọn người dùng
+        </DialogTitle>
+        <DialogContent>
+          <Box className="flex items-center gap-4 mb-4">
+            <Select
+              value={selectedUserId || ""}
+              onChange={handleSelectChange}
+              displayEmpty
+              sx={{
+                flex: 1,
+                height: "40px",
+                borderRadius: "4px",
+              }}
+            >
+              <MenuItem value="">
+                <Typography color="#adadad">Chọn người dùng</Typography>
+              </MenuItem>
+              {unenrolledUser?.map((user) => (
+                <MenuItem key={user.taiKhoan} value={user.taiKhoan}>
+                  {user.hoTen}
+                </MenuItem>
+              ))}
+            </Select>
+            <Button
+              variant="contained"
+              sx={{
+                textTransform: "none",
+                backgroundColor: "#47b094",
+                color: "white",
+                minWidth: "100px",
+                height: "40px",
+              }}
+              onClick={() => {
+                handleEnrollUser(selectedCourseId, selectedUserId);
+              }}
+            >
+              Ghi danh
+            </Button>
+          </Box>
+          <Box className="mb-6">
+            <Typography className="text-sm font-semibold mb-2">
+              Học viên chờ xác thực
+            </Typography>
+            <Table className="border">
+              <TableHead>
+                <TableRow>
+                  <TableCell className="font-bold text-center">STT</TableCell>
+                  <TableCell className="font-bold text-center">
+                    Tài khoản
+                  </TableCell>
+                  <TableCell className="font-bold text-center">
+                    Học viên
+                  </TableCell>
+                  <TableCell className="font-bold text-center">
+                    Chờ xác nhận
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {paginatedPendingUser?.map((users, index) => (
+                  <TableRow key={users.biDanh}>
+                    <TableCell className="text-center">
+                      {startIndexPending + index + 1}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {users.taiKhoan}
+                    </TableCell>
+                    <TableCell className="text-center">{users.hoTen}</TableCell>
+                    <TableCell className="text-center d-flex">
+                      <Box
+                        sx={{
+                          display: "flex",
+                        }}
+                      >
+                        <Button
+                          onClick={async () => {
+                            await handleEnrollUser(
+                              selectedCourseId,
+                              users.taiKhoan
+                            );
+                          }}
+                          sx={{
+                            backgroundColor: "#47b094",
+                            color: "white",
+                            fontSize: "10px",
+                            minWidth: "80px",
+                            mr: 1,
+                          }}
+                        >
+                          Xác thực
+                        </Button>
+                        <Button
+                          onClick={async () => {
+                            await handleCancelEnrollUser(
+                              selectedCourseId,
+                              users.taiKhoan
+                            );
+                          }}
+                          sx={{
+                            backgroundColor: "#de3442",
+                            color: "white",
+                            fontSize: "10px",
+                          }}
+                        >
+                          Xoá
+                        </Button>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            {pendingUsers && pendingUsers.length > 0 && (
+              <PaginationCustom
+                size="small"
+                count={Math.ceil((pendingUsers?.length || 0) / 2)}
+                page={pendingUserListPage}
+                onChange={(_event, page) => setPendingUserListPage(page)}
+              />
+            )}
+          </Box>
+          <Box>
+            <Typography className="text-sm font-semibold mb-2">
+              Học viên đã tham gia khoá học
+            </Typography>
+            <Table className="border">
+              <TableHead>
+                <TableRow>
+                  <TableCell className="font-bold text-center">STT</TableCell>
+                  <TableCell className="font-bold text-center">
+                    Tài khoản
+                  </TableCell>
+                  <TableCell className="font-bold text-center">
+                    Học viên
+                  </TableCell>
+                  <TableCell className="font-bold text-center">
+                    Chờ xác nhận
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {paginatedEnrolledUser?.map((user, index) => (
+                  <TableRow key={user.taiKhoan}>
+                    <TableCell className="text-center">{index + 1}</TableCell>
+                    <TableCell className="text-center">
+                      {user.taiKhoan}
+                    </TableCell>
+                    <TableCell className="text-center">{user.hoTen}</TableCell>
+                    <TableCell className="text-center">
+                      <Button
+                        onClick={() => {
+                          handleCancelEnrollUser(
+                            selectedCourseId,
+                            user.taiKhoan
+                          );
+                          if (selectedCourseId) {
+                            handleGetEnrolledUser(selectedCourseId);
+                            handleFetchUnenrolledUser(selectedCourseId);
+                          }
+                        }}
+                        sx={{
+                          backgroundColor: "#de3442",
+                          color: "white",
+                          fontSize: "10px",
+                        }}
+                      >
+                        Xoá
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            {enrolledUsers && enrolledUsers.length > 0 && (
+              <PaginationCustom
+                size="small"
+                count={Math.ceil((enrolledUsers?.length || 0) / 2)}
+                page={enrolledUserListPage}
+                onChange={(_event, page) => setEnrolledUserListPage(page)}
+              />
+            )}
+          </Box>
+        </DialogContent>
+        <DialogActions className="justify-center">
+          <Button
+            onClick={() => setEnrollDialogOpen(false)}
+            variant="contained"
+            className="bg-gray-500 text-white hover:bg-gray-600"
+          >
+            Đóng
+          </Button>
+        </DialogActions>
       </Dialog>
     </div>
   );
