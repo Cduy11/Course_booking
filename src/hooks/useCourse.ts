@@ -13,7 +13,7 @@ interface CourseState {
 
 export const useCourses = (searchTerm: string) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { courseList } = useSelector(
+  const { courseList, isLoading } = useSelector(
     (state: RootState) => state.course
   ) as CourseState;
 
@@ -45,5 +45,5 @@ export const useCourses = (searchTerm: string) => {
     );
   };
 
-  return { topCourses, referenceCourses, courses, filteredCourses };
+  return { topCourses, referenceCourses, courses, filteredCourses, isLoading };
 };
