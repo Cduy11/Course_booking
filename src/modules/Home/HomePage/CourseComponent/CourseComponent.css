@@ -206,6 +206,10 @@
   display: inline-block;
 }
 
+.course-component-grid {
+  margin-left: 100px !important;
+}
+
 /* Tooltip mặc định cho card ngoài */
 .tooltip {
   position: absolute;
@@ -416,7 +420,7 @@
     padding: 0px 0px !important;
   }
   .middle-card {
-    padding: 0; 
+    padding: 0;
   }
 
   .card-container {
