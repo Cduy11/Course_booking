@@ -106,16 +106,22 @@ const ModalInfo: React.FC<ModalInfoProps> = ({ open, onClose }) => {
       onClose={onClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
     >
       <Box
         sx={{
-          width: 400,
-          margin: "100px auto",
+          width: { xs: "90%", sm: "400px" },
+          margin: "auto",
           backgroundColor: "white",
           padding: 4,
           borderRadius: 2,
           boxShadow: 24,
         }}
+        className="modal-container"
       >
         <Typography id="modal-modal-title" variant="h6" component="h2">
           Chỉnh sửa thông tin cá nhân

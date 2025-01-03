@@ -88,7 +88,6 @@
   margin-bottom: 10px;
   font-size: 20px !important;
   margin-left: 10px !important;
-
 }
 
 .course-content-title1 {
@@ -168,12 +167,12 @@
   color: #4bab90;
   font-size: 20px !important;
   font-weight: bold;
- margin-left: 78% !important;
- padding: 10px;
+  margin-left: 78% !important;
+  padding: 10px;
 }
 
-.silideBarCourseDetails_button {   
-  background: none ;
+.silideBarCourseDetails_button {
+  background: none;
   color: #4bab90 !important;
   border: 1px solid #4bab90 !important;
   transition: ease-in-out 0.5s;
@@ -185,7 +184,6 @@
   color: #fff !important;
   scale: 1.05;
 }
-
 
 .silideBarCourseDetails_text {
   font-weight: bold;
@@ -211,4 +209,26 @@
 .btn-confirmBooking {
   background: #4caa90 !important;
   color: #fff !important;
+}
+
+@media (max-width: 768px) {
+  .details_content_course {
+    padding: 20px;
+  }
+  .info_details_course {
+    align-items: flex-start;
+    margin-top: 10px !important;
+  }
+  .silideBarCourseDetails_price {
+    margin-left: 0px !important;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 960px) {
+  .details_content_course {
+    padding: 30px;
+  }
+  .info_details_course {
+    flex-direction: row;
+  }
 }

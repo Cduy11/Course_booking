@@ -42,7 +42,7 @@ export default function CoursePagination() {
         <Box className="coursePagination-banner">
           <Grid container>
             {fakeData.map((item, index) => (
-              <Grid item xs={2} key={index}>
+              <Grid item xs={12} sm={6} md={2} key={index}>
                 <Box
                   className="coursePagination-item"
                   sx={{ backgroundColor: item.backgroundColor }}
@@ -71,6 +71,7 @@ export default function CoursePagination() {
                   spacing={2}
                   justifyContent="center"
                   style={{ padding: "0px 40px" }}
+                  className="course-component-grid"
                 >
                   {coursePagination.map((course: Course) => (
                     <Grid item xs={12} sm={6} md={3} key={course.maKhoaHoc}>

@@ -149,3 +149,57 @@ button.info-button-modal {
 .time-content {
   margin-left: 10px !important;
 }
+
+/* Responsive styles for tablet */
+@media (max-width: 768px) {
+  .info-details-search-field {
+    width: 100%;
+  }
+
+  .info-details-card {
+    flex-direction: column;
+  }
+
+  .info-details-image {
+    width: 100% !important;
+    height: auto;
+  }
+}
+
+/* Responsive styles for mobile */
+@media (max-width: 768px) {
+  .info-title {
+    font-size: 20px;
+  }
+
+  .info-details-header {
+    font-size: 18px;
+  }
+
+  .info-details-search {
+    margin-bottom: 16px;
+  }
+
+  .info-details-card {
+    margin: 10px 0;
+  }
+
+  .info-details-title {
+    font-size: 16px;
+  }
+
+  .info-details-description {
+    font-size: 14px;
+  }
+  .modal-container {
+    width: 50% !important;
+    margin-left: 29px !important;
+  }
+}
+
+/* Responsive styles for larger screens */
+@media (min-width: 1200px) {
+  .info-details-card {
+    flex-direction: row;
+  }
+}

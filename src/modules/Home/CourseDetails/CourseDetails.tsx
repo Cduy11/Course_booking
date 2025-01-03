@@ -26,7 +26,7 @@ export default function CourseDetails() {
           Các khóa học liên quan
         </Typography>
         <Box className="course-component-content" >
-        <Grid container spacing={2} style={{ padding: "0px 40px", marginLeft: "100px"}}>
+        <Grid container spacing={2} style={{ padding: "0px 40px", marginLeft: "100px"}} className="course-component-grid">
           {courses.map((course, index) => {
             const positionClass =
               index === 0 || index === courses.length - 2
@@ -34,7 +34,7 @@ export default function CourseDetails() {
                 : "middle-card";
 
             return (
-              <Grid item xs={12} sm={6} md={3} key={course.maKhoaHoc}>
+              <Grid item xs={12} sm={6} md={3} key={course.maKhoaHoc} className="course-componrnt-list">
                 <Courses course={course} position={positionClass} />
               </Grid>
             );
