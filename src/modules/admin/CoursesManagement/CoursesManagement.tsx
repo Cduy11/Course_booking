@@ -109,7 +109,15 @@ const validationSchema = yup.object({
     .matches(
       /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(19|20)\d\d$/,
       "Ngày tạo phải có định dạng dd/mm/yyyy"
-    ),
+    )
+    .test("notInPast", "Ngày tạo không được là ngày trong quá khứ", (value) => {
+      if (!value) return false;
+      const [day, month, year] = value.split("/").map(Number);
+      const inputDate = new Date(year, month - 1, day);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return inputDate >= today;
+    }),
   maDanhMucKhoaHoc: yup
     .string()
     .required("Xin vui lòng chọn danh mục khoá học"),
@@ -151,7 +159,6 @@ const CoursesManagement: React.FC = () => {
   const {
     control,
     handleSubmit,
-    getValues,
     reset,
     formState: { errors },
   } = useForm({
@@ -312,16 +319,16 @@ const CoursesManagement: React.FC = () => {
       reset(resetData);
     } else {
       reset({
-        maKhoaHoc: '',
-        biDanh: '',
-        tenKhoaHoc: '',
-        moTa: '',
+        maKhoaHoc: "",
+        biDanh: "",
+        tenKhoaHoc: "",
+        moTa: "",
         luotXem: 0,
         danhGia: 0,
         hinhAnh: undefined,
-        maNhom: '',
-        ngayTao: '',
-        maDanhMucKhoaHoc: '',
+        maNhom: "",
+        ngayTao: "",
+        maDanhMucKhoaHoc: "",
       });
     }
   }, [dataEdit, reset]);
@@ -792,12 +799,12 @@ const CoursesManagement: React.FC = () => {
       <Dialog
         open={enrollDialogOpen}
         onClose={() => setEnrollDialogOpen(false)}
-        maxWidth="md" 
-        fullWidth 
+        maxWidth="md"
+        fullWidth
         PaperProps={{
           sx: {
-            width: "600px", 
-            maxWidth: "90vw", 
+            width: "600px",
+            maxWidth: "90vw",
           },
         }}
       >
