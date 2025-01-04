@@ -29,7 +29,7 @@ export default function CoursePagination() {
   };
 
   return (
-    <Box>
+    <Box className="course-Pagination">
       <Box className="coursePagination-title">
         <Typography variant="h4" sx={{ fontSize: "1.75rem" }}>
           Khóa học

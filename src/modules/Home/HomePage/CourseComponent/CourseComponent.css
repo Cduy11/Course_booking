@@ -217,7 +217,7 @@
   opacity: 0;
   z-index: 99;
   top: 50%;
-  right: -115%;
+  right: -100%;
   transform: translateY(-50%);
   padding: 20px;
   width: 100%;
@@ -225,13 +225,13 @@
   border: 1px solid rgba(0, 0, 0, 0.125);
   box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.5s;
-  height: 360px;
+  height: 400px;
 }
 
 /* Tooltip cho card ở giữa */
 .middle-card .tooltip {
   right: -117;
-  left: -115%;
+  left: -100%;
   top: 50%;
 }
 
@@ -386,6 +386,9 @@
   padding: 0px 0px;
 }
 @media (max-width: 768px) {
+  .course-component {
+    overflow-x: hidden !important;
+  }
   .tooltip {
     position: relative;
     width: 100%;
@@ -399,8 +402,7 @@
   }
 
   .course-item-card {
-    min-width: 100%;
-    width: 100%;
+    margin-left: 26px;
     height: auto;
   }
 

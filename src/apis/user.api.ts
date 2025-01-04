@@ -38,4 +38,28 @@ export const userApi = {
       throw error;
     }
   },
+  deleteUser: async (userId: string) => {
+    try {
+      const response = await fetcher.delete(`/QuanLyNguoiDung/XoaNguoiDung?TaiKhoan=${userId}`)
+      return response.data
+    } catch (error) {
+      throw error;
+    }
+  },
+  addUser: async (formData: Users) => {
+    try {
+      const response = await fetcher.post("/QuanLyNguoiDung/ThemNguoiDung", formData)
+      return response.data.content
+    } catch (error) {
+      throw error
+    }
+  },
+  updateUser: async (formData: Users) => {
+    try {
+      const response = await fetcher.put("/QuanLyNguoiDung/CapNhatThongTinNguoiDung", formData)
+      return response.data.content
+    } catch (error) {
+      throw error
+    }
+  }
 };

@@ -7,6 +7,7 @@
 
 .coursePagination-container {
   padding: 50px;
+  overflow-x: hidden;
 }
 
 .coursePagination-banner {
@@ -45,6 +46,11 @@
 @media (max-width: 768px) {
   .course-component-grid1 {
     padding: 0px 0px !important;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  .course-Pagination {
+    overflow-x: hidden !important;
   }
 }
 

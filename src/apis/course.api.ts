@@ -9,26 +9,33 @@ export const courseApi = {
         "/QuanLyKhoaHoc/LayDanhSachKhoaHoc_PhanTrang",
         {
           params: {
-            MaNhom: "GP01",
+            MaNhom: "GP09",
             page,
             pageSize,
           },
         }
       );
-      return response.data
-    }
-    catch (error) {
-      throw error
+      return response.data;
+    } catch (error) {
+      throw error;
     }
   },
-  searchCourse: async ({ keyword, page, pageSize }: { keyword: string; page: number; pageSize: number }) => {
+  searchCourse: async ({
+    keyword,
+    page,
+    pageSize,
+  }: {
+    keyword: string;
+    page: number;
+    pageSize: number;
+  }) => {
     try {
       const response = await fetcher.get<ApiResponse<Courses[]>>(
         "/QuanLyKhoaHoc/LayDanhSachKhoaHoc",
         {
           params: {
             tenKhoaHoc: keyword,
-            MaNhom: "GP01",
+            MaNhom: "GP09",
             page,
             pageSize,
           },
@@ -41,10 +48,34 @@ export const courseApi = {
   },
   deleteCourse: async (courseId: string) => {
     try {
-      const response = await fetcher.delete(`/QuanLyKhoaHoc/XoaKhoaHoc?MaKhoaHoc=${courseId}`)
-      return response.data
+      const response = await fetcher.delete(
+        `/QuanLyKhoaHoc/XoaKhoaHoc?MaKhoaHoc=${courseId}`
+      );
+      return response.data;
     } catch (error) {
       throw error;
     }
-  }
-}
+  },
+  addCourse: async (formData: Courses) => {
+    try {
+      const response = await fetcher.post(
+        "/QuanLyKhoaHoc/ThemKhoaHoc",
+        formData
+      );
+      return response.data.content;
+    } catch (error) {
+      throw error;
+    }
+  },
+  updateCourse: async (formData: Courses) => {
+    try {
+      const response = await fetcher.put(
+        "/QuanLyKhoaHoc/CapNhatKhoaHoc",
+        formData
+      );
+      return response.data.content;
+    } catch (error) {
+      throw error;
+    }
+  },
+};
