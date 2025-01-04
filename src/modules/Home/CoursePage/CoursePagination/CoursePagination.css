@@ -42,8 +42,8 @@
   margin-bottom: 20px;
 }
 
-@media (max-width: 600px) {
-  .course-component-grid {
+@media (max-width: 768px) {
+  .course-component-grid1 {
     padding: 0px 0px !important;
   }
 }

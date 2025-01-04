@@ -135,10 +135,10 @@ export default function EventPage() {
       </section>
       <section className="eventDetails">
         <Grid container spacing={2}>
-          <Grid item xs={6} className="imgEvent">
+          <Grid item xs={12} sm={6} md={4} className="imgEvent">
             <img src={imgAnimation} alt="img " />
           </Grid>
-          <Grid item xs={6} className="infoEvent">
+          <Grid item xs={12} sm={6} md={4} className="infoEvent">
             <Typography variant="h4">
               Sự kiện công nghệ dành cho startup
             </Typography>
@@ -163,7 +163,7 @@ export default function EventPage() {
         <Typography variant="h6">Các nhà đồng sáng tạo</Typography>
         <Grid container spacing={2} className="speechDetail">
           {speakers.map((speaker, index) => (
-            <Grid item xs={3} key={index}>
+            <Grid item xs={12} sm={6} md={3} key={index}>
               <Card
                 className="speakerCard"
                 style={{ position: "relative", zIndex: 1 }}
@@ -192,7 +192,7 @@ export default function EventPage() {
         <Typography variant="h6">Nhà tài trợ chương trình</Typography>
         <Grid container spacing={2}>
           {donors.map((donor, index) => (
-            <Grid item xs={3} key={index}>
+            <Grid item xs={12} sm={6} md={3} key={index}>
               <Card className="donordImg">
                 <img src={donor.image} alt={donor.name} />
                 <CardContent>

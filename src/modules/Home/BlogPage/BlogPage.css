@@ -116,3 +116,59 @@ button.btnBlogCourse {
   border-radius: 50%;
   object-fit: cover;
 }
+
+/* Responsive styles for different screen sizes */
+@media (max-width: 1200px) {
+  .blogContent {
+    padding: 20px 30px;
+  }
+
+  .blogLeft__title {
+    font-size: 18px;
+  }
+
+  .imgCardBlog {
+    height: 250px;
+  }
+
+  button.btnBlogCourse {
+    width: 100px;
+  }
+}
+
+@media (max-width: 900px) {
+  .blogContent {
+    padding: 10px 20px;
+  }
+
+  .blogLeft__title {
+    font-size: 16px;
+  }
+
+  .imgCardBlog {
+    height: 200px;
+  }
+
+  button.btnBlogCourse {
+    width: 80px;
+  }
+}
+
+@media (max-width: 600px) {
+  .blogContent {
+    padding: 10px 25px;
+  }
+
+  .blogLeft__title {
+    font-size: 14px;
+  }
+
+  .imgCardBlog {
+    height: 150px;
+  }
+
+  button.btnBlogCourse {
+    width: 130px;
+    height: 40px;
+  }
+}

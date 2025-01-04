@@ -56,10 +56,10 @@ export default function InfoPage() {
           <Grid container spacing={2}>
             {item.imgFirst ? (
               <>
-                <Grid item xs={6} className="contentItemImg">
+                <Grid item xs={12} sm={6} md={6} className="contentItemImg">
                   <img src={item.img} alt={`image${index + 1}`}></img>
                 </Grid>
-                <Grid item xs={6} className="contentItemAbout">
+                <Grid item xs={12} sm={6} md={6} className="contentItemAbout">
                   <Typography variant="h6">{item.title}</Typography>
                   <Typography variant="h5">{item.subtitle}</Typography>
                   <Typography variant="h4">
@@ -73,7 +73,7 @@ export default function InfoPage() {
               </>
             ) : (
               <>
-                <Grid item xs={6} className="contentItemAbout">
+                <Grid item xs={12} sm={6} md={6} className="contentItemAbout">
                   <Typography variant="h6">{item.title}</Typography>
                   <Typography variant="h5">{item.subtitle}</Typography>
                   <Typography variant="h4">
@@ -84,7 +84,7 @@ export default function InfoPage() {
                     {item.content.slice(1)}
                   </Typography>
                 </Grid>
-                <Grid item xs={6} className="contentItemImg">
+                <Grid item xs={12} sm={6} md={6} className="contentItemImg">
                   <img src={item.img} alt={`image${index + 1}`}></img>
                 </Grid>
               </>

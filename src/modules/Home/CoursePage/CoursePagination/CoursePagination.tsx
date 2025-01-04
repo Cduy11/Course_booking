@@ -71,7 +71,7 @@ export default function CoursePagination() {
                   spacing={2}
                   justifyContent="center"
                   style={{ padding: "0px 40px" }}
-                  className="course-component-grid"
+                  className="course-component-grid1"
                 >
                   {coursePagination.map((course: Course) => (
                     <Grid item xs={12} sm={6} md={3} key={course.maKhoaHoc}>

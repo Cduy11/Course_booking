@@ -21,7 +21,7 @@ export default function BlogPage() {
       likes: [300, 500, 200],
       author: "Công Duy",
       description:
-        "Có lẽ cũng rất lâu rồi mà tôi chưa đụng đến thứ được gọi là 'timetable'. Hay dân dã hơn thì ngư���i ta hay gọi là 'Lịch thường nhật',...",
+        "Có lẽ cũng rất lâu rồi mà tôi chưa đụng đến thứ được gọi là 'timetable'. Hay dân dã hơn thì nguoi ta hay gọi là 'Lịch thường nhật',...",
       image: img1,
     },
     {
@@ -83,14 +83,14 @@ export default function BlogPage() {
       </Box>
       <Box className="blogContent">
         <Grid container spacing={2}>
-          <Grid item xs={8} className="blogLeft">
+          <Grid item xs={12} sm={6} md={8} className="blogLeft">
             <Typography className="blogLeft__title">
               {" "}
               <CampaignIcon className="blogLeft__icons" /> Phù hợp với bạn
             </Typography>
             <Grid container spacing={2}>
               {blogPosts.map((post) => (
-                <Grid item xs={6} key={post.id}>
+                <Grid item xs={12} sm={6} md={6} key={post.id}>
                   <Card className="cardBlog">
                     <Box className="cardBlogContent">
                       <img
@@ -167,7 +167,7 @@ export default function BlogPage() {
               ))}
             </Grid>
           </Grid>
-          <Grid item xs={4} className="blog__right">
+          <Grid item xs={12} sm={4} md={4} className="blog__right">
             <Box className="cardBlogRight">
               <Box className="blogRightBox">
                 <Typography variant="h6" className="titleBlogRight">
