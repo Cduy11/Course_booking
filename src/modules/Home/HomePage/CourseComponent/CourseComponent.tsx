@@ -20,7 +20,7 @@ export default function CourseComponent() {
           container
           spacing={2}
           justifyContent="center"
-          style={{ padding: "0px 40px" }}
+          style={{ padding: "0px 40px", marginLeft: "100px" }}
           className="course-component-grid1"
         >
           {topCourses.map((course) => (
@@ -40,7 +40,7 @@ export default function CourseComponent() {
           container
           spacing={2}
           justifyContent="center"
-          style={{ padding: "0px 40px" }}
+          style={{ padding: "0px 40px", marginLeft: "100px" }}
           className="course-component-grid1"
         >
           {referenceCourses.map((course, index) => {
@@ -74,7 +74,7 @@ export default function CourseComponent() {
           container
           spacing={2}
           justifyContent="center"
-          style={{ padding: "0px 40px" }}
+          style={{ padding: "0px 40px", marginLeft: "100px" }}
           className="course-component-grid1"
         >
           {courses.map((course, index) => {
