@@ -32,9 +32,9 @@ export default function LoggedHeader() {
     navigate(PATH.HOME.CATALOG_COURSE + `/${maDanhMuc}`);
   };
 
-  const handleEventClick = (event: React.MouseEvent<HTMLElement>) => {
-    setEventAnchorEl(event.currentTarget);
-  };
+  // const handleEventClick = (event: React.MouseEvent<HTMLElement>) => {
+  //   setEventAnchorEl(event.currentTarget);
+  // };
 
   const handleCloseEventMenu = () => {
     setEventAnchorEl(null);

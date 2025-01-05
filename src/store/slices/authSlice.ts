@@ -3,10 +3,10 @@ import fetcher from "../../apis/fetcher";
 import { toast } from "react-toastify";
 import { ErrorState, ApiError } from "../../interfaces/errorTypes";
 import { UserRegisterData } from "../../interfaces/auth";
+import { LoginFormData } from "../../hooks/useAuth";
 
-
-const userLocal = localStorage.getItem("currentUser") 
-  ? JSON.parse(localStorage.getItem("currentUser")!) 
+const userLocal = localStorage.getItem("currentUser")
+  ? JSON.parse(localStorage.getItem("currentUser")!)
   : null;
 
 const initialState = {
@@ -18,15 +18,13 @@ const initialState = {
 // login
 export const loginApi = createAsyncThunk(
   "auth/loginApi",
-  async (data, { rejectWithValue }) => {
+  async (data: LoginFormData, { rejectWithValue }) => {
     try {
       const response = await fetcher.post("/QuanLyNguoiDung/DangNhap", data);
       return response.data;
     } catch (error: unknown) {
       const apiError = error as ApiError;
-      return rejectWithValue(
-        apiError.message || "Có lỗi xảy ra khi gọi API"
-      );
+      return rejectWithValue(apiError.message || "Có lỗi xảy ra khi gọi API");
     }
   }
 );
@@ -57,7 +55,7 @@ const authSlice = createSlice({
       state.currentUser = null;
       localStorage.removeItem("currentUser");
       toast.success("Đăng xuất thành công");
-    }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loginApi.pending, (state) => {
@@ -70,7 +68,7 @@ const authSlice = createSlice({
     });
     builder.addCase(loginApi.rejected, (state, action) => {
       state.isLoading = false;
-      state.error = { message: action.payload as string || "Có lỗi xảy ra" };
+      state.error = { message: (action.payload as string) || "Có lỗi xảy ra" };
     });
     builder.addCase(registerApi.pending, (state) => {
       state.isLoading = true;
@@ -82,7 +80,9 @@ const authSlice = createSlice({
     });
     builder.addCase(registerApi.rejected, (state, action) => {
       state.isLoading = false;
-      state.error = { message: action.payload as string || "Có lỗi xảy ra khi gọi API" };
+      state.error = {
+        message: (action.payload as string) || "Có lỗi xảy ra khi gọi API",
+      };
     });
   },
 });

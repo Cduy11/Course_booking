@@ -6,7 +6,8 @@ import Courses from "./Courses/Courses";
 import ReferenceCourse from "./ReferenceCourse/ReferenceCourse";
 
 export default function CourseComponent() {
-  const { topCourses, referenceCourses, courses } = useCourses();
+  const searchTerm = "";
+  const { topCourses, referenceCourses, courses } = useCourses(searchTerm);
 
   return (
     <Box className="course-component">

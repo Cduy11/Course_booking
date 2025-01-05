@@ -3,14 +3,14 @@ import { useParams } from "react-router-dom";
 import "./CourseDetails.css";
 import DetailsContentCourse from "./DetailsContentCourse/DetailsContentCourse";
 import Courses from "../HomePage/CourseComponent/Courses/Courses";
-import { useCourses } from "../../../hooks/useCourse";
 import { useState, useEffect } from "react";
 import Loadiing from "../../../components/Loading/Loadiing";
+import { useCourses } from "../../../hooks/useCourse";
 
-export default function CourseDetails() { 
-  const { maKhoaHoc } = useParams();
-  const { courses } = useCourses();
-  const [isLoading, setIsLoading] = useState(true);
+export default function CourseDetails() {
+  const { maKhoaHoc } = useParams<{ maKhoaHoc: string }>();
+  const { courses } = useCourses("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (courses.length > 0) {

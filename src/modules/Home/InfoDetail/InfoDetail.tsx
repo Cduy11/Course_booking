@@ -9,7 +9,7 @@ import { useFetchUserInfo } from "../../../hooks/useInfo";
 export default function InfoDetail() {
   const [value, setValue] = useState("one");
 
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+  const handleChange = (_: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
   const { inforUser } = useFetchUserInfo();
