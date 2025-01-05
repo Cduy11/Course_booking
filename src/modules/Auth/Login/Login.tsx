@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { PATH } from "../../../routes/path";
 import { useEffect } from "react";
 import useAuth from "../../../hooks/useAuth";
+import "../Auth.css";
 
 interface RegisterProps {
   onToggle: () => void;
@@ -41,7 +42,7 @@ const Login: React.FC<RegisterProps> = () => {
       .then((user) => {
         if (user) {
           toast.success("Đăng nhập thành công!");
-          if ( user.maLoaiNguoiDung === "GV") {
+          if (user.maLoaiNguoiDung === "GV") {
             navigate(PATH.ADMIN.COURSES_MANAGEMENT);
           } else {
             navigate(PATH.HOME.ROOT);
@@ -62,19 +63,21 @@ const Login: React.FC<RegisterProps> = () => {
         <Stack spacing={3} width="100%">
           <TextField
             {...register("taiKhoan")}
-            className="text-field"
+            className="text-field small-placeholder"
             type="text"
             placeholder="Tài khoản"
             label="Tài khoản"
             fullWidth
+            variant="outlined"
           />
           <TextField
             {...register("matKhau")}
-            className="text-field "
+            className="text-field small-placeholder"
             type="password"
             placeholder="Mật khẩu"
             label="Mật khẩu"
             fullWidth
+            variant="outlined"
           />
         </Stack>
         <Typography>
