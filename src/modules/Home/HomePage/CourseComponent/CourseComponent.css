@@ -430,15 +430,23 @@
   }
 
   .course-card-grid {
-    height: 470px;
+    height: 480px;
     overflow-y: hidden;
     overflow-x: hidden;
+    padding-left: 0px !important;
+    margin-top: 10px !important;
   }
   .course-card-grid1 {
     height: 470px;
     overflow-y: hidden;
     overflow-x: hidden;
     width: 100% !important;
+  }
+  .course-component-grid1 {
+    margin-left: -5px !important;
+  }
+  .card-sale {
+    margin-left: 27px;
   }
 }
 

@@ -142,10 +142,11 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 30px;
+  margin-left: calc(-1 * 7px) !important;
 }
 
 /* Mobile */
-@media (max-width: 599px) {
+@media (max-width: 768px) {
   .info-course-box {
     padding: 20px;
   }
@@ -154,6 +155,7 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+    margin-left: calc(-1 * -1px) !important;
   }
 
   .infoLargeItem {
@@ -178,16 +180,13 @@
     font-size: 20px;
   }
 
-  .infoLargeItem {
-    padding: 24px !important;
-  }
   .info-course-grid-small {
     padding-left: 0px !important;
   }
 }
 
 /* Tablet */
-@media (min-width: 600px) and (max-width: 1024px) {
+@media (min-width: 768px) and (max-width: 1024px) {
   .info-course-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;

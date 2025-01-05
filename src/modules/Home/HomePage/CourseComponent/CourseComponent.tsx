@@ -24,7 +24,14 @@ export default function CourseComponent() {
           className="course-component-grid1"
         >
           {topCourses.map((course) => (
-            <Grid item xs={12} sm={6} md={3} key={course.maKhoaHoc}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={3}
+              key={course.maKhoaHoc}
+              className="course-card-grid"
+            >
               <CoursePurchase course={course} />
             </Grid>
           ))}
@@ -56,7 +63,7 @@ export default function CourseComponent() {
                 sm={6}
                 md={3}
                 key={course.maKhoaHoc}
-                className="course-card-grid1"
+                className="course-card-grid"
               >
                 <ReferenceCourse course={course} position={positionClass} />
               </Grid>

@@ -191,10 +191,7 @@ button.info-button-modal {
   .info-details-description {
     font-size: 14px;
   }
-  .modal-container {
-    width: 50% !important;
-    margin-left: 29px !important;
-  }
+
 }
 
 /* Responsive styles for larger screens */
