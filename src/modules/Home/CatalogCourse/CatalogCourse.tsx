@@ -204,7 +204,7 @@ export default function CatalogCourse() {
           container
           spacing={2}
           mt={5}
-          style={{ padding: "0px 40px", marginLeft: "60px" }}
+          style={{ padding: "0px 40px" }}
           className="catelog_grid"
         >
           {renderCourses(catelogList)}

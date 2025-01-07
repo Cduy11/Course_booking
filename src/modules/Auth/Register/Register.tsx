@@ -81,51 +81,81 @@ const Register: React.FC<RegisterProps> = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <h1>Đăng ký</h1>
         <Stack spacing={2} width="100%">
-          <TextField
-            {...register("taiKhoan")}
-            className="text-field"
-            type="text"
-            label="Tài khoản"
-            variant="outlined"
-            fullWidth
-          />
-          <span className="text-error">{errors.taiKhoan?.message}</span>
-          <TextField
-            {...register("hoTen")}
-            className="text-field"
-            type="text"
-            label="Họ tên"
-            variant="outlined"
-            fullWidth
-          />
-          <span className="text-error">{errors.hoTen?.message}</span>
-          <TextField
-            {...register("matKhau")}
-            className="text-field"
-            type="password"
-            label="Mật khẩu"
-            variant="outlined"
-            fullWidth
-          />
-          <span className="text-error">{errors.matKhau?.message}</span>
-          <TextField
-            {...register("email")}
-            className="text-field"
-            type="email"
-            label="Email"
-            variant="outlined"
-            fullWidth
-          />
-          <span className="text-error">{errors.email?.message}</span>
-          <TextField
-            {...register("soDT")}
-            className="text-field"
-            type="text"
-            label="Số Điện Thoại"
-            variant="outlined"
-            fullWidth
-          />
-          <span className="text-error">{errors.soDT?.message}</span>
+          <div style={{ position: 'relative' }}>
+            <TextField
+              {...register("taiKhoan")}
+              className="text-field"
+              type="text"
+              label="Tài khoản"
+              variant="outlined"
+              fullWidth
+            />
+            {errors.taiKhoan && (
+              <span className="text-error" style={{ position: 'absolute', top: '100%', left: 0 }}>
+                {errors.taiKhoan.message}
+              </span>
+            )}
+          </div>
+          <div style={{ position: 'relative' }}>
+            <TextField
+              {...register("hoTen")}
+              className="text-field"
+              type="text"
+              label="Họ tên"
+              variant="outlined"
+              fullWidth
+            />
+            {errors.hoTen && (
+              <span className="text-error" style={{ position: 'absolute', top: '100%', left: 0 }}>
+                {errors.hoTen.message}
+              </span>
+            )}
+          </div>
+          <div style={{ position: 'relative' }}>
+            <TextField
+              {...register("matKhau")}
+              className="text-field"
+              type="password"
+              label="Mật khẩu"
+              variant="outlined"
+              fullWidth
+            />
+            {errors.matKhau && (
+              <span className="text-error" style={{ position: 'absolute', top: '100%', left: 0 }}>
+                {errors.matKhau.message}
+              </span>
+            )}
+          </div>
+          <div style={{ position: 'relative' }}>
+            <TextField
+              {...register("email")}
+              className="text-field"
+              type="email"
+              label="Email"
+              variant="outlined"
+              fullWidth
+            />
+            {errors.email && (
+              <span className="text-error" style={{ position: 'absolute', top: '100%', left: 0 }}>
+                {errors.email.message}
+              </span>
+            )}
+          </div>
+          <div style={{ position: 'relative' }}>
+            <TextField
+              {...register("soDT")}
+              className="text-field"
+              type="text"
+              label="Số Điện Thoại"
+              variant="outlined"
+              fullWidth
+            />
+            {errors.soDT && (
+              <span className="text-error" style={{ position: 'absolute', top: '100%', left: 0 }}>
+                {errors.soDT.message}
+              </span>
+            )}
+          </div>
           <Select
             className="text-field"
             {...register("maNhom")}
@@ -139,7 +169,11 @@ const Register: React.FC<RegisterProps> = () => {
               </MenuItem>
             ))}
           </Select>
-          <span className="text-error">{errors.maNhom?.message}</span>
+          {errors.maNhom && (
+            <span className="text-error" style={{ position: 'absolute', top: '100%', left: 0 }}>
+              {errors.maNhom.message}
+            </span>
+          )}
         </Stack>
         <button type="submit">Đăng ký</button>
       </form>

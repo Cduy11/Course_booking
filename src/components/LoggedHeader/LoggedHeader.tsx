@@ -66,6 +66,11 @@ export default function LoggedHeader() {
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={() => setAnchorEl(null)}
+            PaperProps={{
+              style: {
+                  overflowY: 'hidden',
+              },
+          }}
           >
             <Box className="menu-item-box">
               {isLoading ? (
