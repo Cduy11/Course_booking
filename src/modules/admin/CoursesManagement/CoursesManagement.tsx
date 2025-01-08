@@ -278,25 +278,12 @@ const CoursesManagement: React.FC = () => {
           "Cập nhật thông tin khoá học thất bại. Vui lòng thử lại."
       );
     },
-    onSuccess: (updatedCourse) => {
+    onSuccess: () => {
       toast.success("Cập nhật thông tin khoá học thành công!");
-
-      queryClient.setQueryData(
-        [QueryKeys.LIST_COURSE, keyword, page],
-        (oldData: any) => {
-          if (!oldData) return { items: [updatedCourse], totalPages: 1 };
-
-          const updatedItems = oldData.items.map((item: Courses) =>
-            item.maKhoaHoc === updatedCourse.maKhoaHoc ? updatedCourse : item
-          );
-
-          return {
-            ...oldData,
-            items: updatedItems,
-          };
-        }
-      );
-
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.LIST_COURSE, keyword, page],
+      });
+  
       reset();
       setIsAddOrEditDialog(false);
       setDataEdit(null);
