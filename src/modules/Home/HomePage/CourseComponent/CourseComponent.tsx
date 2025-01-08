@@ -6,7 +6,8 @@ import Courses from "./Courses/Courses";
 import ReferenceCourse from "./ReferenceCourse/ReferenceCourse";
 
 export default function CourseComponent() {
-  const { topCourses, referenceCourses, courses } = useCourses();
+  const searchTerm = "";
+  const { topCourses, referenceCourses, courses } = useCourses(searchTerm);
 
   return (
     <Box className="course-component">
@@ -20,11 +21,18 @@ export default function CourseComponent() {
           container
           spacing={2}
           justifyContent="center"
-          style={{ padding: "0px 40px", marginLeft: "100px" }}
+          style={{ padding: "0px 40px" }}
           className="course-component-grid1"
         >
           {topCourses.map((course) => (
-            <Grid item xs={12} sm={6} md={3} key={course.maKhoaHoc}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={3}
+              key={course.maKhoaHoc}
+              className="course-card-grid"
+            >
               <CoursePurchase course={course} />
             </Grid>
           ))}
@@ -40,7 +48,7 @@ export default function CourseComponent() {
           container
           spacing={2}
           justifyContent="center"
-          style={{ padding: "0px 40px", marginLeft: "100px" }}
+          style={{ padding: "0px 40px" }}
           className="course-component-grid1"
         >
           {referenceCourses.map((course, index) => {
@@ -56,7 +64,7 @@ export default function CourseComponent() {
                 sm={6}
                 md={3}
                 key={course.maKhoaHoc}
-                className="course-card-grid1"
+                className="course-card-grid"
               >
                 <ReferenceCourse course={course} position={positionClass} />
               </Grid>
@@ -74,7 +82,7 @@ export default function CourseComponent() {
           container
           spacing={2}
           justifyContent="center"
-          style={{ padding: "0px 40px", marginLeft: "100px" }}
+          style={{ padding: "0px 40px" }}
           className="course-component-grid1"
         >
           {courses.map((course, index) => {

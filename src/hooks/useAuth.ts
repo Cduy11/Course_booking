@@ -2,7 +2,7 @@ import { useDispatch } from "react-redux";
 import { loginApi } from "../store/slices/authSlice";
 import { AppDispatch } from "../store";
 
-interface LoginFormData {
+export interface LoginFormData {
   taiKhoan: string;
   matKhau: string;
 }

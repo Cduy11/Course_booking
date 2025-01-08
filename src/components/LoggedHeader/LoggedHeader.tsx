@@ -32,9 +32,9 @@ export default function LoggedHeader() {
     navigate(PATH.HOME.CATALOG_COURSE + `/${maDanhMuc}`);
   };
 
-  const handleEventClick = (event: React.MouseEvent<HTMLElement>) => {
-    setEventAnchorEl(event.currentTarget);
-  };
+  // const handleEventClick = (event: React.MouseEvent<HTMLElement>) => {
+  //   setEventAnchorEl(event.currentTarget);
+  // };
 
   const handleCloseEventMenu = () => {
     setEventAnchorEl(null);
@@ -66,6 +66,11 @@ export default function LoggedHeader() {
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={() => setAnchorEl(null)}
+            PaperProps={{
+              style: {
+                  overflowY: 'hidden',
+              },
+          }}
           >
             <Box className="menu-item-box">
               {isLoading ? (

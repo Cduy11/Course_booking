@@ -74,7 +74,14 @@ export default function CoursePagination() {
                   className="course-component-grid1"
                 >
                   {coursePagination.map((course: Course) => (
-                    <Grid item xs={12} sm={6} md={3} key={course.maKhoaHoc}>
+                    <Grid
+                      item
+                      xs={12}
+                      sm={6}
+                      md={3}
+                      key={course.maKhoaHoc}
+                      className="course-card-grid"
+                    >
                       <Box onClick={() => handleClick(course)}>
                         <CoursePurchase course={course} />
                       </Box>

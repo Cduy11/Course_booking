@@ -1,8 +1,7 @@
-
 .auth-container {
   position: relative;
   border-radius: 10px;
-  box-shadow: 0 14px 28px rgba(0, 0, 0, .2), 0 10px 10px rgba(0, 0, 0, .2);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.2), 0 10px 10px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   width: 80vw;
   height: 83vh;
@@ -63,7 +62,7 @@
   background-color: #eee;
   border: none;
   margin: 8px 0;
-  padding: 10px 15px;
+  padding: 10px 15px !important;
   font-size: 13px;
   border-radius: 8px;
   width: 100%;
@@ -75,7 +74,6 @@
   top: 0;
   height: 100%;
   transition: all 0.6s ease-in-out;
-  
 }
 
 .auth-sign-in {
@@ -188,4 +186,19 @@
 
 .text-error {
   color: red;
+}
+
+/* CSS để điều chỉnh kích thước font của placeholder */
+.small-placeholder .MuiInputBase-input::placeholder {
+  font-size: 12px; /* Kích thước font cho placeholder */
+}
+
+/* Thêm quy tắc CSS để điều chỉnh kích thước của TextField trên màn hình nhỏ */
+@media (max-width: 600px) {
+  .text-field {
+    font-size: 5px !important; /* Kích thước font cho TextField */
+  }
+  .auth-container form {
+    padding: 0px 10px !important;
+  }
 }

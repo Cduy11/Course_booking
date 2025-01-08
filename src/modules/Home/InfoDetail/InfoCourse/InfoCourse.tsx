@@ -24,7 +24,7 @@ import { toast } from "react-toastify";
 const InfoCourse = () => {
   const { inforUser } = useFetchUserInfo();
   const [courseHistory, setCourseHistory] = useState<ChiTietKhoaHoc[]>(
-    inforUser.chiTietKhoaHocGhiDanh || []
+    (inforUser as any).chiTietKhoaHocGhiDanh || []
   );
 
   const dispatch = useDispatch<AppDispatch>();

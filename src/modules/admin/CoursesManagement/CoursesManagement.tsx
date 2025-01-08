@@ -135,7 +135,6 @@ const CoursesManagement: React.FC = () => {
   const [dataEdit, setDataEdit] = useState<CourseEdit | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [unenrolledUser, setUnenrolledUser] = useState<User[] | null>(null);
-  const [selectedUser, setSelectedUser] = useState<string>("");
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [flag, setFlag] = useState(true);
   const { open, handleClickOpen, onClose } = useOpen();
@@ -363,8 +362,6 @@ const CoursesManagement: React.FC = () => {
   };
   const handleSelectChange = (event: SelectChangeEvent<string>) => {
     const selectedUserId = event.target.value;
-    const user = unenrolledUser?.find((u) => u.taiKhoan === selectedUserId);
-    setSelectedUser(user?.hoTen || "");
     setSelectedUserId(selectedUserId);
   };
   const handleFetchUnenrolledUser = async (maKhoaHoc: string) => {
@@ -391,7 +388,7 @@ const CoursesManagement: React.FC = () => {
         setPendingUsers(pending);
       }
 
-      setSelectedUser("");
+      setSelectedUserId("");
       toast.success("Ghi danh thành công!");
     } catch (error) {
       setErrorDialogOpen(true);

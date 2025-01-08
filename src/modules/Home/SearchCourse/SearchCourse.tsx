@@ -41,7 +41,7 @@ export default function SearchCourse() {
 
   // Hàm để xử lý thay đổi checkbox
   const handleCategoryChange = (category: string) => {
-    setSelectedCategories([category]); 
+    setSelectedCategories([category]);
   };
 
   // Cập nhật hàm lọc để chỉ hiển thị các khóa học thuộc danh mục đã chọn
@@ -52,10 +52,9 @@ export default function SearchCourse() {
   );
 
   const navigate = useNavigate();
-  const handleClick = (course) => {
+  const handleClick = (course: { maKhoaHoc: string }) => {
     navigate(`${PATH.HOME.COURSE_DETAILS}/${course.maKhoaHoc}`);
   };
-  
 
   return (
     <Box className="searchPageContainer">
