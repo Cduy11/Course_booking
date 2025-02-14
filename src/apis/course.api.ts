@@ -9,7 +9,7 @@ export const courseApi = {
         "/QuanLyKhoaHoc/LayDanhSachKhoaHoc_PhanTrang",
         {
           params: {
-            MaNhom: "GP09",
+            MaNhom: "GP01",
             page,
             pageSize,
           },
@@ -35,7 +35,7 @@ export const courseApi = {
         {
           params: {
             tenKhoaHoc: keyword,
-            MaNhom: "GP09",
+            MaNhom: "GP01",
             page,
             pageSize,
           },
